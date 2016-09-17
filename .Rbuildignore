@@ -1,0 +1,6 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
+^LICENSE$
+^clean_package.sh$
+^clean_vignettes.sh$
