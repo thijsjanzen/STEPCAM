@@ -22,8 +22,8 @@ calcSD <- function(species, abundances, n_plots, n_traits)
 
   # calculate observed FD values
   #FD_output <- dbFD(species2, abundances2, stand.x = F,messages=FALSE)
-  Ord <- ordinationAxes(x = speices2[,-1], stand.x = FALSE)
-  FD_output <- strippedDbFd(Ord, ifelse(data_abundances > 0, 1, 0))
+  Ord <- ordinationAxes(x = species2[,-1], stand.x = FALSE)
+  FD_output <- strippedDbFd(Ord, ifelse(abundances2 > 0, 1, 0))
 
   # calculate average CTM values across plots
   average_optimums <- c()
