@@ -1,11 +1,11 @@
 # Reduce the overload of the dbFD function
-# Separate into two functions: one to calculate the ordination axes. 
+# Separate into two functions: one to calculate the ordination axes.
 # And the second function uses this axes to calculate FRic, FDiv, and FEve.
 # Calculate the ordination axes only once and reuse them during STEPCAM_ABC
-ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"), 
-                           ord = c("podani", "metric"), w, 
+ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
+                           ord = c("podani", "metric"), w,
                            asym.bin = NULL, messages = FALSE, stand.x = FALSE){
-  dist.bin <- NULL                        	
+  dist.bin <- NULL
   tol <- .Machine$double.eps
   corr <- match.arg(corr)
   ord <- match.arg(ord)
@@ -13,7 +13,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     is.dist.x <- FALSE
     s.x <- nrow(x)
     t.x <- ncol(x)
-    if (is.null(row.names(x))) 
+    if (is.null(row.names(x)))
       stop("'x' must have row names.", "\n")
     else x.rn <- row.names(x)
   }
@@ -21,7 +21,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     is.dist.x <- FALSE
     s.x <- length(x)
     t.x <- 1
-    if (is.null(names(x))) 
+    if (is.null(names(x)))
       stop("'x' must have names.", "\n")
     else x.rn <- names(x)
   }
@@ -29,17 +29,17 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     is.dist.x <- TRUE
     s.x <- attr(x, "Size")
     t.x <- 1
-    if (is.null(attr(x, "Labels"))) 
+    if (is.null(attr(x, "Labels")))
       stop("'x' must have labels.", "\n")
     else x.rn <- attr(x, "Labels")
   }
-  if (missing(w)) 
+  if (missing(w))
     w <- rep(1, t.x)/sum(rep(1, t.x))
   if (is.matrix(x) | is.data.frame(x)) {
     x <- data.frame(x)
     if (t.x >= 2) {
       x.class <- sapply(x, data.class)
-      if (any(x.class == "character")) 
+      if (any(x.class == "character"))
         x[, x.class == "character"] <- as.factor(x[, x.class == "character"])
       else x <- x
       if (all(x.class == "numeric") & all(!is.na(x))) {
@@ -68,13 +68,13 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           x.dist <- dist(x.s)
           row.excl.ab <- pos.NA[, 1]
           a <- a[, -row.excl.ab]
-          if (messages) 
-            cat("Warning: Species with missing trait values have been excluded.", 
+          if (messages)
+            cat("Warning: Species with missing trait values have been excluded.",
                 "\n")
         }
       }
       if (is.factor(x[, 1]) | is.character(x[, 1])) {
-        if (is.ordered(x[, 1])) 
+        if (is.ordered(x[, 1]))
           x <- x
         else x[, 1] <- as.factor(x[, 1])
         if (any(is.na(x))) {
@@ -83,8 +83,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           row.excl.ab <- pos.NA[, 1]
           a <- a[, -row.excl.ab]
           x.rn <- x.rn[-pos.NA]
-          if (messages) 
-            cat("Warning: Species with missing trait values have been excluded.", 
+          if (messages)
+            cat("Warning: Species with missing trait values have been excluded.",
                 "\n")
         }
         if (is.ordered(x[, 1])) {
@@ -97,8 +97,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           x.dummy <- diag(nlevels(x.f))[x.f, ]
           x.dummy.df <- data.frame(x.dummy, row.names = x.rn)
           sequence <- 1:10
-          if (all(dist.bin != sequence[any(sequence)])) 
-            stop("'dist.bin' must be an integer between 1 and 10.", 
+          if (all(dist.bin != sequence[any(sequence)]))
+            stop("'dist.bin' must be an integer between 1 and 10.",
                  "\n")
           x.dist <- dist.binary(x.dummy.df, method = dist.bin)
         }
@@ -111,8 +111,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
       x <- na.omit(x)
       a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
-      if (messages) 
-        cat("Warning: Species with missing trait values have been excluded.", 
+      if (messages)
+        cat("Warning: Species with missing trait values have been excluded.",
             "\n")
     }
     else x <- x
@@ -128,8 +128,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
       x <- na.omit(x)
       a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
-      if (messages) 
-        cat("Warning: Species with missing trait values have been excluded.", 
+      if (messages)
+        cat("Warning: Species with missing trait values have been excluded.",
             "\n")
     }
     else x <- x
@@ -137,8 +137,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     x.dummy <- diag(nlevels(x))[x, ]
     x.dummy.df <- data.frame(x.dummy, row.names = x.rn)
     sequence <- 1:10
-    if (all(dist.bin != sequence[any(sequence)])) 
-      stop("'dist.bin' must be an integer between 1 and 10.", 
+    if (all(dist.bin != sequence[any(sequence)]))
+      stop("'dist.bin' must be an integer between 1 and 10.",
            "\n")
     x <- data.frame(x)
     x.dist <- dist.binary(x.dummy.df, method = dist.bin)
@@ -149,7 +149,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
       x <- na.omit(x)
       a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
-      cat("Warning: Species with missing trait values have been excluded.", 
+      cat("Warning: Species with missing trait values have been excluded.",
           "\n")
     }
     else x <- x
@@ -163,68 +163,68 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
       x <- na.omit(x)
       a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
-      if (messages) 
-        cat("Warning: Species with missing trait values have been excluded.", 
+      if (messages)
+        cat("Warning: Species with missing trait values have been excluded.",
             "\n")
     }
     else x <- x
     x.dummy <- diag(nlevels(x))[x, ]
     x.dummy.df <- data.frame(x.dummy, row.names = x.rn)
     sequence <- 1:10
-    if (all(dist.bin != sequence[any(sequence)])) 
-      stop("'dist.bin' must be an integer between 1 and 10.", 
+    if (all(dist.bin != sequence[any(sequence)]))
+      stop("'dist.bin' must be an integer between 1 and 10.",
            "\n")
     x.dist <- dist.binary(x.dummy.df, method = dist.bin)
     x <- data.frame(x)
     dimnames(x) <- list(x.rn, "Trait")
   }
   if (class(x)[1] == "dist" | class(x)[1] == "dissimilarity") {
-    if (any(is.na(x))) 
-      stop("When 'x' is a distance matrix, it cannot have missing values (NA).", 
+    if (any(is.na(x)))
+      stop("When 'x' is a distance matrix, it cannot have missing values (NA).",
            "\n")
     x.dist <- x
   }
-  if (any(is.na(x.dist))) 
+  if (any(is.na(x.dist)))
     stop("NA's in the distance matrix.", "\n")
   if (!is.dist.x) {
     no.traits <- apply(x, 1, function(v) length(v[!is.na(v)]))
-    if (any(no.traits == 0)) 
+    if (any(no.traits == 0))
       stop("At least one species has no trait data.", "\n")
-  } 
+  }
   attr(x.dist, "Labels") <- x.rn
-  if (is.euclid(x.dist)) 
+  if (ade4::is.euclid(x.dist))
     x.dist2 <- x.dist
   if (!is.euclid(x.dist)) {
     if (corr == "lingoes") {
-      x.dist2 <- lingoes(x.dist)
-      if (messages) 
-        cat("Species x species distance matrix was not Euclidean. Lingoes correction was applied.", 
+      x.dist2 <- ade4::lingoes(x.dist)
+      if (messages)
+        cat("Species x species distance matrix was not Euclidean. Lingoes correction was applied.",
             "\n")
     }
     if (corr == "cailliez") {
-      x.dist2 <- cailliez(x.dist)
-      if (messages) 
-        cat("Species x species distance matrix was not Euclidean. Cailliez correction was applied.", 
+      x.dist2 <- ade4::cailliez(x.dist)
+      if (messages)
+        cat("Species x species distance matrix was not Euclidean. Cailliez correction was applied.",
             "\n")
     }
     if (corr == "sqrt") {
       x.dist2 <- sqrt(x.dist)
-      if (!is.euclid(x.dist2)) 
-        stop("Species x species distance matrix was still is not Euclidean after 'sqrt' correction. Use another correction method.", 
+      if (!ade4::is.euclid(x.dist2))
+        stop("Species x species distance matrix was still is not Euclidean after 'sqrt' correction. Use another correction method.",
              "\n")
-      if (is.euclid(x.dist2)) 
-        if (messages) 
-          cat("Species x species distance matrix was not Euclidean. 'sqrt' correction was applied.", 
+      if (ade4::is.euclid(x.dist2))
+        if (messages)
+          cat("Species x species distance matrix was not Euclidean. 'sqrt' correction was applied.",
               "\n")
     }
     if (corr == "none") {
-      x.dist2 <- quasieuclid(x.dist)
-      if (messages) 
-        cat("Species x species distance was not Euclidean, but no correction was applied. Only the PCoA axes with positive eigenvalues were kept.", 
+      x.dist2 <- ade4::quasieuclid(x.dist)
+      if (messages)
+        cat("Species x species distance was not Euclidean, but no correction was applied. Only the PCoA axes with positive eigenvalues were kept.",
             "\n")
     }
   }
-  x.pco <- dudi.pco(x.dist2, scannf = FALSE, full = TRUE)
+  x.pco <- ade4::dudi.pco(x.dist2, scannf = FALSE, full = TRUE)
   return(x.pco) # Best is to return the whole object, because dbFD needs sometimes more than the axes alone?!
 }
 
@@ -235,7 +235,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
   tol <- .Machine$double.eps
   a <- as.matrix(a)
   c <- nrow(a) # Number of communities
-  traits <- x.pco$li 
+  traits <- x.pco$li
   # Number of species per community where traits are present - do I need it later? Yes!
   nb.sp <- numeric(c)
   for (i in 1:c) {
@@ -249,7 +249,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
   Warning <- FALSE
   if (min.nb.sp < 3) {
     nb.sp2 <- nb.sp[nb.sp > 2]
-    m.max <- min(nb.sp2) - 1    
+    m.max <- min(nb.sp2) - 1
   }
   else {
     m.max <- m.max
@@ -257,7 +257,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
   if(!is.numeric(m)){
     m <- m.max
   }
-  
+
   if (m < x.pco$nf){ # If there is a community with less species than ordination axes
     traits.FRic <- x.pco$li[, 1:m] # Use only the first m axes
   }
@@ -269,7 +269,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
   FRic <- nbsp
   FEve <- nbsp
   FDiv <- nbsp
-  
+
   for (i in 1:c) { # For each community
     sppres <- which(a[i, ] > 0) # Present species
     S <- length(sppres)
@@ -279,14 +279,14 @@ strippedDbFd <- function(x.pco, a, m = "max"){
     # Will I need relative abundances of the species?
     ab <- as.matrix(a[i, sppres])
     abundrel <- ab/sum(ab)
-    
+
     if (ncol(tr.FRic) > 1 & nb.sp[i] >= 3) { # If there are more than 3 species present
-      if (Warning) 
+      if (Warning)
         thresh <- 4
-      if (!Warning) 
+      if (!Warning)
         thresh <- 3
       if (nb.sp[i] >= thresh) {
-        convhull <- convhulln(tr.FRic, "FA")
+        convhull <- geometry::convhulln(tr.FRic, "FA")
         FRic[i] <- convhull$vol
       }
     }
@@ -295,7 +295,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
       t.range <- tr.range[2] - tr.range[1]
       FRic[i] <- t.range
     }
-    
+
     if (nb.sp[i] >= 3) {
       tr.dist <- dist(tr) # pair-wise distance of ordination coordinates
       linkmst <- mst(tr.dist)
@@ -318,7 +318,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
       FEve[i] <- ((sum(minPEW)) - OdSmO)/(1 - OdSmO)
     }
     if (ncol(tr.FRic) > 1 & nb.sp[i] >= 3) {
-      vert0 <- convhulln(tr.FRic, "Fx TO 'vert.txt'")
+      vert0 <- geometry::convhulln(tr.FRic, "Fx TO 'vert.txt'")
       vert1 <- scan("vert.txt", quiet = T)
       vert2 <- vert1 + 1
       vertices <- vert2[-1]
@@ -331,7 +331,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
       abdev2 <- abundrel * devdB
       ababsdev2 <- abundrel * abs(devdB)
       FDiv[i] <- (sum(abdev2) + meandB)/(sum(ababsdev2) + meandB)
-    }    
+    }
   }
   res <- list()
   res$nbsp <- nbsp
@@ -339,7 +339,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
   res$FRic <- FRic
   res$FEve <- FEve
   res$FDiv <- FDiv
-  return(res)  
+  return(res)
 }
 
 
