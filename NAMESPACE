@@ -1,0 +1,16 @@
+import(FD)
+import(vcd)
+import(gtools)
+import(MASS)
+import(ade4)
+import(grid)
+import(geometry)
+import(ape)
+importFrom("graphics", "hist", "layout", "par", "plot")
+importFrom("stats", "dist", "dnorm", "rnorm", "runif", "sd")
+importFrom("utils", "flush.console", "read.table", "write.table")
+importFrom("stats", "as.dist", "na.omit")
+exportPattern("^[[:alpha:]]+")
+
+
+

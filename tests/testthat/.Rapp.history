@@ -1,0 +1,78 @@
+library(testthat)
+library(nLTT)
+tree1 <- TESS::tess.sim.taxa(n = 1, nTaxa = 100, #
+                               max = 100, lambda = 1.0, mu = 0.0)[[1]]#
+  tree2 <- TESS::tess.sim.taxa(n = 1, nTaxa = 100, #
+                               max = 100, lambda = 1.0, mu = 0.0)[[1]]#
+#
+  LL_BD <- function(params, phy) {#
+    lnl <- TESS::tess.likelihood(ape::branching.times(phy), #
+                                 lambda = params[1], mu = params[2],#
+                                 samplingProbability = 1, log = TRUE)#
+    prior1 <- dunif( params[1], 0, 100, log = TRUE)#
+    prior2 <- dunif( params[2], 0, 100, log = TRUE)#
+    return(lnl + prior1 + prior2)#
+  }#
+#
+  #calculate Maximum Likelihood estimates#
+  #these should match our MCMC results#
+  ML1 <- DDD::bd_ML(ape::branching.times(tree1))#
+  ML2 <- DDD::bd_ML(ape::branching.times(tree2))
+expect_equal(#
+    colMeans( mcmc_nltt( tree1, LL_BD, c(1, 0.01), c(TRUE,TRUE), #
+      iterations = 10000, burnin = 1000, thinning = 1, sigma = 0.05))[[1]],#
+    ML1[[1]],#
+    tolerance = 0.01#
+  )
+weights <- rep(1, 2);#
+  particles <- list();#
+  for (i in 1:2) {#
+    particles[[i]] <- c(10, 10)#
+  }#
+  sigma <- 1;#
+  prior_density_function <- function(x) {#
+    dunif(x[1], min = 0, max = 1000) *#
+    dunif(x[2], min = 0, max = 1000)#
+  }#
+#
+  expect_equal(#
+    calculate_weight(weights, particles,#
+      current = c(5, 5), sigma, prior_density_function),#
+    calculate_weight(weights, particles,#
+      current = c(20, 20), sigma, prior_density_function),#
+    tolerance = 0.0001#
+  )
+calculate_weight
+source("/Users/janzen/GitHub/nLTT/R/ABC_SMC.R")
+skip("@ThijsJanzen will fix this :-)")#
+#
+  set.seed(1) #just to be safe#
+  tree1 <- TESS::tess.sim.taxa(n = 1, nTaxa = 100, #
+                               max = 100, lambda = 1.0, mu = 0.0)[[1]]#
+  tree2 <- TESS::tess.sim.taxa(n = 1, nTaxa = 100, #
+                               max = 100, lambda = 1.0, mu = 0.0)[[1]]#
+#
+  LL_BD <- function(params, phy) {#
+    lnl <- TESS::tess.likelihood(ape::branching.times(phy), #
+                                 lambda = params[1], mu = params[2],#
+                                 samplingProbability = 1, log = TRUE)#
+    prior1 <- dunif( params[1], 0, 100, log = TRUE)#
+    prior2 <- dunif( params[2], 0, 100, log = TRUE)#
+    return(lnl + prior1 + prior2)#
+  }#
+#
+  #calculate Maximum Likelihood estimates#
+  #these should match our MCMC results#
+  ML1 <- DDD::bd_ML(ape::branching.times(tree1))#
+  ML2 <- DDD::bd_ML(ape::branching.times(tree2))#
+#
+  expect_equal(#
+    colMeans( mcmc_nltt( tree1, LL_BD, c(1, 0.01), c(TRUE,TRUE), #
+      iterations = 10000, burnin = 1000, thinning = 1, sigma = 0.05))[[1]],#
+    ML1[[1]],#
+    tolerance = 0.01#
+  )
+seq_len(5)
+seq_along(4:5)
+runif
+?runif

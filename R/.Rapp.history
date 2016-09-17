@@ -1,0 +1,324 @@
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=1.txt",header=F)
+par(mfrow=c(4,1))#
+for(i in 1:4) hist(d[,i])
+par(mfrow=c(1,4))#
+for(i in 1:4) hist(d[,i])
+str(d)
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=2.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=0.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=2.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=1.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=1.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i],xlim=c(0,1))
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=0.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i],xlim=c(0,1))
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=1.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i],xlim=c(0,1))
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=2.txt",header=F)#
+#
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i],xlim=c(0,1))
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=2.txt",header=F)#
+#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d)
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=2.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d)
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=2.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d[,c(1,2,3,4,6)])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=1.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d[,c(1,2,3,4,6)])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=0.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d[,c(1,2,3,4,6)])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=2.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d[,c(1,2,3,4,6)])
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=3.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d[,c(1,2,3,4,6)])
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i],xlim=c(0,1))
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=3.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d[,c(1,2,3,4,6)])
+par(mfrow=c(1,6))#
+for(i in 1:6) hist(d[,i],xlim=c(0,1))
+par(mfrow=c(4,6))#
+#
+for(t in 0:3)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+}
+d <- read.table("/Users/janzen/MEGAsync/NeutralModelling/LStables/LScount.table",header=T)#
+d2 <- read.table("/Users/janzen/MEGAsync/NeutralModelling/LStables/LSVSD.table",header=T)#
+d3 <- read.table("/Users/janzen/MEGAsync/NeutralModelling/LStables/LSsamdata.table",header=T)
+i <- 1
+x <- d[i,]
+x
+x <- x[which(x>0)]
+x
+x <- sort(x,descending=T)
+x
+?sort
+x <- sort(x,decreasing=T)
+x
+x <- x / max(x)
+plot(x)
+x
+x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- x / max(x)#
+	plot(x)
+plot(NA,xlim=c(0,1000),ylim=c(0,1))#
+#
+for(i in 1:64)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- x / max(x)#
+	lines(x,col="grey")#
+}
+d
+plot(NA,xlim=c(0,1000),ylim=c(0,1))#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- x / max(x)#
+	plotcol="brown"#
+	if(i > 64) plotcol="darkgreen"#
+	lines(x,col=plotcol)#
+}
+10^1
+plot(NA,xlim=c(0,1000),ylim=c(0,1),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- x / max(x)#
+	plotcol="brown"#
+	if(i > 64) plotcol="darkgreen"#
+	lines(x,col=plotcol)#
+}
+min(d)
+min(d[which(d>0)])
+d
+max(d)
+plot(NA,xlim=c(0,1000),ylim=c(1/max(d),1),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- x / max(x)#
+	plotcol="brown"#
+	if(i > 64) plotcol="darkgreen"#
+	lines(x,col=plotcol)#
+}
+par(mfrow=c(9,6))#
+#
+for(t in 0:8)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+}
+par(mfrow=c(9,6))#
+#
+for(t in 0:8)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) hist(d[,i],xlim=c(0,1),xlab="",ylab="",main="")#
+}
+par(mfrow=c(9,6))#
+par(mar=c(2,2,2,2))#
+for(t in 0:8)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) hist(d[,i],xlim=c(0,1),xlab="",ylab="",main="")#
+}
+d
+hist(d[,6])
+hist(d[,56])
+hist(d[,5])
+d <- read.table("/Users/janzen/MEGAsync/NeutralModelling/LStables/LScount.table",header=T)#
+d2 <- read.table("/Users/janzen/MEGAsync/NeutralModelling/LStables/LSVSD.table",header=T)#
+d3 <- read.table("/Users/janzen/MEGAsync/NeutralModelling/LStables/LSsamdata.table",header=T)#
+#
+plot(NA,xlim=c(0,1000),ylim=c(1/max(d),1),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- x / max(x)#
+	plotcol=rgb(165/255,42/255,42/255,0.1)#
+	if(i > 64) plotcol=rgb(0,100/255,0,0.1)#
+	lines(x,col=plotcol)#
+}
+plot(NA,xlim=c(0,1000),ylim=c(1/max(d),1),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- x / max(x)#
+	plotcol=rgb(165/255,42/255,42/255,0.3)#
+	if(i > 64) plotcol=rgb(0,100/255,0,0.3)#
+	lines(x,col=plotcol)#
+}
+plot(NA,xlim=c(0,1000),ylim=c(1/max(d),2),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- 100 * x / max(x)#
+	plotcol=rgb(165/255,42/255,42/255,0.3)#
+	if(i > 64) plotcol=rgb(0,100/255,0,0.3)#
+	lines(x,col=plotcol)#
+}
+plot(NA,xlim=c(0,1000),ylim=c(1/max(d),3),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- 100 * x / max(x)#
+	plotcol=rgb(165/255,42/255,42/255,0.3)#
+	if(i > 64) plotcol=rgb(0,100/255,0,0.3)#
+	lines(x,col=plotcol)#
+}
+plot(NA,xlim=c(0,1000),ylim=c(1/max(d),100),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- 100 * x / max(x)#
+	plotcol=rgb(165/255,42/255,42/255,0.3)#
+	if(i > 64) plotcol=rgb(0,100/255,0,0.3)#
+	lines(x,col=plotcol)#
+}
+plot(NA,xlim=c(0,5000),ylim=c(1/max(d),100),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- 100 * x / max(x)#
+	plotcol=rgb(165/255,42/255,42/255,0.3)#
+	if(i > 64) plotcol=rgb(0,100/255,0,0.3)#
+	lines(x,col=plotcol)#
+}
+plot(NA,xlim=c(0,2500),ylim=c(1e-3,100),log="y")#
+#
+for(i in 1:128)#
+{#
+	x <- c(); y <- d[i,]#
+	for(j in 1:length(y)) x[j] <- y[[j]]  #
+	x <- x[which(x>0)]#
+	x <- sort(x,decreasing=T)#
+	x <- 100 * x / max(x)#
+	plotcol=rgb(165/255,42/255,42/255,0.3)#
+	if(i > 64) plotcol=rgb(0,100/255,0,0.3)#
+	lines(x,col=plotcol)#
+}
+d <- read.table("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=3.txt",header=F)#
+require(psych)#
+#par(mfrow=c(1,6))#
+#for(i in 1:6) hist(d[,i],xlim=c(0,1))#
+pairs.panels(d[,c(1,2,3,4,6)])#
+#
+par(mfrow=c(9,6))#
+par(mar=c(2,2,2,2))#
+for(t in 0:8)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) hist(d[,i],xlim=c(0,1),xlab="",ylab="",main="")#
+}
+par(mfrow=c(9,6))#
+par(mar=c(2,2,2,2))#
+for(t in 0:8)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) hist(d[,i],xlim=c(0,1),xlab="",ylab="",main="")#
+}
+pairs.panels(d[,c(1,2,3,4,6)])
+par(mfrow=c(9,6))#
+par(mar=c(2,2,2,2))#
+for(t in 0:8)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) hist(d[,i],xlim=c(0,1),xlab="",ylab="",main="")#
+}
+par(mfrow=c(9,5))#
+par(mar=c(2,2,2,2))#
+for(t in 0:8)#
+{#
+ d <- read.table(paste("/Users/janzen/Dropbox/Programming/SMC_LV/Build/Products/Release/test/particles_t=",t,".txt",sep=""),header=F)	#
+ for(i in 1:6) if(i != 5) hist(d[,i],xlim=c(0,1),xlab="",ylab="",main="")#
+}
