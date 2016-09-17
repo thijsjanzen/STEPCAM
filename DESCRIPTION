@@ -2,10 +2,11 @@ Package: STEPCAM
 Type: Package
 Title: ABC-SMC Inference of STEPCAM
 Version: 1.2
-Date: 2016-04-26
+Date: 2016-09-17
 Author: Thijs Janzen & Fons van der Plas
 Maintainer: Thijs Janzen <thijsjanzen@gmail.com>
 Imports: gtools, MASS, vcd, FD, ade4, grid, geometry, ape
+Suggests: testthat
 Description: STEPwise Community Assembly Model collection, applying ABC-SMC in order to infer different community assembly processes. Also includes several plotting functions in order to visualize found estimates.
 License: GPL-2
 URL: https://github.com/thijsjanzen/STEPCAM
