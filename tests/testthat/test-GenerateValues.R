@@ -13,8 +13,8 @@ test_that("generateValues: use", {
                                 mechanism_random = FALSE)
 
   data_species <- x$traits
-  data_species$trait1 <- c(rep(1,n_comm - 2), 2, 10)
-  data_species$trait2 <- c(rep(1,n_comm - 2), 2, 10)
+  data_species$trait1 <- c(rep(1,ncomm - 2), 2, 10)
+  data_species$trait2 <- c(rep(1,ncomm - 2), 2, 10)
 
   data_abundances <- x$abundances
   data_abundances[1,4] <- 0
@@ -63,8 +63,8 @@ test_that("generateValues: abuse", {
                                 mechanism_random = FALSE)
 
   data_species <- x$traits
-  data_species$trait1 <- c(rep(1,n_comm - 2), 2, 10)
-  data_species$trait2 <- c(rep(1,n_comm - 2), 2, 10)
+  data_species$trait1 <- c(rep(1,ncomm - 2), 2, 10)
+  data_species$trait2 <- c(rep(1,ncomm - 2), 2, 10)
 
   data_abundances <- x$abundances
   data_abundances[1,4] <- 0
