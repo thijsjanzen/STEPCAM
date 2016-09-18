@@ -8,18 +8,18 @@
   STEPCAM-ABC inference.
 }
 \usage{
-generate.Artificial.Data(numSpecies, numTraits, numCommunities, occurence_distribution, 
-average_richness, SD_richness, random.Mechanism)
+generate.Artificial.Data <- function(n_species, n_traits, n_communities,
+occurence_distribution, average_richness, sd_richness, mechanism_random)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{numSpecies}{The number of species in the species pool (so across all communities) of the desired dataset. }
-  \item{numTraits}{The number of traits in the desired dataset.}
-  \item{numCommunities}{The number of communities in the desired dataset.}
+  \item{n_species}{The number of species in the species pool (so across all communities) of the desired dataset. }
+  \item{n_traits}{The number of traits in the desired dataset.}
+  \item{n_communities}{The number of communities in the desired dataset.}
   \item{occurence_distribution}{species occurrence distribution (analogous to species abundance distribution) in species pool. A lognormal distribution is assumed. The higher the value, the more uneven the occurrence distribution in the species pool}
   \item{average_richness}{average richness in local community as a proportion of richness in species pool}
-  \item{SD_richness}{standard deviation in richness across communities}
-  \item{random.Mechanism}{if TRUE, species are randomly drawn from from species pool. If FALSE, it is assumed that a certain trait combination is optimal in each community and species with traits similar to this optimum more likely end up in the local community. Therefore, random.mechanism = FALSE assumes filtering processes to be most dominant in community assembly}
+  \item{sd_richness}{standard deviation in richness across communities}
+  \item{mechanism_random}{if TRUE, species are randomly drawn from from species pool. If FALSE, it is assumed that a certain trait combination is optimal in each community and species with traits similar to this optimum more likely end up in the local community. Therefore, random.mechanism = FALSE assumes filtering processes to be most dominant in community assembly}
 }
 \value{
   \item{traits}{A matrix containing the traits for all species, rows are the different species, column correspond to the respective traits.}
@@ -28,7 +28,7 @@ average_richness, SD_richness, random.Mechanism)
 \author{ Thijs Janzen & Fons van der Plas}
 
 \examples{
-Artificial.Data <- generate.Artificial.Data(numSpecies=40,numTraits=3,numCommunities=5,
-                   occurence_distribution=0.2,average_richness=0.5,SD_richness=0.2,
-                   random.Mechanism=FALSE);
+Artificial.Data <- generate.Artificial.Data(n_species=40, n_traits=3, n_communities = 5,
+                   occurence_distribution = 0.2, average_richness = 0.5, sd_richness = 0.2,
+                   random.Mechanism = FALSE)
 }

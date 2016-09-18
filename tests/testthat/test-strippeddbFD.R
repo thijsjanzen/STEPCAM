@@ -5,12 +5,12 @@ test_that("strippedDbFd: use", {
   n_traits <- 3
   n_plots <- 10
   num_species <- 10;
-  x <- generate.Artificial.Data(numSpecies = num_species, numTraits = n_traits,
-                                numCommunities = n_plots,
+  x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
+                                n_communities = n_plots,
                                 occurence_distribution = 0.5,
                                 average_richness = 1,
-                                SD_richness = 1,
-                                random.Mechanism = FALSE)
+                                sd_richness = 1,
+                                mechanism_random = FALSE)
 
   data_species <- x$traits
   data_species$trait1 <- 1:10
@@ -56,12 +56,12 @@ test_that("strippedDbFd: use", {
   n_traits <- 3
   n_plots <- 10
   num_species <- 10;
-  x <- generate.Artificial.Data(numSpecies = num_species, numTraits = n_traits,
-                                numCommunities = n_plots,
+  x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
+                                n_communities = n_plots,
                                 occurence_distribution = 0.5,
                                 average_richness = 10,
-                                SD_richness = 2,
-                                random.Mechanism = FALSE)
+                                sd_richness = 2,
+                                mechanism_random = FALSE)
 
   species  <- scaleSpeciesvalues(x$traits,n_traits)
   abundances <- x$abundances
@@ -100,12 +100,12 @@ test_that("strippedDbFd: use", {
   n_traits <- 3
   n_plots <- 10
   num_species <- 10;
-  x <- generate.Artificial.Data(numSpecies = num_species, numTraits = n_traits,
-                                numCommunities = n_plots,
+  x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
+                                n_communities = n_plots,
                                 occurence_distribution = 0.05,
                                 average_richness = 0.3,
-                                SD_richness = 0.1,
-                                random.Mechanism = FALSE)
+                                sd_richness = 0.1,
+                                mechanism_random = FALSE)
 
 
   species  <- scaleSpeciesvalues(x$traits,n_traits)
@@ -141,13 +141,3 @@ test_that("strippedDbFd: use", {
     tolerance = 0.1
   )
 })
-
-test_that("strippedDbFd: abuse", {
-
-
-
-
-
-})
-
-

@@ -3,12 +3,12 @@ context("STEPCAM")
 test_that("STEPCAM: use",{
   set.seed(42)
   n_traits <- 1
-  x <- generate.Artificial.Data(numSpecies = 10, numTraits = n_traits,
-                                numCommunities = 10,
+  x <- generate.Artificial.Data(n_species = 10, n_traits = n_traits,
+                                n_communities = 10,
                                 occurence_distribution = 0.5,
                                 average_richness = 1,
-                                SD_richness = 1,
-                                random.Mechanism = FALSE)
+                                sd_richness = 1,
+                                mechanism_random = FALSE)
 
   data_species <- x$traits;
   data_species$trait1 <- 1:10
@@ -24,7 +24,8 @@ test_that("STEPCAM: use",{
   S <- length(esppres);
   species_fallout <- 2
 
-  a <- STEPCAM(c(0,species_fallout,0),data_species,data_abudances,taxa,esppres,community_number,n_traits,species_fallout)
+  a <- STEPCAM( c(0, species_fallout, 0), data_species, data_abudances,
+                taxa, esppres, community_number, n_traits, species_fallout)
 
   expect_equal(
     a,
@@ -38,7 +39,9 @@ test_that("STEPCAM: use",{
   names(data_species) <- c("sp",traitnames[1:n_traits], "freq")
 
   species_fallout <- 2
-  a <- STEPCAM(c(0,0,species_fallout),data_species,data_abudances,taxa,esppres,community_number,n_traits,species_fallout)
+  a <- STEPCAM( c(0,0,species_fallout), data_species, data_abudances,
+                taxa, esppres, community_number,
+                n_traits, species_fallout)
   expect_equal(
     a,
     c(1,0,1,1,1,1,1,1,0,1),
@@ -51,7 +54,10 @@ test_that("STEPCAM: use",{
   data_species$freq <- rep(1,length(data_species$freq))
   data_species$freq[1] <- 0
   species_fallout <- 1
-  a <- STEPCAM(c(species_fallout,0,0),data_species,data_abudances,taxa,esppres,community_number,n_traits,species_fallout)
+  a <- STEPCAM( c(species_fallout,0,0),
+                data_species, data_abundances,
+                taxa, esppres, community_number,
+                n_traits, species_fallout)
 
   expect_equal(
     a,
