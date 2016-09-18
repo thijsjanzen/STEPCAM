@@ -185,6 +185,13 @@ test_that("ABC_SMC: use", {
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   expect_equal(v, c(0,2,0), tolerance = 0.1)
+
+  for (t in 0:20) {
+    file_name <- paste("particles_t=", t, ".txt", sep="")
+    if (file.exists(file_name)) {
+      file.remove(file_name)
+    }
+  }
 })
 
 
