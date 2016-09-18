@@ -10,7 +10,7 @@ test_that("calcSD: use", {
   x <- generate.Artificial.Data(numSpecies = num_species, numTraits = n_traits,
                                 numCommunities = n_plots,
                                 occurence_distribution = 0.5,
-                                average_richness = 1,
+                                average_richness = 10,
                                 SD_richness = 1,
                                 random.Mechanism = FALSE)
 
@@ -19,17 +19,29 @@ test_that("calcSD: use", {
   data_species$trait2 <- 1:10
   data_species$trait3 <- 1:10
 
-  data_abundances <- x$abundances
-  for (i in 1:length(data_abundances[1,])) {
-    for (j in 1:length(data_abundances[,1])) {
-        data_abundances[i,j] <- 1
-    }
-  }
-
   scaled_species <- scaleSpeciesvalues(data_species,n_traits)
 
   x <- calcSD(scaled_species,data_abundances, n_plots, n_traits)
   x
+
+  expect_equal(
+    x[[1]] ,
+    0
+  )
+
+  expect_equal(
+    x[[2]],
+    0
+  )
+
+  expect_equal(
+    x[[4]],
+    0
+  )
+
+
+
+
 
 
   species <- scaled_species
