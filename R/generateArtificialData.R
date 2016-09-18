@@ -1,24 +1,22 @@
 # generate artificial species pool / community / trait data. The main purpose is to
 # make a simplified artificial data set, to get a feeling for how STEPCAM works
 
-generate.Artificial.Data <- function(numSpecies, numTraits, numCommunities,
-occurence_distribution, average_richness, SD_richness, random.Mechanism){
-	
+generate.Artificial.Data <- function(n_species, n_traits, n_communities,
+occurence_distribution, average_richness, sd_richness, mechanism_random){
+
   # create species x trait matrix based on settings
-	pool_richness <- numSpecies
-	n_traits <- numTraits;
-	n_communities <- numCommunities
-	mechanism_random <- random.Mechanism;	
-	
-	traits_pool <- matrix(round(rnorm(n = (pool_richness * n_traits), mean = 0, sd = 1), 3),
-  ncol = n_traits, nrow = pool_richness)
-  
-	column1 <- c()
-	for(i in 1:pool_richness){
+	pool_richness <- n_species
+
+	traits_pool <- matrix( round( rnorm(n = (pool_richness * n_traits),
+	                                    mean = 0, sd = 1), 3),
+	                       ncol = n_traits, nrow = pool_richness)
+
+  column1 <- c()
+	for(i in 1:pool_richness) {
 	  column1[i] <- paste("species", i, sep = "")
 	}
 	row1 <- rep(NA, (n_traits + 1))
-	for(i in 1:n_traits + 1){
+	for(i in 1:n_traits + 1) {
 	  row1[i] <- paste("trait", (i - 1), sep="")
 	}
 	row1[1] <- "species"
@@ -31,7 +29,7 @@ occurence_distribution, average_richness, SD_richness, random.Mechanism){
 
 	occurence <- 10^rnorm(pool_richness, mean = 0, sd = occurence_distribution)
 
-	richness_values <- round((rnorm(n_communities, mean = 0, sd = 1) * (SD_richness * pool_richness) + 
+	richness_values <- round((rnorm(n_communities, mean = 0, sd = 1) * (sd_richness * pool_richness) +
   (average_richness * pool_richness)), 0)
 	richness_values[which(richness_values > pool_richness)] <- pool_richness
 	richness_values[which(richness_values < 0)] <- 0
@@ -66,7 +64,7 @@ occurence_distribution, average_richness, SD_richness, random.Mechanism){
 	row1 <- c(column1[-c(which(colSums(comm_spec_matrix) == 0))])
 	if(length(which(colSums(comm_spec_matrix) == 0)) != 0) comm_spec_matrix <-
   comm_spec_matrix[, -c(which(colSums(comm_spec_matrix) == 0))]
-		
+
 	comm_spec_matrix <- as.data.frame(cbind(comm_spec_matrix, rep("", n_communities)))
 	names(comm_spec_matrix) <- row1
 
@@ -75,12 +73,14 @@ occurence_distribution, average_richness, SD_richness, random.Mechanism){
 
 	names(plots) <- traits_pool_df[, 1]
 
-	traits_pool_df[ ,c(2:ncol(traits_pool_df))] <- as.matrix(traits_pool_df[ ,c(2:ncol(traits_pool_df))])
-	for(i in 2:ncol(traits_pool_df)){                                                                             
+	traits_pool_df[ ,c(2:ncol(traits_pool_df))] <- as.matrix(
+	                traits_pool_df[ ,c(2:ncol(traits_pool_df))])
+
+	for (i in 2:ncol(traits_pool_df)) {
     traits_pool_df[, i] <- as.numeric(traits_pool_df[, i])
 	}
 	output <- list( traits = traits_pool_df, abundances = plots);
-	
+
 	return(output)
 }
 

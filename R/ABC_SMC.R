@@ -5,8 +5,8 @@ getRandomVals <- function(max_val)  {
   x <- x * max_val; #translate to integers
   x2 <- floor(x); #round to integers
   while (sum(x2) != max_val) {
-    a <- sample(1:3, size = 1, prob = x-floor(x) )
-    x2[a] <- x2[a]+1;
+    a <- sample(1:3, size = 1, prob = x - floor(x) )
+    x2[a] <- x2[a] + 1;
   }
   return(x2)
 }
@@ -19,16 +19,16 @@ getFromPrevious <- function(inds, ws, disps, filts, comps)  {
 }
 
 # function to calculate the weight of a particle
-calculateWeight <- function(params, target, sigM,
-                            dispVals, filtVals, compVals,
-                            numParticles, W)  {
+calculateWeight <- function(params, target, sigma,
+                            disp_vals, filt_vals, comp_vals,
+                            weights)  {
   sum <- 0.0
   vals <- c()
 
-  for (i in 1:seq_along(dispVals)) {
-    prevP <- c(dispVals[i], filtVals[i], compVals[i])
+  for (i in 1:seq_along(disp_vals)) {
+    prevP <- c(disp_vals[i], filt_vals[i], comp_vals[i])
     diff <- params[target] - prevP[target]
-    vals[i] <- W[i] * dnorm(diff, mean = 0, sd = sigM)
+    vals[i] <- weights[i] * dnorm(diff, mean = 0, sd = sigma)
   }
   return(1 / sum(vals));
 }
@@ -37,24 +37,24 @@ calculateWeight <- function(params, target, sigM,
 normalizeWeights <- function(x) {
   sum_x <- sum(x)
   x <- x / sum_x
-  return(x);
+  return(x)
 }
 
 # function to randomly change the contribution of one of the processes:
-perturb <- function(p, sigM)  {
+perturb <- function(p, sigma)  {
   params <- p;
   max_number <- sum(p)
   numbers <- 1:3
 
-  x <- sample(numbers, 3, replace=F)
+  x <- sample(numbers, 3, replace = FALSE)
 
-  oldVal <- params[x[1]]
+  oldval <- params[x[1]]
 
-  params[x[1]] <- round(params [x[1]] + rnorm(1, mean = 0, sd = sigM), 0)
+  params[x[1]] <- round(params [x[1]] + rnorm(1, mean = 0, sd = sigma), 0)
   params[x[1]] <- max(0, params[x[1]])
   params[x[1]] <- min(max_number, params[x[1]]);
 
-  diff <- params [x[1]] - oldVal
+  diff <- params [x[1]] - oldval
 
   params[x[2]] <- params[x[2]] - diff
   params[x[2]] <- max(0, params[x[2]])
@@ -69,20 +69,21 @@ perturb <- function(p, sigM)  {
 
 # function to calculate the fit
 calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
-  Fit_Rich <- (abs((rich - obs[,1])) / sd_vals[1])^2;
-  Fit_Even <- (abs((even - obs[,2])) / sd_vals[2])^2;
-  Fit_Div  <- (abs((div -  obs[,3])) / sd_vals[3])^2;
-  Fit_optima <- (opt_diff / sd_vals[4])^2;
+  fit_rich <- (abs( (rich - obs[, 1]) ) / sd_vals[1]) ^ 2;
+  fit_even <- (abs( (even - obs[, 2]) ) / sd_vals[2]) ^ 2;
+  fit_div  <- (abs( (div -  obs[, 3]) ) / sd_vals[3]) ^ 2;
+  fit_optima <- (opt_diff / sd_vals[4])^2;
 
-  Full_Fit <- Fit_Rich + Fit_Even + Fit_Div + Fit_optima;
+  full_fit <- fit_rich + fit_even + fit_div + fit_optima;
 
-  return(Full_Fit)
+  return(full_fit)
 }
 
 
 ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, species,
                     abundances, frequencies, stopRate, Ord)  {
+
   optimum <- summary_stats[, 4:(3 + n_traits)]
 
   dispVals <- 1:numParticles
@@ -107,33 +108,29 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   t <- 1
 
   f <- list.files(pattern = "particles_t=")
-   if(length(f) > 0)
-  {
+  if (length(f) > 0) {
     f <- gtools::mixedsort(f)
     t1 <- 1 + length(f)
     d <- read.table(f[length(f)], header = F)
 
-
-    dispVals <- d[,1]
-    filtVals <- d[,2]
-    compVals <- d[,3]
-    fits <-     d[,8]
-    weights <-  d[,9]
+    dispVals <- d[, 1]
+    filtVals <- d[, 2]
+    compVals <- d[, 3]
+    fits <-     d[, 8]
+    weights <-  d[, 9]
 
     t <- t1
-    if (d[numParticles,1] == numParticles)
-    {
-      d <- read.table( f[length(f)-1], header = F);
-      output <- list( DA = d[,1], HF = d[,2], LS = d[,3]);
-	    cat("Found previously finished run, loaded results from that run\n")
-      flush.console();
-	    return(output);
+    if (d[numParticles, 1] == numParticles) {
+      d <- read.table( f[length(f) - 1], header = F)
+      output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
+      cat("Found previously finished run, loaded results from that run\n")
+      flush.console()
+      return(output)
     }
   }
 
   # continuously sampling
-  while (t < 50)
-  {
+  while (t < 50)  {
     cat("\nGenerating Particles for iteration\t", t, "\n")
 
     cat("0--------25--------50--------75--------100\n")
@@ -156,7 +153,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       if (t == 1)  {
         params <- getRandomVals(species_fallout)
       } else {
-        params <- getFromPrevious(indices, weights, dispVals, filtVals, compVals)
+        params <- getFromPrevious(indices, weights,
+                                  dispVals, filtVals, compVals)
         params <- perturb(params, sigma)
 
         # we need to know which parameter was perturbed,
@@ -164,7 +162,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         changed <- params[4]
         params <- params[1:3]
 
-        if( sum(params) > species_fallout) {
+        if ( sum(params) > species_fallout) {
           print("too much params after perturb!"); flush.console(); break;
         }
       }
@@ -176,15 +174,16 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       esppres, community_number, n_traits, species_fallout)
 
       # make traits (total species richness x number of traits)
-      # and community ((66 * permutations * communities) x total species richness) matrices
-      traits <- as.data.frame(species[, c(2:(n_traits + 1))], row.names = c(1:taxa))
+      # and community ((66 * permutations * communities) x
+      # total species richness) matrices
+      traits <- as.data.frame(species[, c(2:(n_traits + 1))],
+                              row.names = c(1:taxa))
       communities <- as.data.frame(t(allcommunities), names = (1:taxa))
       names(communities) <- c(1:taxa)
       present_species <- as.vector(which(colSums(communities) > 0))
 
       # calculate several measures of FD of modeled community
-     # FD_output <- dbFD(traits[present_species, ], communities[, present_species], stand.x = F,messages=FALSE)
-      FD_output <- strippedDbFd(Ord, communities[,present_species])
+      FD_output <- strippedDbFd(Ord, communities[, present_species])
       FRic <- FD_output$FRic # FRic = functional richness (Villeger et al, 2008, Ecology)
       FEve <- FD_output$FEve # FEve = functional evenness (Villeger et al, 2008, Ecology)
       FDiv <- FD_output$FDiv # FDiv = functional diversity (Villeger et al, 2008, Ecology)
@@ -206,25 +205,25 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       # function to accept / reject models based on the fit
       if (fit < threshold) {
         numberAccepted <- numberAccepted + 1
-        nextDisp[numberAccepted] = params[1]
-        nextFilt[numberAccepted] = params[2]
-        nextComp[numberAccepted] = params[3]
+        nextDisp[numberAccepted] <- params[1]
+        nextFilt[numberAccepted] <- params[2]
+        nextComp[numberAccepted] <- params[3]
 
-        fits[numberAccepted] = fit
-        RichVec[numberAccepted] = FRic[[1]]
-        EveVec[numberAccepted] = FEve[[1]]
-        DivVec[numberAccepted] = FDiv[[1]]
-        OptVec[numberAccepted] = mean_optimum;
+        fits[numberAccepted] <- fit
+        RichVec[numberAccepted] <- FRic[[1]]
+        EveVec[numberAccepted] <- FEve[[1]]
+        DivVec[numberAccepted] <- FDiv[[1]]
+        OptVec[numberAccepted] <- mean_optimum;
 
-        if(t == 1) {
+        if (t == 1) {
           nextWeights[numberAccepted] = 1
         } else {
           nextWeights[numberAccepted] =
             calculateWeight(params, changed, sigma, dispVals, filtVals,
-                            compVals, numParticles, weights)
+                            compVals, weights)
         }
 
-	      if ((numberAccepted)%%(numParticles / PRINT_FREQ) == 0) {
+        if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
           cat("**") ; flush.console()
         }
       }
@@ -263,15 +262,15 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     }
   }
   if (t >= 2) {
-	  d <- read.table(paste("particles_t=", t - 2, ".txt", sep="",
-	                        collapse = NULL), header = F)
+    d <- read.table(paste("particles_t=", t - 2, ".txt", sep="",
+                          collapse = NULL), header = F)
   } else {
     if (t >= 1) {
-		  d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
-		                        collapse = NULL), header = F)
+      d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
+                            collapse = NULL), header = F)
 	  } else {
-		  d <- read.table(paste("particles_t=", t, ".txt", sep="",
-		                        collapse = NULL), header = F)
+	    d <- read.table(paste("particles_t=", t, ".txt", sep="",
+	                          collapse = NULL), header = F)
 	  }
   }
   output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
