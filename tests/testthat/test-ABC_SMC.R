@@ -1,10 +1,6 @@
 context("ABC_SMC")
 
 test_that("ABC_SMC: use", {
-  skip("Work in Progress")
-
-  #source("/Users/janzen/GitHub/STEPCAM/R/Preparation.R")
-#  source("/Users/janzen/GitHub/STEPCAM/R/ABC_SMC.R")
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -49,10 +45,6 @@ test_that("ABC_SMC: use", {
 
   params <- c(0,1,0)
   plot_number <- 1
-
-
-  #summary_stats <- generateValues(params, scaled_species, data_abundances,
-  #                                 plot_number, n_traits)
 
   FD_output <- strippedDbFd(Ord, ifelse(data_abundances > 0, 1, 0))
   observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
@@ -181,17 +173,7 @@ test_that("ABC_SMC: use", {
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = FALSE, stop_at_iteration = 20)
-
-
-
-
-
-
-
-
-
-
+                    continue_from_file = FALSE, stop_at_iteration = 9)
 })
 
 
