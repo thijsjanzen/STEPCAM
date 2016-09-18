@@ -3,17 +3,17 @@ context("ABC_SMC")
 test_that("ABC_SMC: use", {
   skip("Work in Progress")
 
-  source("/Users/janzen/GitHub/STEPCAM/R/Preparation.R")
+  #source("/Users/janzen/GitHub/STEPCAM/R/Preparation.R")
 
   set.seed(42)
   n_traits <- 2
   n_plots <- 10
-  x <- generate.Artificial.Data(numSpecies = 10, numTraits = n_traits,
-                                numCommunities = n_plots,
+  x <- generate.Artificial.Data(n_species = 10, n_traits = n_traits,
+                                n_communities = ncomm,
                                 occurence_distribution = 0.5,
                                 average_richness = 1,
-                                SD_richness = 1,
-                                random.Mechanism = FALSE)
+                                sd_richness = 1,
+                                mechanism_random = FALSE)
 
   data_species <- x$traits;
   data_species$trait1 <- c(1,1.1,1.2,1.3,5,7.6,7.7,7.8,7.9,8)
@@ -28,9 +28,15 @@ test_that("ABC_SMC: use", {
 
 
   params <- c(0,1,0)
-  scaled_species <- scaleSpeciesvalues(data_species,n_traits)
-
+  scaled_species  <- scaleSpeciesvalues(data_species,n_traits)
+  abundances <- data_abundances
+  row.names(abundances) <- c(1:n_plots)
   data_frequencies <- generateFrequencies(data_abundances)
+
+  scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies)) ;
+  traitnames <- names(data_species)[-1]
+  names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
+  row.names(scaled_species) <- c(1:taxa)
 
   summary_stats <- generateValues(params, scaled_species, data_abundances,
                                    plot_number, n_traits)
