@@ -8,7 +8,7 @@
   STEPCAM-ABC inference.
 }
 \usage{
-generate.Artificial.Data <- function(n_species, n_traits, n_communities,
+generate.Artificial.Data(n_species, n_traits, n_communities,
 occurence_distribution, average_richness, sd_richness, mechanism_random)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -30,5 +30,5 @@ occurence_distribution, average_richness, sd_richness, mechanism_random)
 \examples{
 Artificial.Data <- generate.Artificial.Data(n_species=40, n_traits=3, n_communities = 5,
                    occurence_distribution = 0.2, average_richness = 0.5, sd_richness = 0.2,
-                   random.Mechanism = FALSE)
+                   mechanism_random = FALSE)
 }

@@ -16,6 +16,7 @@ test_that("calcSD: use", {
   data_species$trait1 <- 1:10
   data_species$trait2 <- 1:10
   data_species$trait3 <- 1:10
+  data_abundances <- x$abundances
 
   scaled_species <- scaleSpeciesvalues(data_species, n_traits)
 

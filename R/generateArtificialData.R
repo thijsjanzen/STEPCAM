@@ -2,7 +2,8 @@
 # make a simplified artificial data set, to get a feeling for how STEPCAM works
 
 generate.Artificial.Data <- function(n_species, n_traits, n_communities,
-occurence_distribution, average_richness, sd_richness, mechanism_random){
+                                     occurence_distribution, average_richness,
+                                     sd_richness, mechanism_random) {
 
   # create species x trait matrix based on settings
 	pool_richness <- n_species
