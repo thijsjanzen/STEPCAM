@@ -9,9 +9,9 @@ test_that("ABC_SMC: use", {
   n_traits <- 2
   n_plots <- 10
   x <- generate.Artificial.Data(n_species = 10, n_traits = n_traits,
-                                n_communities = ncomm,
+                                n_communities = n_plots,
                                 occurence_distribution = 0.5,
-                                average_richness = 1,
+                                average_richness = 0.3,
                                 sd_richness = 1,
                                 mechanism_random = FALSE)
 
@@ -44,21 +44,14 @@ test_that("ABC_SMC: use", {
   esppres <- which(data_abundances[plot_number, ] > 0) ;
   S <- length(esppres);
   species_fallout <- taxa - S
-  Ord <- ordinationAxes(x = scaled_species[,-1], stand.x = FALSE)
+  Ord <- ordinationAxes(x = scaled_species, stand.x = FALSE)
+
   sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits);
 
   species <- scaled_species
   abundances <- data_abundances
 
 
-
-
-
-
-  scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies)) ;
-  traitnames <- names(data_species)[-1]
-  names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
-  row.names(scaled_species) <- c(1:taxa)
   stopRate <- 0.1
 
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,

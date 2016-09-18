@@ -23,7 +23,7 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
   row.names(species2) <- names(abundances2)
 
   # calculate observed FD values
-  FD_output <- dbFD(species2, abundances2, stand.x = F,messages=FALSE)
+  #FD_output <- dbFD(species2, abundances2, stand.x = F,messages=FALSE)
   Ord <- ordinationAxes(x = species2, stand.x = FALSE)
   FD_output <- strippedDbFd(Ord, ifelse(abundances2 > 0, 1, 0))
 
@@ -116,7 +116,7 @@ scaleSpeciesvalues <- function(species, n_traits) {
 generateValues <- function(params, species, abundances, community_number, n_traits) {
   # calculate for each species in how many plots it occurs
 
-  if (n_traits < 2) {
+  if (n_traits == 1) {
     stop("generateValues: ",
          "need more than 1 trait")
   }
