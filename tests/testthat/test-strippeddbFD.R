@@ -2,15 +2,15 @@ context("strippedDbFd")
 
 test_that("strippedDbFd: use", {
   set.seed(42)
-  n_traits <- 2
+  n_traits <- 3
   n_plots <- 10
   num_species <- 10;
   x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
                                 n_communities = n_plots,
                                 occurence_distribution = 0.5,
-                                average_richness = 1,
+                                average_richness = 10,
                                 sd_richness = 1,
-                                mechanism_random = FALSE)
+                                mechanism_random = TRUE)
 
   data_species <- x$traits
   data_species$trait1 <- 1:10
@@ -18,11 +18,6 @@ test_that("strippedDbFd: use", {
   data_species$trait3 <- 1:10
 
   data_abundances <- x$abundances
-  for (i in 1:length(data_abundances[1,])) {
-    for (j in 1:length(data_abundances[,1])) {
-      data_abundances[i,j] <- 1
-    }
-  }
 
   species  <- scaleSpeciesvalues(data_species,n_traits)
   abundances <- data_abundances
