@@ -5,8 +5,7 @@ fallout.dispersal <- function(new_community, new_richness) # function with dispe
   return(new_community)
 }
 
-fallout.filtering <- function(new_community, filtering_fallout, new_richness,optimum,n_traits) # function with filtering event.
-{
+fallout.filtering <- function(new_community, new_richness, optimum, n_traits) {# function with filtering event.
   new_community <- new_community[,-ncol(new_community)];
   new_community_traits <- new_community[c(2:(1+n_traits))];
   traits_with_optimum <- rbind(new_community_traits,optimum);
@@ -16,7 +15,7 @@ fallout.filtering <- function(new_community, filtering_fallout, new_richness,opt
   distances_ordered <- order(distance_from_optimum);
   distances_ordered <- distances_ordered[-which(distances_ordered == length(distances_ordered))]
   new_community <- new_community[c(distances_ordered[1:new_richness]),];
-  
+
   return(new_community)
 }
 
@@ -27,9 +26,9 @@ fallout.competition <- function(new_community, competition_fallout,n_traits) # f
    trait_distances <- dist(new_community[,(2:(n_traits+1))])
    m3 <- which(trait_distances2==min(trait_distances), arr.ind=TRUE)
    a <- as.vector(m3[,1])
-   mina1 <- min(trait_distances2[a[1],c(-a[2],-a[1])]) 
-   mina2 <- min(trait_distances2[a[2],c(-a[2],-a[1])])   
-   min_overall <- which(c(mina1,mina2)==min(mina1,mina2))  
+   mina1 <- min(trait_distances2[a[1],c(-a[2],-a[1])])
+   mina2 <- min(trait_distances2[a[2],c(-a[2],-a[1])])
+   min_overall <- which(c(mina1,mina2)==min(mina1,mina2))
    species_out <- a[min_overall][[1]] #in the case of ties, only remove one
 	 new_community <- new_community[c(-species_out),]
 
@@ -39,7 +38,7 @@ fallout.competition <- function(new_community, competition_fallout,n_traits) # f
 ## the Kraft.generator function: function that runs (hybrid) STEPCAMs
 STEPCAM<- function(params, species, abundances,taxa,esppres,community_number,n_traits,species_fallout)
 {
- output <- matrix(nrow=taxa) 
+ output <- matrix(nrow=taxa)
  allfinaloutput <- matrix(nrow=taxa) # matrix in which all output will be written
  new_traits <- c()
 
@@ -52,19 +51,19 @@ STEPCAM<- function(params, species, abundances,taxa,esppres,community_number,n_t
  if(is.na(filtering_fallout)) filtering_fallout <- 0;
 
  ## traits and abundances in community ##
- tr <- species[esppres,];  
+ tr <- species[esppres,];
 
  ## calculated trait mean. This mean will be used as the 'optimal' trait value in a community for the filtering model. Species very dissimilar from this value will be filtered out ##
- optimum <- c()  
+ optimum <- c()
  for(i in 1:n_traits){
   optimum[i] <- mean(tr[,(i+1)])
  }
 
  speciesnames <- row.names(species)
  new_community <- species
- 
+
  fallout <- c(rep(1,dispersal_fallout),rep(2,filtering_fallout),rep(3,competition_fallout)) # vector containing all community assembly steps: 1 = dispersal event, 2 = filtering event, 3 = limiting similarity event
- 
+
  for(i in 1:species_fallout)
  {
    new_richness <- nrow(species) - i
@@ -85,7 +84,7 @@ STEPCAM<- function(params, species, abundances,taxa,esppres,community_number,n_t
  }
  species_names_left <- as.numeric(row.names(new_community))
  new_community <- cbind(new_community) ; names(new_community)[ncol(new_community)] <- "abund"
- species_presences <- rep(0,taxa) ; 
+ species_presences <- rep(0,taxa) ;
  species_presences[species_names_left] <- 1
  species_presences <- matrix(species_presences,nrow=taxa,ncol=1)
  ## bind all output ##

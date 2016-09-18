@@ -1,10 +1,9 @@
-
 # this function calculates the sd values for the different traits, in order to normalize the traits
-calcSD <- function(species, abundances, n_plots, n_traits)
-{
+calcSD <- function(species, abundances, n_plots, n_traits)  {
+
   optimum <- matrix(nrow = n_plots, ncol = n_traits)
 
-  for(n in 1:n_plots){
+  for (n in 1:n_plots) {
     # select species present in focal community: abundance above 0
     esppres <- which(abundances[n, ] > 0)
     # traits and abundances of species present in community
@@ -18,16 +17,19 @@ calcSD <- function(species, abundances, n_plots, n_traits)
 
   row.names(abundances) <- c(1:n_plots)
   abundances2 <- as.data.frame(abundances)
-  species2 <- species[,c(2:(n_traits + 1))] ; row.names(species2) <- names(abundances2)
+  species2 <- species[,c(2:(n_traits + 1))] ;
+  #species2 <- cbind(names(abundances2),species2)
+  species2 <- as.matrix(species2)
+  row.names(species2) <- names(abundances2)
 
   # calculate observed FD values
-  #FD_output <- dbFD(species2, abundances2, stand.x = F,messages=FALSE)
-  Ord <- ordinationAxes(x = species2[,-1], stand.x = FALSE)
+  FD_output <- dbFD(species2, abundances2, stand.x = F,messages=FALSE)
+  Ord <- ordinationAxes(x = species2, stand.x = FALSE)
   FD_output <- strippedDbFd(Ord, ifelse(abundances2 > 0, 1, 0))
 
   # calculate average CTM values across plots
   average_optimums <- c()
-  for(i in 1:n_traits){
+  for (i in 1:n_traits){
     average_optimums[i] <- mean(optimum[, i])
   }
   optimums_plus_average <- rbind(optimum, average_optimums)
@@ -47,8 +49,7 @@ calcSD <- function(species, abundances, n_plots, n_traits)
 }
 
 # calculate frequencies (number of plots in which it occurs) of all species
-generateFrequencies <- function(abundances)
-{
+generateFrequencies <- function(abundances) {
   if(length(which(is.na(abundances) == TRUE)) > 0) {
     stop("generateFrequencies: ",
          "One or more entries in the abundance matrix is NA")
@@ -75,17 +76,16 @@ generateFrequencies <- function(abundances)
       ifelse(abundances[i, j] > 0 , presences[i, j] <- 1 , presences[i, j] <- 0)
     }
   }
-  for(i in 1:taxa){
+  for (i in 1:taxa){
     frequencies[i] <- sum(presences[, i])
   }
   return(frequencies);
 }
 
 # function to transform species trait variables to a standard normal distribution (mean = 0, sd = 1)
-scaleSpeciesvalues <- function(species, n_traits)
-{
+scaleSpeciesvalues <- function(species, n_traits) {
   #check dimensions
-  if(length(species[1,]) != (n_traits+1)) {
+  if (length(species[1,]) != (n_traits+1)) {
     stop("scaleSpeciesvalues: ",
          "incorrect trait matrix dimensions ", "\n",
          " did you perhaps remove the species names?")
@@ -94,18 +94,18 @@ scaleSpeciesvalues <- function(species, n_traits)
   # scale the trait values
   standard_deviations <- c();
   means <- c()
-  for(i in 2:(n_traits + 1)){
+  for (i in 2:(n_traits + 1)) {
     standard_deviations[i] <- sd(species[, i])
     means[i] <- mean(species[, i])
   }
 
-  if(length(which(standard_deviations == 0)) > 0) {
+  if (length(which(standard_deviations == 0)) > 0) {
     stop("scaleSpeciesvalues: ",
          "one of your traits has no variation ", "\n",
          "  most likely trait(s): ", -1 + which(standard_deviations==0))
   }
 
-  for(i in 2:(n_traits + 1)){
+  for (i in 2:(n_traits + 1)) {
     species[, i] <- (species[, i] - means[i]) / standard_deviations[i]
   }
   return(species)
@@ -113,8 +113,7 @@ scaleSpeciesvalues <- function(species, n_traits)
 
 # function to generate simulated FD / trait mean values given a certain species/trait
 # pool and certain community assembly parameter settings
-generateValues <- function(params, species, abundances, community_number, n_traits)
-{
+generateValues <- function(params, species, abundances, community_number, n_traits) {
   # calculate for each species in how many plots it occurs
   samples <- length(abundances[, 1])
 
@@ -141,7 +140,7 @@ generateValues <- function(params, species, abundances, community_number, n_trai
 
   # species that fall out through filtering
   filtering_fallout <- round((params[2] / (params[2] + params[3])) *
-  (species_fallout - dispersal_fallout),0)
+                               (species_fallout - dispersal_fallout),0)
 
   # species that fall out through limiting similarity
   competition_fallout <- species_fallout - dispersal_fallout - filtering_fallout
@@ -150,9 +149,10 @@ generateValues <- function(params, species, abundances, community_number, n_trai
 
   # the Kraft.generator function: function that runs hybrid Kraft models
   allfinaloutput <- STEPCAM(params2, species, abundances, taxa, esppres,
-  community_number, n_traits, species_fallout);
+                            community_number, n_traits, species_fallout);
 
-  traits <- as.data.frame(species[, c(2:(n_traits + 1))], row.names = 1:length(allfinaloutput))
+  traits <- as.data.frame(species[, c(2:(n_traits + 1))],
+                          row.names = 1:length(allfinaloutput))
   presences <- as.data.frame(t(allfinaloutput), 1:length(allfinaloutput))
   names(presences) <- 1:length(allfinaloutput)
 
@@ -165,16 +165,16 @@ generateValues <- function(params, species, abundances, community_number, n_trai
   "+.default" <- .Primitive("+")
   "+.character" <- function(...) paste(..., sep = "")
   traitnames <- c()
-  for(i in 1:n_traits){
+  for (i in 1:n_traits) {
     traitnames[i] <- "PC" + i
   }
   names(traits) <- traitnames
 
-  Ord <- ordinationAxes(x = traits[,-1], stand.x = FALSE)
+  Ord <- ordinationAxes(x = traits, stand.x = FALSE)
   FD_output <- strippedDbFd(Ord, ifelse(presences > 0, 1, 0))
 
   trait_means <- c()
-  for(i in 1:n_traits){
+  for (i in 1:n_traits){
     trait_means[i] <- mean(traits[, i])
   }
 
@@ -182,7 +182,5 @@ generateValues <- function(params, species, abundances, community_number, n_trai
 
   return(summary_stats);
 }
-
-
 
 
