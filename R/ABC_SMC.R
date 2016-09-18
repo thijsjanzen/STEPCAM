@@ -25,7 +25,7 @@ calculateWeight <- function(params, target, sigma,
   sum <- 0.0
   vals <- c()
 
-  for (i in 1:seq_along(disp_vals)) {
+  for (i in seq_along(disp_vals)) {
     prevP <- c(disp_vals[i], filt_vals[i], comp_vals[i])
     diff <- params[target] - prevP[target]
     vals[i] <- weights[i] * dnorm(diff, mean = 0, sd = sigma)
@@ -82,7 +82,8 @@ calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
 
 ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, species,
-                    abundances, frequencies, stopRate, Ord)  {
+                    abundances, frequencies, stopRate, Ord, continue_from_file = TRUE,
+                    stop_at_iteration = 50)  {
 
   optimum <- summary_stats[, 4:(3 + n_traits)]
 
@@ -108,7 +109,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   t <- 1
 
   f <- list.files(pattern = "particles_t=")
-  if (length(f) > 0) {
+  if (length(f) > 0 && continue_from_file == TRUE) {
+    cat("Found previous output, continuing from that output\n"); flush.console();
     f <- gtools::mixedsort(f)
     t1 <- 1 + length(f)
     d <- read.table(f[length(f)], header = F)
@@ -229,11 +231,15 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       }
 
       tried <- tried + 1
-      if (tried > (1/stopRate) && tried > 5)  {
+      if (tried > (1/stopRate) && tried > 50)  {
         # do not check every particle if the acceptance rate is OK
         if (numberAccepted / tried < stopRate) {
           stop_iteration <- 1; break;
         }
+      }
+
+      if (t >= stop_at_iteration) {
+        stop_iteration <- 1; break;
       }
     }
 

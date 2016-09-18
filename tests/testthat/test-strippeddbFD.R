@@ -2,7 +2,7 @@ context("strippedDbFd")
 
 test_that("strippedDbFd: use", {
   set.seed(42)
-  n_traits <- 3
+  n_traits <- 2
   n_plots <- 10
   num_species <- 10;
   x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
