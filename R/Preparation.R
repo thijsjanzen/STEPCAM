@@ -115,6 +115,12 @@ scaleSpeciesvalues <- function(species, n_traits) {
 # pool and certain community assembly parameter settings
 generateValues <- function(params, species, abundances, community_number, n_traits) {
   # calculate for each species in how many plots it occurs
+
+  if (n_traits < 2) {
+    stop("generateValues: ",
+         "need more than 1 trait")
+  }
+
   samples <- length(abundances[, 1])
 
   # total number of species in species pool

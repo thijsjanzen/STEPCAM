@@ -75,6 +75,7 @@ STEPCAM<- function(params, species, abundances, taxa, esppres,
  fallout <- c(rep(1, dispersal_fallout),
               rep(2, filtering_fallout),
               rep(3, competition_fallout))
+
  for(i in 1:species_fallout) {
    new_richness <- nrow(species) - i
    type = fallout[i];
