@@ -97,9 +97,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   div_vec <- 1:numParticles
   opt_vec <- 1:numParticles
 
-  next_disp <- dispVals
-  next_filt <- filtVals
-  next_comp <- compVals
+  next_disp <- disp_vals
+  next_filt <- filt_vals
+  next_comp <- comp_vals
 
   weights <- rep(1, numParticles)
   next_weights <- rep(1, numParticles)
@@ -214,8 +214,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
           next_weights[numberAccepted] = 1
         } else {
           next_weights[numberAccepted] =
-            calculateWeight(params, changed, sigma, dispVals, filtVals,
-                            compVals, weights)
+            calculateWeight(params, changed, sigma, disp_vals, filt_vals,
+                            comp_vals, weights)
         }
 
         if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
