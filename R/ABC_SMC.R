@@ -122,13 +122,6 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     weights <-  d[, 9]
 
     t <- t1
-    if (d[numParticles, 1] == numParticles) {
-      d <- read.table( f[length(f) - 1], header = F)
-      output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
-      cat("Found previously finished run, loaded results from that run\n")
-      flush.console()
-      return(output)
-    }
   }
 
   # continuously sampling
