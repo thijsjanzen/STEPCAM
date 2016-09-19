@@ -243,7 +243,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     weights <- next_weights
 
     output <- cbind(disp_vals, filt_vals, comp_vals, rich_vec,
-                    eve_Vec, div_Vec, opt_vec, fits, weights)
+                    eve_vec, div_vec, opt_vec, fits, weights)
     file_name <- paste("particles_t=", t, ".txt", sep="", collapse = NULL)
     write.table(output, file_name, row.names = F, col.names = F)
 
