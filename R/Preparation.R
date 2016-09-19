@@ -1,6 +1,20 @@
 # this function calculates the sd values for the different traits, in order to normalize the traits
 calcSD <- function(species, abundances, n_plots, n_traits)  {
 
+  a <- rowSums(abundances)
+  if(length(which(a == 0)) > 0) {
+    stop("calcSD: ",
+         "One of your communities doesn't have species in it")
+  }
+  a <- rowSums(abundances)
+  if(length(which(a < 3)) > 0) {
+    stop("calcSD: ",
+         "One of your communities doesn't have at least three species in it in order to calculate summary statistics")
+  }
+
+
+
+
   optimum <- matrix(nrow = n_plots, ncol = n_traits)
 
   for (n in 1:n_plots) {

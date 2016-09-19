@@ -85,6 +85,13 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     abundances, frequencies, stopRate, Ord, continue_from_file = TRUE,
                     stop_at_iteration = 50)  {
 
+  for(i in seq_along(sd_vals)) {
+    if(sd_vals[[i]] == 0.000) {
+      stop("ABC_SMC: ",
+           "one of the community summary statistics shows no variation in your dataset")
+    }
+  }
+
   optimum <- summary_stats[, 4:(3 + n_traits)]
 
   disp_vals <- 1:numParticles
@@ -114,6 +121,11 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     f <- gtools::mixedsort(f)
     t1 <- 1 + length(f)
     d <- read.table(f[length(f)], header = F)
+    if(d[numParticles,1] == numParticles) {
+      d <- read.table(f[length(f) - 1],header = F)
+      t1 <- t1 - 1
+    }
+
 
     disp_vals <- d[, 1]
     filt_vals <- d[, 2]
@@ -195,7 +207,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
       # (inverse) fit of model: euclidian distance of FD and trait mean values of
       # observed community from that of simulated
-      fit <- calculateDistance(FRic[[1]], FEve[[1]], FDiv[[1]], mean_optimum[1], summary_stats, sd_vals)
+      fit <- calculateDistance(FRic[[1]], FEve[[1]], FDiv[[1]],
+                               mean_optimum[1], summary_stats, sd_vals)
 
       # function to accept / reject models based on the fit
       if (fit < threshold) {
