@@ -122,10 +122,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     t1 <- 1 + length(f)
     d <- read.table(f[length(f)], header = F)
     if(d[numParticles,1] == numParticles) {
-      d <- read.table(f[length(f) - 1],header = F)
+      d <- read.table(f[length(f) - 1], header = F)
       t1 <- t1 - 1
     }
-
 
     disp_vals <- d[, 1]
     filt_vals <- d[, 2]
@@ -139,9 +138,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   # continuously sampling
   while (t < 50)  {
     cat("\nGenerating Particles for iteration\t", t, "\n")
-
     cat("0--------25--------50--------75--------100\n")
-
     cat("*"); flush.console()
     PRINT_FREQ <- 20
 

@@ -86,6 +86,12 @@ test_that("ABC_SMC: use", {
 
   expect_equal(v, c(0,2,0), tolerance = 0.1)
 
+  for (t in 0:20) {
+    file_name <- paste("particles_t=", t, ".txt", sep="")
+    if (file.exists(file_name)) {
+      file.remove(file_name)
+    }
+  }
  ################################################################################################
  ################################################################################################
  ######################## Limiting Similarity test #############################################
@@ -104,9 +110,9 @@ test_that("ABC_SMC: use", {
                                 mechanism_random = FALSE)
 
   data_species <- x$traits
-  data_species$trait1 <- c(runif(10,0,1))
-  data_species$trait2 <- c(runif(10,0,1))
-  data_species$trait3 <- c(runif(10,0,1))
+  data_species$trait1 <- c(runif(10,0,5))
+  data_species$trait2 <- c(runif(10,0,5))
+  data_species$trait3 <- c(runif(10,0,5))
   data_species$trait1[10] <- data_species$trait1[9] + 0.00001
   data_species$trait2[10] <- data_species$trait2[9] + 0.00001
   data_species$trait3[10] <- data_species$trait3[9] + 0.00001
@@ -121,7 +127,7 @@ test_that("ABC_SMC: use", {
     }
     for(j in 4:10) {
       if(runif(1,0,1) < 0.5) {
-        data_abundances[i,j] <- 0
+        data_abundances[i,j] <- 1
       }
     }
   }
@@ -130,8 +136,8 @@ test_that("ABC_SMC: use", {
   }
 
 
-  data_abundances[1,9] <- 1
-  data_abundances[1,10] <- 0
+  data_abundances[1,9] <- 0
+  data_abundances[1,10] <- 1
 
   scaled_species <- scaleSpeciesvalues(data_species, n_traits)
 
@@ -192,15 +198,17 @@ test_that("ABC_SMC: use", {
                     continue_from_file = FALSE, stop_at_iteration = 5)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
-  expect_equal(v, c(0,0,1), tolerance = 0.5)
+  expect_equal(v[[3]], 0.4, tolerance = 0.1)
 
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
-                    data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = TRUE, stop_at_iteration = 9)
+                    data_abundances, data_frequencies, stopRate = 0.4, Ord,
+                    continue_from_file = TRUE, stop_at_iteration = 20)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
-  expect_equal(v, c(0,0,1), tolerance = 0.5)
+  expect_equal(v[[3]], 1, tolerance = 0.2)
+
+  v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
 
   for (t in 0:20) {
     file_name <- paste("particles_t=", t, ".txt", sep="")
@@ -297,6 +305,6 @@ test_that("ABC_SMC: abuse", {
   ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = TRUE, stop_at_iteration = 5),
+                    continue_from_file = FALSE, stop_at_iteration = 5),
   "one of the community summary statistics shows no variation in your dataset")
 })
