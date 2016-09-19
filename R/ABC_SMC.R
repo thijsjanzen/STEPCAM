@@ -26,8 +26,8 @@ calculateWeight <- function(params, target, sigma,
   vals <- c()
 
   for (i in seq_along(disp_vals)) {
-    prevP <- c(disp_vals[i], filt_vals[i], comp_vals[i])
-    diff <- params[target] - prevP[target]
+    previous_particles <- c(disp_vals[i], filt_vals[i], comp_vals[i])
+    diff <- params[target] - previous_particles[target]
     vals[i] <- weights[i] * dnorm(diff, mean = 0, sd = sigma)
   }
   return(1 / sum(vals));
@@ -87,22 +87,22 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
   optimum <- summary_stats[, 4:(3 + n_traits)]
 
-  dispVals <- 1:numParticles
-  filtVals <- 1:numParticles
-  compVals <- 1:numParticles
+  disp_vals <- 1:numParticles
+  filt_vals <- 1:numParticles
+  comp_vals <- 1:numParticles
 
   fits <- 1:numParticles
-  RichVec <- 1:numParticles
-  EveVec <- 1:numParticles
-  DivVec <- 1:numParticles
-  OptVec <- 1:numParticles
+  rich_vec <- 1:numParticles
+  eve_vec <- 1:numParticles
+  div_vec <- 1:numParticles
+  opt_vec <- 1:numParticles
 
-  nextDisp <- dispVals
-  nextFilt <- filtVals
-  nextComp <- compVals
+  next_disp <- dispVals
+  next_filt <- filtVals
+  next_comp <- compVals
 
   weights <- rep(1, numParticles)
-  nextWeights <- rep(1, numParticles)
+  next_weights <- rep(1, numParticles)
   indices <- 1:numParticles
 
   sigma <- 1
@@ -115,9 +115,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     t1 <- 1 + length(f)
     d <- read.table(f[length(f)], header = F)
 
-    dispVals <- d[, 1]
-    filtVals <- d[, 2]
-    compVals <- d[, 3]
+    disp_vals <- d[, 1]
+    filt_vals <- d[, 2]
+    comp_vals <- d[, 3]
     fits <-     d[, 8]
     weights <-  d[, 9]
 
@@ -149,7 +149,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         params <- getRandomVals(species_fallout)
       } else {
         params <- getFromPrevious(indices, weights,
-                                  dispVals, filtVals, compVals)
+                                  disp_vals, filt_vals, comp_vals)
         params <- perturb(params, sigma)
 
         # we need to know which parameter was perturbed,
@@ -200,20 +200,20 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       # function to accept / reject models based on the fit
       if (fit < threshold) {
         numberAccepted <- numberAccepted + 1
-        nextDisp[numberAccepted] <- params[1]
-        nextFilt[numberAccepted] <- params[2]
-        nextComp[numberAccepted] <- params[3]
+        next_disp[numberAccepted] <- params[1]
+        next_filt[numberAccepted] <- params[2]
+        next_comp[numberAccepted] <- params[3]
 
         fits[numberAccepted] <- fit
-        RichVec[numberAccepted] <- FRic[[1]]
-        EveVec[numberAccepted] <- FEve[[1]]
-        DivVec[numberAccepted] <- FDiv[[1]]
-        OptVec[numberAccepted] <- mean_optimum;
+        rich_vec[numberAccepted] <- FRic[[1]]
+        eve_vec[numberAccepted] <- FEve[[1]]
+        div_vec[numberAccepted] <- FDiv[[1]]
+        opt_vec[numberAccepted] <- mean_optimum;
 
         if (t == 1) {
-          nextWeights[numberAccepted] = 1
+          next_weights[numberAccepted] = 1
         } else {
-          nextWeights[numberAccepted] =
+          next_weights[numberAccepted] =
             calculateWeight(params, changed, sigma, dispVals, filtVals,
                             compVals, weights)
         }
@@ -237,24 +237,24 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     }
 
     # replace values
-    dispVals <- nextDisp
-    filtVals <- nextFilt
-    compVals <- nextComp
-    weights <- nextWeights
+    disp_vals <- next_disp
+    filt_vals <- next_filt
+    comp_vals <- next_comp
+    weights <- next_weights
 
-    output <- cbind(dispVals, filtVals, compVals, RichVec,
-                    EveVec, DivVec, OptVec, fits, weights)
+    output <- cbind(disp_vals, filt_vals, comp_vals, rich_vec,
+                    eve_Vec, div_Vec, opt_vec, fits, weights)
     file_name <- paste("particles_t=", t, ".txt", sep="", collapse = NULL)
     write.table(output, file_name, row.names = F, col.names = F)
 
-    cat(" ", mean(dispVals), mean(filtVals), mean(compVals), "\t", "accept rate = ",
-        numberAccepted / (tried-1), numberAccepted, tried, "\n")
+    cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals), "\t", "accept rate = ",
+        numberAccepted / (tried-1), "\n")
 
     # and reset
-    nextWeights <- rep(1,numParticles)
-    nextDisp <- 1:numParticles
-    nextFilt <- 1:numParticles
-    nextComp <- 1:numParticles
+    next_weights <- rep(1,numParticles)
+    next_disp <- 1:numParticles
+    next_filt <- 1:numParticles
+    next_comp <- 1:numParticles
     t <- t + 1
     if (stop_iteration == 1){
       break
