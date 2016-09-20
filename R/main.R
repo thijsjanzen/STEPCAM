@@ -75,7 +75,7 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 plotSTEPCAM <- function(output){
   total <- output$DA[1] + output$HF[1] + output$LS[1];
   par(mfrow=c(1, 3));
-  par(mar=c(4,5,5,5))
+  par(mar=c(3,3,3,3))
   hist(output$DA / total, col="grey", main = "Dispersal Assembly", xlim = c(0, 1), ylab = "", xlab = "");
   hist(output$HF / total, col="grey" , main = "Habitat Filtering", xlim = c(0, 1), ylab = "", xlab = "");
   hist(output$LS / total, col="grey" , main = "Limiting Similarity", xlim = c(0, 1), ylab = "", xlab = "");
