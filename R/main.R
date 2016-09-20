@@ -43,7 +43,7 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 
   trait_means <- c()
   traitvalues <- c()
-  for(i in 1:n_traits){
+  for(i in 1:n_traits) {
     for(j in 1:length(observed_abundances)){
       traitvalues[j] <- observed_traits[j, i]
     }
@@ -111,10 +111,10 @@ plotSMC <- function(path){
   maxTime <- 1;
 
   # determine how many iterations need to be plotted
-  for(k in 1:200){
-    file_name <- paste(path, val, 200 - k,end, sep = "", collapse = NULL);
+  for(k in 50:0) {
+    file_name <- paste(path, val,  k,end, sep = "", collapse = NULL);
     if(file.exists(file_name)){
-      maxTime <- 200 - k;
+      maxTime <- k;
       break;
     }
   }
@@ -124,10 +124,8 @@ plotSMC <- function(path){
 
   k <- matrix(nrow = numRows, ncol = numCols);
   cnt <- 1;
-  for(i in 1:numCols)
-  {
-    for(j in 1:numRows)
-    {
+  for (i in 1:numCols) {
+    for (j in 1:numRows) {
        k[j, i] <- cnt
        cnt <- cnt + 1;
     }
@@ -135,11 +133,10 @@ plotSMC <- function(path){
   layout(k)
   par(mar = c(0.5, 0, 0.5, 0));
 
-  for(c in 1:8)
-  {
+  for(c in 1:8) {
     fulldata <- c();
 
-    for(i in 1:(maxTime)) {
+    for (i in 1:(maxTime)) {
       data_name <- paste(path, val, i, end, sep = "", collapse = NULL)
       if(file.exists(data_name))
       {
@@ -150,16 +147,13 @@ plotSMC <- function(path){
 
     xmin <- min(fulldata);
     xmax <- max(fulldata);
-    if(xmin == xmax){ xmin = 0.9 * xmin; xmax = 1.1 * xmax;}
-    if(xmin == xmax && xmin == 0){xmin = -1; xmax = 1;}
-    if(c < 4)
-    {
+    if(c < 4) {
       fulldata <- fulldata / total
       xmin <- 0;
       xmax <- 1;
     }
-    for(i in 1:length(fulldata[1,]))
-    {
+    
+    for (i in 1:length(fulldata[1,]))  {
       plotElement(fulldata[,i], xmin*0.9, xmax*1.1, i, maxTime, c)
     }
   }

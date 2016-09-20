@@ -101,13 +101,25 @@ test_that("ordinationAxes: use", {
   v[4] <- NA
   Ord <-  ordinationAxes(x = v, stand.x = FALSE)
 
+  #character vector
   v <-  c(rep("blue",3),rep("red",2),rep("yellow",2),rep("black",3))
   names(v) <- data_species$species
   expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
-
+  
+  #character vector with one missing value
+  v[4] <- NA
+  expect_warning(
+    Ord <-  ordinationAxes(x = v, stand.x = FALSE)
+  )
+  
+  #vector factor
   v <- as.factor(v)
+  expect_warning(
+    Ord <-  ordinationAxes(x = v, stand.x = FALSE)
+  )
+  #with missing value
   v[4] <- NA
   expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
@@ -134,4 +146,41 @@ test_that("ordinationAxes: use", {
   expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
+})
+
+
+test_that("ordinationAxes: abuse", {
+  skip_on_cran()
+  set.seed(42)
+  n_traits <- 3
+  n_plots <- 10
+  num_species <- 10;
+  x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
+                                n_communities = n_plots,
+                                occurence_distribution = 0.5,
+                                average_richness = 10,
+                                sd_richness = 1,
+                                mechanism_random = TRUE)
+  
+  data_species <- x$traits
+  data_abundances <- x$abundances
+  
+  species  <- scaleSpeciesvalues(data_species,n_traits)
+  abundances <- data_abundances
+  
+  
+  row.names(abundances) <- c(1:n_plots)
+  abundances2 <- as.data.frame(abundances)
+  species2 <- species[,c(2:(n_traits + 1))] ;
+  #species2 <- cbind(names(abundances2),species2)
+  species2 <- as.matrix(species2)
+  row.names(species2) <- names(abundances2)
+  
+  #add some NA values
+  species2[5,1] <- NA
+  species2[7,2] <- NA
+  expect_error(
+    Ord <- ordinationAxes(x = species2, stand.x = FALSE)
+  )
+  
 })

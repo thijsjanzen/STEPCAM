@@ -227,7 +227,6 @@ test_that("ABC_SMC: use", {
 
 test_that("ABC_SMC: abuse", {
   skip_on_cran()
-  skip("sd_vals[[1]] != 0")
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -312,7 +311,7 @@ test_that("ABC_SMC: abuse", {
   plot_number <- 1
   stopRate <- 0.0001
 
-
+  sd_vals <- round(sd_vals)
  expect_error(
   ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
