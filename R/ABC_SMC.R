@@ -165,11 +165,6 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         # to be able to calculate its weight later
         changed <- params[4]
         params <- params[1:3]
-
-        if ( sum(params) > species_fallout) {
-          stop("ABC_SMC: ",
-               "too much params after perturb!");
-        }
       }
 
       # total number of species in species pool
@@ -267,19 +262,19 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     next_filt <- 1:numParticles
     next_comp <- 1:numParticles
 
-    if (stop_iteration == 1){
+    if (stop_iteration == 1) {
       break
     }
     t <- t + 1
   }
 
 
-  if (t >= 1) {
+  if (t >= 2) {
     d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
                           collapse = NULL), header = F)
   } else {
-      d <- read.table(paste("particles_t=", t, ".txt", sep="",
-	                          collapse = NULL), header = F)
+      stop("ABC_SMC: ",
+           "Can't stop at iteration 1 - please set stop_at_iteration to 2 if you only want to generate from the prior")
   }
   output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
   return(output)
