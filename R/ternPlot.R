@@ -16,8 +16,6 @@ newpage = TRUE, ...)
   dimnames_position <- match.arg(dimnames_position)
   if(is.null(dimnames) && dimnames_position != "none")
     dimnames <- colnames(x)
-  if(is.logical(prop_size) && prop_size)
-    prop_size <- 3
   if(ncol(x) != 3)
     stop("Need a matrix with 3 columns")
   if(any(x < 0))

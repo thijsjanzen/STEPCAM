@@ -266,22 +266,20 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     next_disp <- 1:numParticles
     next_filt <- 1:numParticles
     next_comp <- 1:numParticles
-    t <- t + 1
+
     if (stop_iteration == 1){
       break
     }
+    t <- t + 1
   }
-  if (t >= 2) {
-    d <- read.table(paste("particles_t=", t - 2, ".txt", sep="",
+
+
+  if (t >= 1) {
+    d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
                           collapse = NULL), header = F)
   } else {
-    if (t >= 1) {
-      d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
-                            collapse = NULL), header = F)
-	  } else {
-	    d <- read.table(paste("particles_t=", t, ".txt", sep="",
+      d <- read.table(paste("particles_t=", t, ".txt", sep="",
 	                          collapse = NULL), header = F)
-	  }
   }
   output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
   return(output)
