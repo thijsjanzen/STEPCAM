@@ -33,7 +33,8 @@ test_that("strippedDbFd: use", {
   # calculate observed FD values
   FD_output1 <- FD::dbFD(species2, abundances2, stand.x = F,messages=FALSE)
   Ord <- ordinationAxes(x = species2, stand.x = FALSE)
-  FD_output2 <- strippedDbFd(Ord, ifelse(abundances2 > 0, 1, 0))
+  res <- detMnbsp(Ord, abundances2)
+  FD_output2 <- strippedDbFd(Ord, abundances2, res[[1]], res[[2]])
 
   expect_equal (
     FD_output1$FRic,
@@ -72,7 +73,8 @@ test_that("strippedDbFd: use", {
   # calculate observed FD values
   FD_output1 <- FD::dbFD(species2, abundances2, stand.x = F,messages=FALSE)
   Ord <- ordinationAxes(x = species2, stand.x = FALSE)
-  FD_output2 <- strippedDbFd(Ord, ifelse(abundances2 > 0, 1, 0))
+  res <- detMnbsp(Ord, abundances2)
+  FD_output2 <- strippedDbFd(Ord, abundances2, res[[1]], res[[2]])
 
   expect_equal (
     FD_output1$FRic,
@@ -117,7 +119,8 @@ test_that("strippedDbFd: use", {
   # calculate observed FD values
   FD_output1 <- FD::dbFD(species2, abundances2, stand.x = F,messages=FALSE)
   Ord <- ordinationAxes(x = species2, stand.x = FALSE)
-  FD_output2 <- strippedDbFd(Ord, ifelse(abundances2 > 0, 1, 0))
+  res <- detMnbsp(Ord, abundances2)
+  FD_output2 <- strippedDbFd(Ord, abundances2, res[[1]], res[[2]])
 
   expect_equal (
     FD_output1$FRic,

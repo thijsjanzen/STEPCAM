@@ -22,15 +22,9 @@ getFromPrevious <- function(inds, ws, disps, filts, comps)  {
 calculateWeight <- function(params, target, sigma,
                             disp_vals, filt_vals, comp_vals,
                             weights)  {
-  sum <- 0.0
-  vals <- c()
-
-  for (i in seq_along(disp_vals)) {
-    previous_particles <- c(disp_vals[i], filt_vals[i], comp_vals[i])
-    diff <- params[target] - previous_particles[target]
-    vals[i] <- weights[i] * dnorm(diff, mean = 0, sd = sigma)
-  }
-  return(1 / sum(vals));
+  diff <- params[target] - cbind(disp_vals, filt_vals, comp_vals)[,target]
+  vals <- weights * dnorm(diff, mean = 0, sd = sigma)  
+  return( 1/sum(vals) )
 }
 
 # normalize all the weights of all particles such that they sum to 1
@@ -91,7 +85,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
            "one of the community summary statistics shows no variation in your dataset")
     }
   }
-
+  res <- detMnbsp(Ord, abundances)
   optimum <- summary_stats[, 4:(3 + n_traits)]
 
   disp_vals <- 1:numParticles
@@ -151,7 +145,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     changed <- 1
     tried <- 1
 
-    while (numberAccepted < numParticles) {
+    while (numberAccepted <= numParticles) {
       params <- c(species_fallout, 0, 0)
       # get a parameter combination
       if (t == 1)  {
@@ -169,21 +163,17 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
       # total number of species in species pool
       taxa <- length(abundances[1, ])
-      allcommunities <- matrix(nrow = taxa)
+     
       allcommunities <- STEPCAM(params, species, abundances, taxa,
-      esppres, community_number, n_traits, species_fallout)
-
-      # make traits (total species richness x number of traits)
-      # and community ((66 * permutations * communities) x
-      # total species richness) matrices
-      traits <- as.data.frame(species[, c(2:(n_traits + 1))],
-                              row.names = c(1:taxa))
-      communities <- as.data.frame(t(allcommunities), names = (1:taxa))
-      names(communities) <- c(1:taxa)
-      present_species <- as.vector(which(colSums(communities) > 0))
-
-      # calculate several measures of FD of modeled community
-      FD_output <- strippedDbFd(Ord, communities[, present_species])
+                                esppres, community_number, n_traits,
+                                species_fallout)
+      traits <- as.data.frame(species[,c(2:(n_traits+1))],row.names=c(1:taxa));
+      communities <- as.data.frame(t(allcommunities))
+      present_species <- which(communities > 0)
+      
+     # source("/Users/janzen/GitHub/STEPCAM/R/modified_dbFD.R")
+      FD_output <- strippedDbFd(Ord, communities, m = res[[1]], nb.sp = res[[2]]) 
+  
       FRic <- FD_output$FRic # FRic = functional richness (Villeger et al, 2008, Ecology)
       FEve <- FD_output$FEve # FEve = functional evenness (Villeger et al, 2008, Ecology)
       FDiv <- FD_output$FDiv # FDiv = functional diversity (Villeger et al, 2008, Ecology)
@@ -202,10 +192,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       # observed community from that of simulated
       fit <- calculateDistance(FRic[[1]], FEve[[1]], FDiv[[1]],
                                mean_optimum[1], summary_stats, sd_vals)
-
-      # function to accept / reject models based on the fit
+      
+       # function to accept / reject models based on the fit
       if (fit < threshold) {
-        numberAccepted <- numberAccepted + 1
         next_disp[numberAccepted] <- params[1]
         next_filt[numberAccepted] <- params[2]
         next_comp[numberAccepted] <- params[3]
@@ -223,7 +212,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
             calculateWeight(params, changed, sigma, disp_vals, filt_vals,
                             comp_vals, weights)
         }
-
+        numberAccepted <- numberAccepted + 1
         if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
           cat("**") ; flush.console()
         }

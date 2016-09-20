@@ -38,7 +38,8 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 
   # calculate FD values observed communities
   Ord <- ordinationAxes(x = scaled_species[,-1], stand.x = FALSE)
-  FD_output <- strippedDbFd(Ord, ifelse(data_abundances > 0, 1, 0))
+  res <- detMnbsp(Ord, data_abundances)
+  FD_output <- strippedDbFd(Ord, data_abundances, res[[1]], res[[2]])
 
   trait_means <- c()
   traitvalues <- c()
@@ -74,6 +75,7 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 plotSTEPCAM <- function(output){
   total <- output$DA[1] + output$HF[1] + output$LS[1];
   par(mfrow=c(1, 3));
+  par(mar=c(4,5,5,5))
   hist(output$DA / total, col="grey", main = "Dispersal Assembly", xlim = c(0, 1), ylab = "", xlab = "");
   hist(output$HF / total, col="grey" , main = "Habitat Filtering", xlim = c(0, 1), ylab = "", xlab = "");
   hist(output$LS / total, col="grey" , main = "Limiting Similarity", xlim = c(0, 1), ylab = "", xlab = "");
@@ -91,18 +93,13 @@ plotElement <- function(d, xmin, xmax, index, maxTime, parameter){
   title <- ""
   if(index %% maxTime == 1) title <- topLabels[parameter]
 
-  if(index %% maxTime == 0 )
-  {
+  if(index %% maxTime == 0 )  {
     hist(d, xlim = c(xmin, xmax),main = title, col = "grey", ylab = "",
-    xlab = "", yaxt = "n", cex.main = 1.5);
-  }
-  else
-  {
+    xlab = "", yaxt = "n", cex.main = 1);
+  } else {
      hist(d, xlim = c(xmin, xmax), main = title, col = "grey", ylab = "",
-     xlab = "", yaxt = "n", xaxt = "n", cex.main = 1.5);
+     xlab = "", yaxt = "n", xaxt = "n", cex.main = 1);
   }
-  par(new = TRUE)
-  plot(y~x, col = "red", type = "l", axes = FALSE, ylab = "", xlab = "", main = "", yaxt = "n");
 }
 
 plotSMC <- function(path){
@@ -142,8 +139,7 @@ plotSMC <- function(path){
   {
     fulldata <- c();
 
-    for(i in 1:(maxTime))
-    {
+    for(i in 1:(maxTime)) {
       data_name <- paste(path, val, i, end, sep = "", collapse = NULL)
       if(file.exists(data_name))
       {
@@ -154,7 +150,7 @@ plotSMC <- function(path){
 
     xmin <- min(fulldata);
     xmax <- max(fulldata);
-    if(xmin == xmax){xmin = 0.9 * xmin; xmax = 1.1 * xmax;}
+    if(xmin == xmax){ xmin = 0.9 * xmin; xmax = 1.1 * xmax;}
     if(xmin == xmax && xmin == 0){xmin = -1; xmax = 1;}
     if(c < 4)
     {
@@ -164,7 +160,7 @@ plotSMC <- function(path){
     }
     for(i in 1:length(fulldata[1,]))
     {
-      plotElement(fulldata[,i], xmin, xmax, i, maxTime, c)
+      plotElement(fulldata[,i], xmin*0.9, xmax*1.1, i, maxTime, c)
     }
   }
 }

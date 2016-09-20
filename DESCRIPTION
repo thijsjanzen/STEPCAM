@@ -7,6 +7,9 @@ Author: Thijs Janzen & Fons van der Plas
 Maintainer: Thijs Janzen <thijsjanzen@gmail.com>
 Imports: gtools, FD, stats, MASS, vcd, ade4, grid, geometry, ape
 Suggests: testthat,
+    knitr,
+    rmarkdown
 Description: STEPwise Community Assembly Model collection, applying ABC-SMC in order to infer different community assembly processes. Also includes several plotting functions in order to visualize found estimates.
 License: GPL-2
 URL: https://github.com/thijsjanzen/STEPCAM
+VignetteBuilder: knitr

@@ -8,8 +8,8 @@ test_that("STEPCAM_ABC: use", {
   x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
                                 n_communities = n_plots,
                                 occurence_distribution = 0.5,
-                                average_richness = 10,
-                                sd_richness = 1,
+                                average_richness = 0.8,
+                                sd_richness = 0.25,
                                 mechanism_random = FALSE)
 
   data_species <- x$traits
@@ -26,7 +26,7 @@ test_that("STEPCAM_ABC: use", {
 
   output <- STEPCAM_ABC(data_abundances, data_species,
                         numParticles = 100, n_traits, plot_number = 1,
-                        stopRate = 0.1, stop_at_iteration = 10, continue_from_file = FALSE)
+                        stopRate = 0.05, stop_at_iteration = 12, continue_from_file = FALSE)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   expect_equal(v, c(0,2,0), tolerance = 0.1)

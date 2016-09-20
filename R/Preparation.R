@@ -39,7 +39,8 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
   # calculate observed FD values
   #FD_output <- dbFD(species2, abundances2, stand.x = F,messages=FALSE)
   Ord <- ordinationAxes(x = species2, stand.x = FALSE)
-  FD_output <- strippedDbFd(Ord, ifelse(abundances2 > 0, 1, 0))
+  res <- detMnbsp(Ord, abundances)
+  FD_output <- strippedDbFd(Ord, abundances2, res[[1]], res[[2]])
 
   # calculate average CTM values across plots
   average_optimums <- c()
@@ -191,7 +192,8 @@ generateValues <- function(params, species, abundances, community_number, n_trai
   names(traits) <- traitnames
 
   Ord <- ordinationAxes(x = traits, stand.x = FALSE)
-  FD_output <- strippedDbFd(Ord, ifelse(presences > 0, 1, 0))
+  res <- detMnbsp(Ord, presences)
+  FD_output <- strippedDbFd(Ord, presences, res[[1]], res[[2]])
 
   trait_means <- c()
   for (i in 1:n_traits){

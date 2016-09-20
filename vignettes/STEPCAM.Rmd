@@ -1,0 +1,70 @@
+---
+title: "Example workflow of STEPCAM"
+author: "Thijs Janzen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Example Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The aim of this vignette is to show the user how the workflow of STEPCAM looks like, and to provide a worked out example, with output.
+
+## What is STEPCAM
+STEPCAM is a STEPwise Community Assembly Model. STEPCAM uses approximate Bayesian computation in order to infer the relative contribution of Dispersal Assembly (DA), Habitat Filtering (HF) and Limiting Similarity (LS), based on the combination of abundance and trait data. Starting from the full species pool, STEPCAM removes species in stepwise function, in order to recover the trait-distribution observed in the focal community. Choice of which species to remove depends on the relative contribution of dispersal assembly, habitat filtering, and limiting similary. At a dispersal assembly removal step, a species is randomly selected inversely proportional to the abundance of the species across all communities. At a habitat filtering removal step, a species that is most dissimilar from the communities' optimal trait value is removed. At a limiting similarity removal step, a species that is most similar with the other remaining species is removed. 
+The approximate Bayesian framework uses ABC-SMC to estimate the relative contribution of DA, HF and LS. The output is a posterior distribution across the three paremeters of interest. 
+
+## Required data
+Although in typical use, the user will have his own data available, for clarity and portability, we will generate artificial data, and use that to perform STEPCAM. Using the function ```generate.Artificial.Data``` we generate a dataset, with 3 traits, 10 plots and 10 species:
+
+```{r}
+  library(STEPCAM)
+  set.seed(42)
+  simul_data <- generate.Artificial.Data(n_species = 10, n_traits = 3, n_communities = 10,
+                                occurence_distribution = 0.5, average_richness = 0.8,
+                                sd_richness = 0.25, mechanism_random = FALSE)
+```
+For the sake of this vignette we want to display the ability of STEPCAM to estimate habitat filtering. Habitat Filtering causes species with too dissimilar trait values to be selected against in a community, or in a plot. Because ```generate.Artificial.Data``` generates random trait data, for our example it is more convenient to enter specific trait values that will aid in detecting Habitat Filtering:
+```{r}
+  data_species <- simul_data$traits
+  data_species$trait1 <- c(runif(8,0,1), 5, 10)
+  data_species$trait2 <- c(runif(8,0,1), -10, 30)
+  data_species$trait3 <- c(runif(8,0,1), -20, 40)
+```
+The three traits selected here do not represent a specific trait, but we can clearly see that the two last entries (of species9 and species10) have very deviant values from the values of the rest of the species:
+```{r}
+  data_species
+```
+To complete the construction of our artificial dataset, we have to set the abundance data to something a bit more meaningful. Our focus here is on plot 1, and for plot one we want to "trick" the dataset into showing strong Habitat Filtering. In order to do so we include all species, except species 9 and 10:
+```{r}
+  data_abundances <- simul_data$abundances
+  for (i in 1:8) {
+    data_abundances[1,i] <- 1
+  }
+  data_abundances[1,9] <- 0
+  data_abundances[1,10] <- 0
+  data_abundances
+```
+We now have all the basic ingredients to start a STEPCAM analysis. What STEPCAM basically does, is pick a random combination of parameters (DA, HF, LS), and simulate the stepwise removal (especially for a high relative contribution of DA, the outcome can be very stochastic). After stepwise removal, the resulting species pool is used to estimate four trait-distribution summary statistics, which in turn are compared with the values obtained for the original data. If they are similar enough, the parameter combination is accepted, and the algorithm moves on. As you will see, the algorithm goes through a range of iterations. Each iteration, the threshold of similarity is lowered (e.g. the difference between the simulated and observed data has to be smaller). As the threshold is lowered, the acceptance rate often drops, and good results are best obtained for extremely low acceptance rates, if computation time permits.
+
+### Starting STEPCAM
+```{r}
+  output <- STEPCAM_ABC(data_abundances, data_species,
+                        numParticles = 100, n_traits = 3, plot_number = 1,
+                        stopRate = 0.05, stop_at_iteration = 12, continue_from_file = FALSE)
+```
+
+The results above show that the simulation ran for 9 iterations, and at the 10th iteration the acceptance rate of newly proposed parameter values dropped below 1 in 20 (5%). Right next to the progressbars, the simulation provides us with some intermediate output: the mean estimates for DS, HF and LS, and the acceptance rate. Furthermore, we see that while the acceptance rate is 1, the relative contribution of our three parameters of interest is more or less equal to the prior. What is the prior then? The prior in this case is the non-informative starting point that STEPCAM takes as parameter combination in the first iteration. In our case we are removing two species in a stepwise fashion (remember that we set the presence of two species to 0?), and hence the initial expected frequency of the three processes is 2*(1/3,1/3,1/3), which is about (0.67,0.67,0.67). From iteration 7 onwards we see that the acceptance rate starts to drop, and that the relative contribution of the three processes starts to deviate from an equal distribution. By iteration 11 we have a very nice result of c(0.02,1.98,0), which is very much in line with our expectation of (0,2,0) (DS,HF,LS)! STEPCAM has thus correctly inferred the relative contribution of the three processes.
+
+We can plot our results in a ternary plot:
+```{r}
+TernPlot(output)
+```
+
+Because we have only 2 species to remove, only a limited number of combinations of (DS, HF, LS) are possible, hence the low number of points in the ternaryplot. For a more exciting example of the plotting abilities of the STEPCAM package, please see the relevant vignette. 
+
+
+
+
+

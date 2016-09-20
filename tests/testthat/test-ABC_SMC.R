@@ -47,7 +47,9 @@ test_that("ABC_SMC: use", {
   params <- c(0,1,0)
   plot_number <- 1
 
-  FD_output <- strippedDbFd(Ord, ifelse(data_abundances > 0, 1, 0))
+  res <- detMnbsp(Ord, abundances)
+  FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
+  
   observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
   observed_abundances <- data_abundances[plot_number, ]
   present_species <- which(observed_abundances > 0)
@@ -161,7 +163,8 @@ test_that("ABC_SMC: use", {
   params <- c(0,0,1)
   plot_number <- 1
 
-  FD_output <- strippedDbFd(Ord, ifelse(data_abundances > 0, 1, 0))
+  res <- detMnbsp(Ord, abundances)
+  FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
 
 
   observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
@@ -276,7 +279,10 @@ test_that("ABC_SMC: abuse", {
   #summary_stats <- generateValues(params, scaled_species, data_abundances,
   #                                 plot_number, n_traits)
 
-  FD_output <- strippedDbFd(Ord, ifelse(data_abundances > 0, 1, 0))
+  res <- detMnbsp(Ord, abundances)
+  FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
+  
+  
   observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
   observed_abundances <- data_abundances[plot_number, ]
   present_species <- which(observed_abundances > 0)
@@ -356,7 +362,9 @@ test_that("ABC_SMC: abuse", {
  params <- c(0,1,0)
  plot_number <- 1
 
- FD_output <- strippedDbFd(Ord, ifelse(data_abundances > 0, 1, 0))
+ res <- detMnbsp(Ord, abundances)
+ FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
+ 
  observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
  observed_abundances <- data_abundances[plot_number, ]
  present_species <- which(observed_abundances > 0)

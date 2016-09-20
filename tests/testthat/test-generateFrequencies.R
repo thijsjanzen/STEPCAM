@@ -5,8 +5,7 @@ test_that("generateFrequencies: use",{
 	expected <- c(3,2,1)
 	expect_equal(
 		generateFrequencies(abund),
-		expected,
-		tol=0.01
+		expected
 	)
 })
 
