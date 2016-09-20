@@ -88,9 +88,17 @@ test_that("ordinationAxes: use", {
                                 mechanism_random = TRUE)
 
   data_species <- x$traits
-  data_species$trait1[4] <- NA
+  #data_species$trait1[4] <- NA
   v <- data_species$trait1
   names(v) <- data_species$species
   Ord <- ordinationAxes(x = v, stand.x = FALSE)
+  v[4] <- NA
+  Ord <-  ordinationAxes(x = v, stand.x = FALSE)
 
+  v <-  c(rep("blue",3),rep("red",2),rep("yellow",2),rep("black",3))
+  names(v) <- data_species$species
+  Ord <-  ordinationAxes(x = v, stand.x = FALSE)
+
+  v <- as.factor(v)
+  Ord <-  ordinationAxes(x = v, stand.x = FALSE)
 })

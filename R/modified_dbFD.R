@@ -5,7 +5,7 @@
 ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
                            ord = c("podani", "metric"), w,
                            asym.bin = NULL, messages = FALSE, stand.x = FALSE){
-  dist.bin <- NULL
+  dist.bin <- 2
   tol <- .Machine$double.eps
   corr <- match.arg(corr)
   ord <- match.arg(ord)
@@ -98,7 +98,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           if (all(dist.bin != sequence[any(sequence)]))
             stop("'dist.bin' must be an integer between 1 and 10.",
                  "\n")
-          x.dist <- dist.binary(x.dummy.df, method = dist.bin)
+          x.dist <- ade4::dist.binary(x.dummy.df, method = dist.bin)
         }
       }
     }
@@ -119,25 +119,28 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     dimnames(x) <- list(x.rn, "Trait")
   }
   if (is.vector(x) & is.character(x)) {
+    # convert to factor
     x <- as.factor(x)
-    if (any(is.na(x))) {
-      pos.NA <- which(is.na(x))
+    if (any(is.na(x) ) )
+    {
+      pos.NA <- which(is.na(x) )
       x <- na.omit(x)
+      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
-      if (messages)
-        cat("Warning: Species with missing trait values have been excluded.",
-            "\n")
+      if (messages) cat("Warning: Species with missing trait values have been excluded.","\n")
+    } else {
+      x <- x
     }
-    else x <- x
-    dimnames(x) <- list(x.rn, "Trait")
-    x.dummy <- diag(nlevels(x))[x, ]
+    #x <- data.frame(x)
+    #dimnames(x) <- list(x.rn, "Trait")
+    # create matrix of dummy variables
+    x.dummy <- diag(nlevels(x) )[x, ]
+    # keep species names
     x.dummy.df <- data.frame(x.dummy, row.names = x.rn)
     sequence <- 1:10
-    if (all(dist.bin != sequence[any(sequence)]))
-      stop("'dist.bin' must be an integer between 1 and 10.",
-           "\n")
+    if (all(dist.bin != sequence[any(sequence)]) ) stop("'dist.bin' must be an integer between 1 and 10.","\n")
     x <- data.frame(x)
-    x.dist <- dist.binary(x.dummy.df, method = dist.bin)
+    x.dist <- ade4::dist.binary(x.dummy.df, method = dist.bin)
   }
   if (is.ordered(x)) {
     if (any(is.na(x))) {
@@ -169,7 +172,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (all(dist.bin != sequence[any(sequence)]))
       stop("'dist.bin' must be an integer between 1 and 10.",
            "\n")
-    x.dist <- dist.binary(x.dummy.df, method = dist.bin)
+    x.dist <- ade4::dist.binary(x.dummy.df, method = dist.bin)
     x <- data.frame(x)
     dimnames(x) <- list(x.rn, "Trait")
   }
@@ -189,7 +192,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
   attr(x.dist, "Labels") <- x.rn
   if (ade4::is.euclid(x.dist))
     x.dist2 <- x.dist
-  if (!is.euclid(x.dist)) {
+  if (!ade4::is.euclid(x.dist)) {
     if (corr == "lingoes") {
       x.dist2 <- ade4::lingoes(x.dist)
       if (messages)
