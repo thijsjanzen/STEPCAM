@@ -34,9 +34,10 @@ test_that("generateValues: use", {
   taxa <- nrow(scaled_species);
   row.names(scaled_species) <- c(1:taxa)
 
-  skip("doesn't work since updating dbFD 20-09-2016")
-  v <- generateValues(params, scaled_species, data_abundances,
+  expect_warning(
+    v <- generateValues(params, scaled_species, data_abundances,
                       community_number, n_traits)
+  )
 
   expect_equal(
     v[[4]],
@@ -48,9 +49,8 @@ test_that("generateValues: use", {
   )
 
   expect_equal(
-    v[[2]],
-    0.0,
-    tolerance = 0.001
+    is.na(v[[2]]),
+    TRUE
   )
 })
 

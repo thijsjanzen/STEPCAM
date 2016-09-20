@@ -105,7 +105,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (any(is.na(x))) {
       pos.NA <- which(is.na(x))
       x <- na.omit(x)
-      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
       if (messages) 
         cat("Warning: Species with missing trait values have been excluded.", 
@@ -122,14 +121,13 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (any(is.na(x))) {
       pos.NA <- which(is.na(x))
       x <- na.omit(x)
-      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
       if (messages) 
         cat("Warning: Species with missing trait values have been excluded.", 
             "\n")
     }
     else x <- x
-    dimnames(x) <- list(x.rn, "Trait")
+    #dimnames(x) <- list(x.rn, "Trait")
     x.dummy <- diag(nlevels(x))[x, ]
     x.dummy.df <- data.frame(x.dummy, row.names = x.rn)
     sequence <- 1:10
@@ -143,7 +141,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (any(is.na(x))) {
       pos.NA <- which(is.na(x))
       x <- na.omit(x)
-      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
       cat("Warning: Species with missing trait values have been excluded.", 
           "\n")
@@ -157,7 +154,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (any(is.na(x))) {
       pos.NA <- which(is.na(x))
       x <- na.omit(x)
-      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
       if (messages) 
         cat("Warning: Species with missing trait values have been excluded.", 
@@ -224,24 +220,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
   return(x.pco) # Best is to return the whole object, because dbFD needs sometimes more than the axes alone?!
 }
 
-
-# Max possible interpoint distance for S points (for FRicMax)
-# Axes: Ordination axes
-# S: Species richness of focal community
-maxDistPoints <- function(Axes, S){ 
-  # Code heavily borrowed by spacedman:
-  # http://stackoverflow.com/questions/22152482/choose-n-most-distant-points-in-r
-  subset <- Axes  
-  alldist <- as.matrix(dist(subset))   
-  while (nrow(subset) > S) {
-    cdists <- rowSums(alldist)
-    closest <- which(cdists == min(cdists))[1]
-    subset <- subset[-closest,]
-    alldist <- alldist[-closest,-closest]
-  }
-  return(subset)
-}
-
 # Function to dermine the number of PCoA axes used and number of species. 
 # (Both constant in STEPCAM and therefor only camculated once.)
 detMnbsp <- function(x.pco, a){
@@ -263,8 +241,7 @@ detMnbsp <- function(x.pco, a){
   if (min.nb.sp < 3) {
     nb.sp2 <- nb.sp[nb.sp > 2]
     m.max <- min(nb.sp2) - 1    
-  }
-  else {
+  } else {
     m.max <- m.max
   }
   m <- m.max

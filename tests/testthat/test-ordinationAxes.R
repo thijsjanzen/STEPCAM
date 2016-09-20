@@ -36,8 +36,12 @@ test_that("ordinationAxes: use", {
   Ord <- ordinationAxes(x = v2, stand.x = FALSE)
 
   v2[1:3] <- as.factor(c(1,1,2))
-  v2 <- as.dist(v2)
-  Ord <- ordinationAxes(x = v2, stand.x = FALSE)
+  expect_warning(
+    v2 <- as.dist(v2)
+  )
+  expect_warning(
+    Ord <- ordinationAxes(x = v2, stand.x = FALSE)
+  )
 
   set.seed(42)
   n_traits <- 3
@@ -94,18 +98,20 @@ test_that("ordinationAxes: use", {
   names(v) <- data_species$species
   Ord <- ordinationAxes(x = v, stand.x = FALSE)
   
-  if(1 == 2) { #doesn't work 20-09-2016
-    v[4] <- NA
+  v[4] <- NA
+  Ord <-  ordinationAxes(x = v, stand.x = FALSE)
+
+  v <-  c(rep("blue",3),rep("red",2),rep("yellow",2),rep("black",3))
+  names(v) <- data_species$species
+  expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
-  
-    v <-  c(rep("blue",3),rep("red",2),rep("yellow",2),rep("black",3))
-    names(v) <- data_species$species
+  )
+
+  v <- as.factor(v)
+  v[4] <- NA
+  expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
-  
-    v <- as.factor(v)
-    v[4] <- NA
-    Ord <-  ordinationAxes(x = v, stand.x = FALSE)
-  }
+  )
   
   v <- data_species$trait1
   names(v) <- data_species$species
