@@ -1,6 +1,7 @@
 context("STEPCAM")
 
 test_that("STEPCAM: use",{
+  skip_on_cran()
   set.seed(42)
   n_traits <- 1
   x <- generate.Artificial.Data(n_species = 10, n_traits = n_traits,

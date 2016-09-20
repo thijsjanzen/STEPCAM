@@ -1,6 +1,7 @@
 context("plotSMC")
 
 test_that("plotSMC: use", {
+  skip_on_cran()
 
   set.seed(42)
   n_traits <- 3

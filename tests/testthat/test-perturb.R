@@ -1,6 +1,7 @@
 context("perturb")
 
 test_that("perturb: use", {
+  skip_on_cran()
   A <- matrix(0,ncol=3,nrow=1e5)
   start <- c(0,1,0)
   for(i in 1:1e5) {

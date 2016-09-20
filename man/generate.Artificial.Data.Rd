@@ -25,7 +25,7 @@ occurence_distribution, average_richness, sd_richness, mechanism_random)
   \item{traits}{A matrix containing the traits for all species, rows are the different species, column correspond to the respective traits.}
   \item{abundances}{A matrix containing the abundances of all species for all plots. Rows correspond to species, columns to plots.}
 }
-\author{ Thijs Janzen & Fons van der Plas}
+\author{Fons van der Plas}
 
 \examples{
 Artificial.Data <- generate.Artificial.Data(n_species=40, n_traits=3, n_communities = 5,

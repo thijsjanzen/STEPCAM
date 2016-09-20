@@ -1,6 +1,7 @@
 context("TernPlot")
 
 test_that("TernPlot: use", {
+  skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -36,6 +37,7 @@ test_that("TernPlot: use", {
 })
 
 test_that("TernPlot: abuse:", {
+  skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10

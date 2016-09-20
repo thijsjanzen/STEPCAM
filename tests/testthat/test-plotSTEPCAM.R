@@ -1,6 +1,7 @@
 context("plotSTEPCAM")
 
 test_that("plotSTEPCAM: use", {
+  skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
