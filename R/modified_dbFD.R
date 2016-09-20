@@ -67,7 +67,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           x.s <- apply(x, 2, scale, center = TRUE, scale = stand.x)
           x.dist <- dist(x.s)
           row.excl.ab <- pos.NA[, 1]
-          a <- a[, -row.excl.ab]
           if (messages)
             cat("Warning: Species with missing trait values have been excluded.",
                 "\n")
@@ -81,7 +80,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           pos.NA <- which(is.na(x), arr.ind = TRUE)
           x <- na.omit(x)
           row.excl.ab <- pos.NA[, 1]
-          a <- a[, -row.excl.ab]
           x.rn <- x.rn[-pos.NA]
           if (messages)
             cat("Warning: Species with missing trait values have been excluded.",
@@ -109,7 +107,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (any(is.na(x))) {
       pos.NA <- which(is.na(x))
       x <- na.omit(x)
-      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
       if (messages)
         cat("Warning: Species with missing trait values have been excluded.",
@@ -126,7 +123,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (any(is.na(x))) {
       pos.NA <- which(is.na(x))
       x <- na.omit(x)
-      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
       if (messages)
         cat("Warning: Species with missing trait values have been excluded.",
@@ -161,7 +157,6 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (any(is.na(x))) {
       pos.NA <- which(is.na(x))
       x <- na.omit(x)
-      a <- a[, -pos.NA]
       x.rn <- x.rn[-pos.NA]
       if (messages)
         cat("Warning: Species with missing trait values have been excluded.",
