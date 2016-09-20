@@ -57,10 +57,6 @@ test_that("calcSD: abuse", {
   data_species$trait1 <- c(runif(10,0,1))
   data_species$trait2 <- c(runif(10,0,1))
   data_species$trait3 <- c(runif(10,0,1))
-  data_species$trait1[10] <- data_species$trait1[9] + 0.00001
-  data_species$trait2[10] <- data_species$trait2[9] + 0.00001
-  data_species$trait3[10] <- data_species$trait3[9] + 0.00001
-
 
   data_abundances <- x$abundances
   for(i in 1:8) {
@@ -83,6 +79,12 @@ test_that("calcSD: abuse", {
   expect_error(
     calcSD(scaled_species, data_abundances, n_plots, n_traits),
     "One of your communities doesn't have species in it"
+  )
+
+  data_abundances[5,1] <- 1
+  expect_error(
+    calcSD(scaled_species, data_abundances, n_plots, n_traits),
+    "One of your communities doesn't have at least three species in it in order to calculate summary statistics"
   )
 })
 

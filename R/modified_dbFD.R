@@ -48,11 +48,11 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           x.dist <- dist(x.s)
         }
         else {
-          x.dist <- gowdis(x, w = w, ord = ord, asym.bin = asym.bin)
+          x.dist <- FD::gowdis(x, w = w, ord = ord, asym.bin = asym.bin)
         }
       }
       else {
-        x.dist <- gowdis(x, w = w, ord = ord, asym.bin = asym.bin)
+        x.dist <- FD::gowdis(x, w = w, ord = ord, asym.bin = asym.bin)
       }
     }
     if (t.x == 1) {
@@ -154,7 +154,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     else x <- x
     x <- data.frame(x)
     dimnames(x) <- list(x.rn, "Trait")
-    x.dist <- gowdis(x, w = w, ord = ord, asym.bin = asym.bin)
+    x.dist <- FD::gowdis(x, w = w, ord = ord, asym.bin = asym.bin)
   }
   if (is.factor(x) & !is.ordered(x)) {
     if (any(is.na(x))) {
@@ -296,7 +296,7 @@ strippedDbFd <- function(x.pco, a, m = "max"){
 
     if (nb.sp[i] >= 3) {
       tr.dist <- dist(tr) # pair-wise distance of ordination coordinates
-      linkmst <- mst(tr.dist)
+      linkmst <- ape::mst(tr.dist)
       mstvect <- as.dist(linkmst)
       abund2 <- matrix(0, nrow = S, ncol = S)
       for (q in 1:S) for (r in 1:S) abund2[q, r] <- abundrel[q] + abundrel[r]

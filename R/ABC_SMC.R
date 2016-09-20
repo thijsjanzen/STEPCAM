@@ -167,7 +167,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         params <- params[1:3]
 
         if ( sum(params) > species_fallout) {
-          print("too much params after perturb!"); flush.console(); break;
+          stop("ABC_SMC: ",
+               "too much params after perturb!");
         }
       }
 

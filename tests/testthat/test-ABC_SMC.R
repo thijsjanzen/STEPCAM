@@ -190,25 +190,28 @@ test_that("ABC_SMC: use", {
   plot_number <- 1
   stopRate <- 0.0001
 
-
+  for (t in 0:50) {
+    file_name <- paste("particles_t=", t, ".txt", sep="")
+    if (file.exists(file_name)) {
+      file.remove(file_name)
+    }
+  }
 
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = FALSE, stop_at_iteration = 5)
+                    continue_from_file = FALSE, stop_at_iteration = 2)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   expect_equal(v[[3]], 0.4, tolerance = 0.1)
 
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
-                    data_abundances, data_frequencies, stopRate = 0.4, Ord,
+                    data_abundances, data_frequencies, stopRate = 0.2, Ord,
                     continue_from_file = TRUE, stop_at_iteration = 20)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   expect_equal(v[[3]], 1, tolerance = 0.2)
-
-  v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
 
   for (t in 0:20) {
     file_name <- paste("particles_t=", t, ".txt", sep="")

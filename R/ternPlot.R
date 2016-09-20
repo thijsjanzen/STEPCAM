@@ -6,7 +6,7 @@ id_just = c("center", "center"), coordinates = FALSE, grid = TRUE,
 grid_color = "darkgrey", labels = c("inside", "outside", "none"),
 labels_color = "darkgray", border = "black", bg = "white",
 pch = 19, cex = 1, prop_size = FALSE, col = "red", main = "ternary plot",
-newpage = TRUE, pop = TRUE, ...)
+newpage = TRUE, ...)
 {
   labels <- match.arg(labels)
   if(grid == TRUE)
@@ -23,8 +23,6 @@ newpage = TRUE, pop = TRUE, ...)
   if(any(x < 0))
     stop("X must be non-negative")
   s <- rowSums(x)
-  if(any(s <= 0))
-    stop("each row of X must have a positive sum")
   x <- x / s
   top <- sqrt(3) / 2
   if(newpage)
@@ -94,9 +92,8 @@ newpage = TRUE, pop = TRUE, ...)
   0.03, 0.03, 0.03, 0.03, 0.03, 0.03), "snpc") - 0.5 * size,
   label = as.character(id), just = id_just, gp = gpar(col = id_color,
   cex = 0.8))
-  if(pop)
+
   popViewport(2)
-  else upViewport(2)
 }
 
 # this plots the parameter values of best fitting models: it gives an
