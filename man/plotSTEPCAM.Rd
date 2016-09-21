@@ -22,6 +22,7 @@ plotSTEPCAM(output)
 \author{Thijs Janzen}
 
 \examples{
+\dontrun{
 Artificial.Data <- generate.Artificial.Data(n_species = 40, n_traits = 3,
                         n_communities = 5, occurence_distribution = 0.2,
                         average_richness = 0.5, sd_richness = 0.2,
@@ -29,4 +30,5 @@ Artificial.Data <- generate.Artificial.Data(n_species = 40, n_traits = 3,
 O <- STEPCAM_ABC(Artificial.Data$abundances,Artificial.Data$traits,
                  numParticles=10,n_traits=3,plot_number=1,stopRate=0.8);
 plotSTEPCAM(O);
+}
 }
