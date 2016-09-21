@@ -15,5 +15,5 @@ Description: Collection of model estimation, and model plotting functions
              combination of trait and abundance data. See also <http://onlinelibrary.wiley.com/wol1/doi/10.1890/14-0454.1/abstract> for more information.
 License: GPL-2
 URL: https://github.com/thijsjanzen/STEPCAM
-BugReports: https://github.com/thijsjanzen/STEPCAM
+BugReports: https://github.com/thijsjanzen/STEPCAM/issues
 VignetteBuilder: knitr
