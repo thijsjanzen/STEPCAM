@@ -179,8 +179,8 @@ generateValues <- function(params, species,
                             community_number, n_traits, species_fallout)
 
   traits <- as.data.frame(species[, c(2:(n_traits + 1))],
-                          row.names = seq_len(allfinaloutput))
-  presences <- as.data.frame(t(allfinaloutput), seq_len(allfinaloutput))
+                          row.names = seq_along(allfinaloutput))
+  presences <- as.data.frame(t(allfinaloutput), seq_along(allfinaloutput))
   names(presences) <- seq_len(allfinaloutput)
 
   esppres <- which(presences > 0)

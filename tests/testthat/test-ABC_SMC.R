@@ -57,12 +57,12 @@ test_that("ABC_SMC: use", {
   observed_traits <- observed_traits[present_species, ]
   observed_abundances <- observed_abundances[present_species]
   observed_presences <- observed_abundances
-  observed_presences[seq_len(observed_presences)] <- 1
+  observed_presences[ seq_along(observed_presences) ] <- 1
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
   for(i in 1:n_traits){
-    for(j in 1:length(observed_abundances)){
+    for(j in seq_along(observed_abundances)){
       traitvalues[j] <- observed_traits[j, i]
     }
     # calculate CTM value
