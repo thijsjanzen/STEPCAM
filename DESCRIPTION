@@ -3,7 +3,7 @@ Type: Package
 Title: ABC-SMC Inference of STEPCAM
 Version: 1.2.1
 Authors@R: c(person("Thijs","Janzen", email = "thijsjanzen@gmail.com",role=c("aut","cre")), person("Fons","van der Plas",email="",role=c("aut")),person("Thorsten","Hauffe",email="",role=c("ctb")))
-Imports: gtools, FD, stats, MASS, vcd, ade4, grid, geometry, ape
+Imports: gtools, FD, stats, ade4, grid, geometry, ape
 Suggests: testthat,
     knitr,
     rmarkdown

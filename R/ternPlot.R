@@ -32,7 +32,9 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
   ylim <- c(-1, top)
   grid::pushViewport(grid::viewport(width = grid::unit(1, "snpc")))
   if(!is.null(main))
-    grid::grid.text(main, y = 0.9, gp = grid::gpar(fontsize = 18, fontstyle = 1))
+    grid::grid.text(main, y = 0.9, 
+                    gp = grid::gpar(fontsize = 18, 
+                                    fontstyle = 1))
   grid::pushViewport(grid::viewport(width = 0.8, height = 0.8, xscale = xlim,
   yscale = ylim, name = "plot"))
   eps <- 0.01
@@ -45,10 +47,12 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
   if (dimnames_position == "edge") {
     shift <- eps * if(labels == "outside")
 
-      grid::grid.text(x = 0.25 - 2 * eps - shift, y = 0.5 * top +
-    shift, label = dimnames[2], rot = 60, gp = grid::gpar(col = dimnames_color))
-    grid::grid.text(x = 0.75 + 3 * eps + shift, y = 0.5 * top +
-    shift, label = dimnames[1], rot = -60, gp = grid::gpar(col = dimnames_color))
+      grid::grid.text(x = 0.25 - 2 * eps - shift, y = 0.5 * top + shift, 
+                      label = dimnames[2], rot = 60, 
+                      gp = grid::gpar(col = dimnames_color))
+    grid::grid.text(x = 0.75 + 3 * eps + shift, y = 0.5 * top + shift, 
+                    label = dimnames[1], rot = -60, 
+                    gp = grid::gpar(col = dimnames_color))
     grid::grid.text(x = 0.5, y = -0.02 - shift, label = dimnames[3],
     gp = grid::gpar(col = dimnames_color))
   }
@@ -63,8 +67,9 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
     if(labels == "inside"){
       grid::grid.text(x = (1 - i) * 3 / 4 - eps, y = (1 - i) / 2 *
       top, label = i * scale, gp = grid::gpar(col = labels_color), rot = 120)
-      grid::grid.text(x = 1 - i + i / 4 + eps, y = i / 2 * top -
-      eps, label = (1 - i) * scale, gp = grid::gpar(col = labels_color), rot = -120)
+      grid::grid.text(x = 1 - i + i / 4 + eps, y = i / 2 * top - eps, 
+                      label = (1 - i) * scale, 
+                      gp = grid::gpar(col = labels_color), rot = -120)
       grid::grid.text(x = 0.5, y = i * top + eps, label = i *
       scale, gp = grid::gpar(col = labels_color))
     }
@@ -93,15 +98,16 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
   size <- grid::unit(if(prop_size)
   prop_size * (s / max(s))
   else cex, "lines")
-  grid::grid.points(xp, yp, pch = pch, gp = grid::gpar(col = col), default.units = "snpc",
-  size = size, ...)
+  grid::grid.points(xp, yp, pch = pch, gp = grid::gpar(col = col), 
+                    default.units = "snpc", size = size, ...)
   if(!is.null(id))
     grid::grid.text( x = xp + c(-0.005, 0.01, 0.01, 0, -0.01, 0, 
                         0, 0.01, 0, 0.01, -0.01,
                         0.02, -0.005, 0, 0.01, 0, 0, 0.01, 0.01, -0.01), 
-             y = grid::unit(yp + c(0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 
-                             0.02, 0.03, 0.03, 0.03, 0.03, 0.03, 
-                             0.03, 0.03, 0.03, 0.03, 0.03, 0.03), 
+             y = grid::unit(yp + c(0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 
+                                   0.03, 0.03, 0.02, 0.03, 0.03, 0.03, 
+                                   0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 
+                                   0.03, 0.03), 
                       "snpc") - 0.5 * size,
              label = as.character(id), 
              just = id_just, 
@@ -113,7 +119,7 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
 # this plots the parameter values of best fitting models: it gives an
 # indication of a most likely community assembly processes in your community
 TernPlot <- function(output) {
-	d <- cbind(output$DA, output$HF, output$LS);
+	d <- cbind(output$DA, output$HF, output$LS)
 	ternaryplot2(d, scale=1, col="black", grid = TRUE, 
 	             cex = 0.5, labels = c("outside"),
 	             dimnames = c("DA", "HF", "LS"), main="", 

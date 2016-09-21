@@ -8,7 +8,7 @@ test_that("scaleSpeciesvalues: use",{
                                 sd_richness = 1,
                                 mechanism_random = FALSE)
 
-  traitmatrix <- x$traits;
+  traitmatrix <- x$traits
   traitmatrix$trait1 <- c(1,2,3)
   traitmatrix$trait2 <- c(2,3,4)
 
@@ -42,7 +42,7 @@ test_that("scaleSpeciesvaluess: abuse", {
                                 sd_richness = 1,
                                 mechanism_random = FALSE)
 
-  traitmatrix <- x$traits;
+  traitmatrix <- x$traits
   traitmatrix$trait1 <- c(1,1,2)
   traitmatrix$trait2 <- c(2,2,2)
   expect_error(

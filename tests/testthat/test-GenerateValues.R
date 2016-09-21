@@ -32,7 +32,7 @@ test_that("generateValues: use", {
               scaled_species[, c(1:(n_traits + 1))], data_frequencies))
   traitnames <- names(data_species)[-1]
   names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
-  taxa <- nrow(scaled_species);
+  taxa <- nrow(scaled_species)
   row.names(scaled_species) <- c(1:taxa)
 
   expect_warning(
