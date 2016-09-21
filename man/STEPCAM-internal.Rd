@@ -12,7 +12,7 @@
 \alias{getRandomVals}
 \alias{normalizeWeights}
 \alias{perturb}
-\alias{plotElement}
+\alias{plot_element}
 \alias{scaleSpeciesvalues}
 \alias{STEPCAM}
 \alias{ternaryplot2}

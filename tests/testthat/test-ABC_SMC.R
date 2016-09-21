@@ -317,7 +317,9 @@ test_that("ABC_SMC: abuse", {
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 5),
-  "one of the community summary statistics shows no variation in your dataset")
+  "ABC_SMC: one of the community summary 
+  statistics shows no variation in your dataset")
+
  set.seed(42)
  n_traits <- 3
  n_plots <- 10

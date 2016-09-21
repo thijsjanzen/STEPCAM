@@ -79,8 +79,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     abundances, frequencies, stopRate, Ord, 
                     continue_from_file = TRUE, stop_at_iteration = 50)  {
 
-  for(i in seq_along(sd_vals)) {
-    if(sd_vals[[i]] == 0.000) {
+  for (i in seq_along(sd_vals)) {
+    if (sd_vals[[i]] == 0.000) {
       stop("ABC_SMC: ",
            "one of the community summary statistics 
             shows no variation in your dataset")
