@@ -1,12 +1,12 @@
 # function to generate a random combination of dispersal, filtering and competition parameter settings (uninformed prior assumed)
 getRandomVals <- function(max_val)  {
   x <- stats::runif(3, min = 0, max = 1)
-  x <- x / sum(x); #normalize to 1
-  x <- x * max_val; #translate to integers
-  x2 <- floor(x); #round to integers
+  x <- x / sum(x) #normalize to 1
+  x <- x * max_val #translate to integers
+  x2 <- floor(x) #round to integers
   while (sum(x2) != max_val) {
     a <- sample(1:3, size = 1, prob = x - floor(x) )
-    x2[a] <- x2[a] + 1;
+    x2[a] <- x2[a] + 1
   }
   return(x2)
 }
@@ -15,7 +15,7 @@ getRandomVals <- function(max_val)  {
 getFromPrevious <- function(inds, ws, disps, filts, comps)  {
   index <- sample(x = inds, size = 1, replace = TRUE, prob = ws)
   output <- c(disps[index], filts[index], comps[index])
-  return(output);
+  return(output)
 }
 
 # function to calculate the weight of a particle
@@ -36,7 +36,7 @@ normalizeWeights <- function(x) {
 
 # function to randomly change the contribution of one of the processes:
 perturb <- function(p, sigma)  {
-  params <- p;
+  params <- p
   max_number <- sum(p)
   numbers <- 1:3
 
@@ -46,7 +46,7 @@ perturb <- function(p, sigma)  {
 
   params[x[1]] <- round(params [x[1]] + rnorm(1, mean = 0, sd = sigma), 0)
   params[x[1]] <- max(0, params[x[1]])
-  params[x[1]] <- min(max_number, params[x[1]]);
+  params[x[1]] <- min(max_number, params[x[1]])
 
   diff <- params [x[1]] - oldval
 
@@ -63,12 +63,12 @@ perturb <- function(p, sigma)  {
 
 # function to calculate the fit
 calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
-  fit_rich <- (abs( (rich - obs[, 1]) ) / sd_vals[1]) ^ 2;
-  fit_even <- (abs( (even - obs[, 2]) ) / sd_vals[2]) ^ 2;
-  fit_div  <- (abs( (div -  obs[, 3]) ) / sd_vals[3]) ^ 2;
-  fit_optima <- (opt_diff / sd_vals[4])^2;
+  fit_rich <- (abs( (rich - obs[, 1]) ) / sd_vals[1]) ^ 2
+  fit_even <- (abs( (even - obs[, 2]) ) / sd_vals[2]) ^ 2
+  fit_div  <- (abs( (div -  obs[, 3]) ) / sd_vals[3]) ^ 2
+  fit_optima <- (opt_diff / sd_vals[4])^2
 
-  full_fit <- fit_rich + fit_even + fit_div + fit_optima;
+  full_fit <- fit_rich + fit_even + fit_div + fit_optima
 
   return(full_fit)
 }
@@ -76,13 +76,14 @@ calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
 
 ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, species,
-                    abundances, frequencies, stopRate, Ord, continue_from_file = TRUE,
-                    stop_at_iteration = 50)  {
+                    abundances, frequencies, stopRate, Ord, 
+                    continue_from_file = TRUE, stop_at_iteration = 50)  {
 
   for(i in seq_along(sd_vals)) {
     if(sd_vals[[i]] == 0.000) {
       stop("ABC_SMC: ",
-           "one of the community summary statistics shows no variation in your dataset")
+           "one of the community summary statistics 
+            shows no variation in your dataset")
     }
   }
   res <- detMnbsp(Ord, abundances)
@@ -111,12 +112,13 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
   f <- list.files(pattern = "particles_t=")
   if (length(f) > 0 && continue_from_file == TRUE) {
-    cat("Found previous output, continuing from that output\n"); flush.console();
+    cat("Found previous output, continuing from that output\n")
+    flush.console()
     f <- gtools::mixedsort(f)
     t1 <- 1 + length(f)
-    d <- read.table(f[length(f)], header = F)
+    d <- read.table(f[length(f)], header = FALSE)
     if(d[numParticles,1] == numParticles) {
-      d <- read.table(f[length(f) - 1], header = F)
+      d <- read.table(f[length(f) - 1], header = FALSE)
       t1 <- t1 - 1
     }
 
@@ -133,7 +135,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   while (t < 50)  {
     cat("\nGenerating Particles for iteration\t", t, "\n")
     cat("0--------25--------50--------75--------100\n")
-    cat("*"); flush.console()
+    cat("*")
+    flush.console()
     PRINT_FREQ <- 20
 
     numberAccepted <- 0
@@ -167,16 +170,21 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       allcommunities <- STEPCAM(params, species, abundances, taxa,
                                 esppres, community_number, n_traits,
                                 species_fallout)
-      traits <- as.data.frame(species[,c(2:(n_traits+1))],row.names=c(1:taxa));
+      traits <- as.data.frame(species[,c(2:(n_traits+1))],
+                              row.names=c(1:taxa))
+
       communities <- as.data.frame(t(allcommunities))
       present_species <- which(communities > 0)
       
-     # source("/Users/janzen/GitHub/STEPCAM/R/modified_dbFD.R")
-      FD_output <- strippedDbFd(Ord, communities, m = res[[1]], nb.sp = res[[2]]) 
+      FD_output <- strippedDbFd(Ord, communities, 
+                                m = res[[1]], nb.sp = res[[2]]) 
   
-      FRic <- FD_output$FRic # FRic = functional richness (Villeger et al, 2008, Ecology)
-      FEve <- FD_output$FEve # FEve = functional evenness (Villeger et al, 2008, Ecology)
-      FDiv <- FD_output$FDiv # FDiv = functional diversity (Villeger et al, 2008, Ecology)
+      # FRic = functional richness (Villeger et al, 2008, Ecology)
+      FRic <- FD_output$FRic 
+      # FEve = functional evenness (Villeger et al, 2008, Ecology)
+      FEve <- FD_output$FEve 
+      # FDiv = functional diversity (Villeger et al, 2008, Ecology)
+      FDiv <- FD_output$FDiv 
 
       trait_means <- c()
       for (i in 1:n_traits) {
@@ -185,11 +193,12 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       }
       optimum_plus_trait_means <- rbind(optimum, trait_means)
 
-      # calculate distance of trait mean simulated community from that of observed
+      # calculate distance of trait mean between simulated community 
+      # and observed community
       mean_optimum <- dist(optimum_plus_trait_means)
 
-      # (inverse) fit of model: euclidian distance of FD and trait mean values of
-      # observed community from that of simulated
+      # (inverse) fit of model: euclidian distance of FD and trait mean 
+      # values of observed community from that of simulated
       fit <- calculateDistance(FRic[[1]], FEve[[1]], FDiv[[1]],
                                mean_optimum[1], summary_stats, sd_vals)
       
@@ -203,18 +212,19 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         rich_vec[numberAccepted] <- FRic[[1]]
         eve_vec[numberAccepted] <- FEve[[1]]
         div_vec[numberAccepted] <- FDiv[[1]]
-        opt_vec[numberAccepted] <- mean_optimum;
+        opt_vec[numberAccepted] <- mean_optimum
 
         if (t == 1) {
-          next_weights[numberAccepted] = 1
+          next_weights[numberAccepted] <- 1
         } else {
-          next_weights[numberAccepted] =
+          next_weights[numberAccepted] <-
             calculateWeight(params, changed, sigma, disp_vals, filt_vals,
                             comp_vals, weights)
         }
         numberAccepted <- numberAccepted + 1
         if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
-          cat("**") ; flush.console()
+          cat("**")
+          flush.console()
         }
       }
 
@@ -222,12 +232,14 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       if (tried > (1/stopRate) && tried > 50)  {
         # do not check every particle if the acceptance rate is OK
         if (numberAccepted / tried < stopRate) {
-          stop_iteration <- 1; break;
+          stop_iteration <- 1
+          break
         }
       }
 
       if (t >= stop_at_iteration) {
-        stop_iteration <- 1; break;
+        stop_iteration <- 1
+        break
       }
     }
 
@@ -240,10 +252,10 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     output <- cbind(disp_vals, filt_vals, comp_vals, rich_vec,
                     eve_vec, div_vec, opt_vec, fits, weights)
     file_name <- paste("particles_t=", t, ".txt", sep="", collapse = NULL)
-    write.table(output, file_name, row.names = F, col.names = F)
+    write.table(output, file_name, row.names = FALSE, col.names = FALSE)
 
-    cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals), "\t", "accept rate = ",
-        numberAccepted / (tried-1), "\n")
+    cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals), 
+        "\t", "accept rate = ", numberAccepted / (tried-1), "\n")
 
     # and reset
     next_weights <- rep(1,numParticles)
@@ -260,10 +272,12 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
   if (t >= 2) {
     d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
-                          collapse = NULL), header = F)
+                          collapse = NULL), header = FALSE)
   } else {
       stop("ABC_SMC: ",
-           "Can't stop at iteration 1 - please set stop_at_iteration to 2 if you only want to generate from the prior")
+           "Can't stop at iteration 1 - 
+           please set stop_at_iteration to 2 if you only 
+           want to generate from the prior")
   }
   output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
   return(output)

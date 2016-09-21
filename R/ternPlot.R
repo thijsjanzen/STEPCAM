@@ -1,4 +1,3 @@
-
 # this function is adapted from the "vcd" package to have slightly different labels
 ternaryplot2 = function(x, scale = 1, dimnames = NULL, dimnames_position = c("corner",
 "edge", "none"), dimnames_color = "black", id = NULL, id_color = "black",
@@ -78,7 +77,7 @@ newpage = TRUE, ...)
   }
   xp <- x[, 2] + x[, 3] / 2
   yp <- x[, 3] * top
-  size = unit(if(prop_size)
+  size <- unit(if(prop_size)
   prop_size * (s / max(s))
   else cex, "lines")
   grid.points(xp, yp, pch = pch, gp = gpar(col = col), default.units = "snpc",
@@ -98,7 +97,7 @@ newpage = TRUE, ...)
 # indication of a most likely community assembly processes in your community
 TernPlot <- function(output){
 	d <- cbind(output$DA, output$HF, output$LS);
-	ternaryplot2(d, scale=1, col="black", grid=T, cex = 0.5, labels = c("outside"),
+	ternaryplot2(d, scale=1, col="black", grid = TRUE, cex = 0.5, labels = c("outside"),
   dimnames = c("DA", "HF", "LS"), main="", coordinates = TRUE)
 }
 

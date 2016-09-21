@@ -1,6 +1,16 @@
+# the ordinationAxes function was adapted from the supplementary 
+# material from Hauffe et al. 2016, which be accessed here: 
+# doi:10.5194/bg-13-2901-2016-supplement.
+# The original paper:
+# Hauffe, Torsten, Christian Albrecht, and Thomas Wilke. "Assembly processes of 
+# gastropod community change with horizontal and vertical zonation in ancient 
+# Lake Ohrid: a metacommunity speciation perspective." 
+# Biogeosciences 13.10 (2016): 2901-2911.
+# Which can be accessed here:
+# http://www.biogeosciences.net/13/2901/2016/bg-13-2901-2016.pdf
 ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"), 
                            ord = c("podani", "metric"), w, 
-                           asym.bin = NULL, messages = FALSE, stand.x = TRUE){
+                           asym.bin = NULL, messages = FALSE, stand.x = TRUE) {
   dist.bin <- 2
   tol <- .Machine$double.eps
   corr <- match.arg(corr)
@@ -250,6 +260,19 @@ detMnbsp <- function(x.pco, a){
   Res[[2]] <- nb.sp
   return(Res)  
 }
+
+# the strippeddbFD function was adapted from the supplementary 
+# material from Hauffe et al. 2016, which be accessed here: 
+# doi:10.5194/bg-13-2901-2016-supplement.
+# The original paper:
+# Hauffe, Torsten, Christian Albrecht, and Thomas Wilke. "Assembly processes of 
+# gastropod community change with horizontal and vertical zonation in ancient 
+# Lake Ohrid: a metacommunity speciation perspective." 
+# Biogeosciences 13.10 (2016): 2901-2911.
+# Which can be accessed here:
+# http://www.biogeosciences.net/13/2901/2016/bg-13-2901-2016.pdf
+
+
 
 # Strip away radically everything except FRic, FDiv, and FEve
 # Because this function needs to be much much faster!
