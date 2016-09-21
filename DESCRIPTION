@@ -3,13 +3,18 @@ Type: Package
 Title: ABC-SMC Inference of STEPCAM
 Version: 1.2
 Date: 2016-09-17
-Author: Thijs Janzen & Fons van der Plas
-Maintainer: Thijs Janzen <thijsjanzen@gmail.com>
+Authors@R: c(person("Thijs","Janzen", email = "thijsjanzen@gmail.com",role=c("aut","cre")), person("Fons","van der Plas",email="",role=c("aut")),person("Thorsten","Hauffe",email="",role=c("ctb")))
 Imports: gtools, FD, stats, MASS, vcd, ade4, grid, geometry, ape
 Suggests: testthat,
     knitr,
     rmarkdown
-Description: STEPwise Community Assembly Model collection, applying ABC-SMC in order to infer different community assembly processes. Also includes several plotting functions in order to visualize found estimates.
+Description: Collection of model estimation, and model plotting functions 
+             related to the STEPCAM family of community assembly models. 
+             STEPCAM is a STEPwise Community Assembly Model that infers 
+             the relative contribution of Dispersal Assembly, Habitat Filtering 
+             and Limiting Similarity from a dataset consisting of the 
+             combination of trait and abundance data. See also <http://onlinelibrary.wiley.com/wol1/doi/10.1890/14-0454.1/abstract> for more information.
 License: GPL-2
 URL: https://github.com/thijsjanzen/STEPCAM
+BugReports: https://github.com/thijsjanzen/STEPCAM
 VignetteBuilder: knitr

@@ -5,3 +5,11 @@ inst/doc
 R/.RData
 
 R/.Rhistory
+
+*.history
+
+R/.RData
+
+R/.Rhistory
+
+R/.Rapp.history
