@@ -163,7 +163,7 @@ plotSMC <- function(path){
       xmax <- 1
     }
     
-    for (i in seq_len(fulldata[1,]))  {
+    for (i in seq_along(fulldata[1,]))  {
       plot_element(fulldata[, i], xmin * 0.9, xmax * 1.1, i, maxTime, c)
     }
   }
