@@ -52,7 +52,8 @@ We now have all the basic ingredients to start a STEPCAM analysis. What STEPCAM 
 ```{r}
   output <- STEPCAM_ABC(data_abundances, data_species,
                         numParticles = 100, n_traits = 3, plot_number = 1,
-                        stopRate = 0.05, stop_at_iteration = 12, continue_from_file = FALSE)
+                        stopRate = 0.05, stop_at_iteration = 12, 
+                        continue_from_file = FALSE)
 ```
 
 The results above show that the simulation ran for 9 iterations, and at the 10th iteration the acceptance rate of newly proposed parameter values dropped below 1 in 20 (5%). Right next to the progressbars, the simulation provides us with some intermediate output: the mean estimates for DS, HF and LS, and the acceptance rate. Furthermore, we see that while the acceptance rate is 1, the relative contribution of our three parameters of interest is more or less equal to the prior. What is the prior then? The prior in this case is the non-informative starting point that STEPCAM takes as parameter combination in the first iteration. In our case we are removing two species in a stepwise fashion (remember that we set the presence of two species to 0?), and hence the initial expected frequency of the three processes is 2*(1/3,1/3,1/3), which is about (0.67,0.67,0.67). From iteration 7 onwards we see that the acceptance rate starts to drop, and that the relative contribution of the three processes starts to deviate from an equal distribution. By iteration 11 we have a very nice result of c(0.02,1.98,0), which is very much in line with our expectation of (0,2,0) (DS,HF,LS)! STEPCAM has thus correctly inferred the relative contribution of the three processes.
