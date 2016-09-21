@@ -85,7 +85,7 @@ test_that("calcSD: abuse", {
   data_abundances[5,1] <- 1
   expect_error(
     calcSD(scaled_species, data_abundances, n_plots, n_traits),
-    "One of your communities doesn't have at least three species in it in order to calculate summary statistics"
+    "One of your communities doesn't have at least three species in it"
   )
 })
 

@@ -2,9 +2,9 @@
 # material from Hauffe et al. 2016, which be accessed here: 
 # doi:10.5194/bg-13-2901-2016-supplement.
 # The original paper:
-# Hauffe, Torsten, Christian Albrecht, and Thomas Wilke. "Assembly processes of 
-# gastropod community change with horizontal and vertical zonation in ancient 
-# Lake Ohrid: a metacommunity speciation perspective." 
+# Hauffe, Torsten, Christian Albrecht, and Thomas Wilke. "Assembly processes 
+# of gastropod community change with horizontal and vertical zonation 
+# in ancient Lake Ohrid: a metacommunity speciation perspective." 
 # Biogeosciences 13.10 (2016): 2901-2911.
 # Which can be accessed here:
 # http://www.biogeosciences.net/13/2901/2016/bg-13-2901-2016.pdf
@@ -75,7 +75,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           row.excl.ab <- pos.NA[, 1]
           a <- a[, -row.excl.ab]
           if (messages) 
-            cat("Warning: Species with missing trait values have been excluded.", 
+            cat("Warning:",
+                "Species with missing trait values have been excluded.", 
                 "\n")
         }
       }
@@ -90,7 +91,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
           a <- a[, -row.excl.ab]
           x.rn <- x.rn[-pos.NA]
           if (messages) 
-            cat("Warning: Species with missing trait values have been excluded.", 
+            cat("Warning:",
+                "Species with missing trait values have been excluded.", 
                 "\n")
         }
         if (is.ordered(x[, 1])) {
@@ -182,7 +184,8 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
   }
   if (class(x)[1] == "dist" | class(x)[1] == "dissimilarity") {
     if (any(is.na(x))) 
-      stop("When 'x' is a distance matrix, it cannot have missing values (NA).", 
+      stop("When 'x' is a distance matrix,",
+           "it cannot have missing values (NA).", 
            "\n")
     x.dist <- x
   }
@@ -200,34 +203,42 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     if (corr == "lingoes") {
       x.dist2 <- lingoes(x.dist)
       if (messages) 
-        cat("Species x species distance matrix was not Euclidean. Lingoes correction was applied.", 
+        cat("Species x species distance matrix was not Euclidean.",
+            "Lingoes correction was applied.", 
             "\n")
     }
     if (corr == "cailliez") {
       x.dist2 <- cailliez(x.dist)
       if (messages) 
-        cat("Species x species distance matrix was not Euclidean. Cailliez correction was applied.", 
+        cat("Species x species distance matrix was not Euclidean.",
+            "Cailliez correction was applied.", 
             "\n")
     }
     if (corr == "sqrt") {
       x.dist2 <- sqrt(x.dist)
       if (!ade4::is.euclid(x.dist2)) 
-        stop("Species x species distance matrix was still is not Euclidean after 'sqrt' correction. Use another correction method.", 
+        stop("Species x species distance matrix was still not Euclidean 
+             after 'sqrt' correction. Use another correction method.", 
              "\n")
       if (ade4::is.euclid(x.dist2)) 
         if (messages) 
-          cat("Species x species distance matrix was not Euclidean. 'sqrt' correction was applied.", 
+          cat("Species x species distance matrix was not Euclidean.",
+              "'sqrt' correction was applied.", 
               "\n")
     }
     if (corr == "none") {
       x.dist2 <- quasieuclid(x.dist)
       if (messages) 
-        cat("Species x species distance was not Euclidean, but no correction was applied. Only the PCoA axes with positive eigenvalues were kept.", 
+        cat("Species x species distance was not Euclidean,",
+            "but no correction was applied. Only the PCoA axes",
+            "with positive eigenvalues were kept.", 
             "\n")
     }
   }
   x.pco <- ade4::dudi.pco(x.dist2, scannf = FALSE, full = TRUE)
-  return(x.pco) # Best is to return the whole object, because dbFD needs sometimes more than the axes alone?!
+  # Best is to return the whole object, because dbFD needs sometimes 
+  # more than the axes alone?!
+  return(x.pco) 
 }
 
 # Function to dermine the number of PCoA axes used and number of species. 
@@ -237,7 +248,8 @@ detMnbsp <- function(x.pco, a){
   a <- as.matrix(a)
   c <- nrow(a) # Number of communities
   traits <- x.pco$li 
-  # Number of species per community where traits are present - do I need it later? Yes!
+  # Number of species per community where traits are present
+  # do I need it later? Yes!
   nb.sp <- numeric(c)
   for (i in 1:c) {
     sp.pres <- which(a[i, ] > 0)
@@ -246,7 +258,8 @@ detMnbsp <- function(x.pco, a){
     nb.sp[i] <- nrow(unique(traits.sp.pres))
   }
   min.nb.sp <- min(nb.sp)
-  m.max <- min.nb.sp - 1 # Minimum number of species in one of the communities - 1
+  # Minimum number of species in one of the communities - 1
+  m.max <- min.nb.sp - 1 
   #Warning <- FALSE
   if (min.nb.sp < 3) {
     nb.sp2 <- nb.sp[nb.sp > 2]
@@ -265,9 +278,9 @@ detMnbsp <- function(x.pco, a){
 # material from Hauffe et al. 2016, which be accessed here: 
 # doi:10.5194/bg-13-2901-2016-supplement.
 # The original paper:
-# Hauffe, Torsten, Christian Albrecht, and Thomas Wilke. "Assembly processes of 
-# gastropod community change with horizontal and vertical zonation in ancient 
-# Lake Ohrid: a metacommunity speciation perspective." 
+# Hauffe, Torsten, Christian Albrecht, and Thomas Wilke. "Assembly processes 
+# of gastropod community change with horizontal and vertical zonation 
+# in ancient Lake Ohrid: a metacommunity speciation perspective." 
 # Biogeosciences 13.10 (2016): 2901-2911.
 # Which can be accessed here:
 # http://www.biogeosciences.net/13/2901/2016/bg-13-2901-2016.pdf
@@ -283,7 +296,8 @@ strippedDbFd <- function(x.pco, a, m, nb.sp){
   c <- nrow(a) # Number of communities
   traits <- x.pco$li 
   Warning <- FALSE
-  if (m < x.pco$nf){ # If there is a community with less species than ordination axes
+  # If there is a community with less species than ordination axes
+  if (m < x.pco$nf){ 
     traits.FRic <- x.pco$li[, 1:m] # Use only the first m axes
   }
   if (m >= x.pco$nf){
@@ -307,10 +321,12 @@ strippedDbFd <- function(x.pco, a, m, nb.sp){
     abund2 <- sapply( c(abundrel), function(x) x + abundrel)          
     abund2vect <- as.dist(abund2)
     
-    # New part: check range of axes values, because if range is very small, convhulln will fail
+    # New part: check range of axes values, because if range is very small, 
+    # convhulln will fail
     #apply(tr.FRic, 2, range)
     
-    if (ncol(tr.FRic) > 1 & nb.sp[i] >= 3) { # If there are more than 3 species present
+    # If there are more than 3 species present
+    if (ncol(tr.FRic) > 1 & nb.sp[i] >= 3) {
       if (Warning) 
         thresh <- 4
       if (!Warning) 
@@ -333,7 +349,8 @@ strippedDbFd <- function(x.pco, a, m, nb.sp){
       mstvect <- as.dist(linkmst)
       #abund2 <- matrix(0, nrow = S, ncol = S)
       #for (q in 1:S) for (r in 1:S) abund2[q, r] <- abundrel[q] + abundrel[r]
-      #  the *apply family is faster than the original code with more than three species
+      # the *apply family is faster than the original code 
+      # with more than three species
       # Move this outside of the loop 'cause its always the same:
       #abund2 <- sapply( c(abundrel), function(x) x + abundrel)          
       #abund2vect <- as.dist(abund2)

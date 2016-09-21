@@ -1,4 +1,5 @@
-# function with dispersal event. Removal chance inversely depends of frequency species.
+# function with dispersal event. 
+# Removal chance inversely depends of frequency species.
 fallout.dispersal <- function(new_community, new_richness) {
   new_community_rows <- sample( c(1:nrow(new_community)),
                                new_richness,

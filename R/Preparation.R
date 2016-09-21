@@ -1,4 +1,5 @@
-# this function calculates the sd values for the different traits, in order to normalize the traits
+# this function calculates the sd values for the different traits, 
+# in order to normalize the traits
 calcSD <- function(species, abundances, n_plots, n_traits)  {
 
   a <- rowSums(abundances)
@@ -9,7 +10,8 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
   a <- rowSums(abundances)
   if(length(which(a < 3)) > 0) {
     stop("calcSD: ",
-         "One of your communities doesn't have at least three species in it in order to calculate summary statistics")
+         "One of your communities doesn't have at least three species",
+         " in it in order to calculate summary statistics")
   }
   optimum <- matrix(nrow = n_plots, ncol = n_traits)
 
@@ -18,8 +20,10 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
     esppres <- which(abundances[n, ] > 0)
     # traits and abundances of species present in community
     tr <- species[esppres,]
-    # Community Trait Means (CTMs). These will be used as the 'optimal' trait value in a
-    # community for the filtering model. Species very dissimilar from this value will be filtered out
+    # Community Trait Means (CTMs). 
+    # These will be used as the 'optimal' trait value in a
+    # community for the filtering model. 
+    # Species very dissimilar from this value will be filtered out
     for (i in seq_len(n_traits)){
       optimum[n, i] <- mean(tr[, (i + 1)])
     }
@@ -170,7 +174,9 @@ generateValues <- function(params, species,
                                (species_fallout - dispersal_fallout),0)
 
   # species that fall out through limiting similarity
-  competition_fallout <- species_fallout - dispersal_fallout - filtering_fallout
+  competition_fallout <- species_fallout - 
+                         dispersal_fallout - 
+                         filtering_fallout
 
   params2 <- c(dispersal_fallout, filtering_fallout, competition_fallout)
 

@@ -11,19 +11,19 @@ STEPCAM_ABC <- function(data_abundances, data_species,
   n_plots <- nrow(data_abundances)
 
   # species present in the community
-  esppres <- which(data_abundances[plot_number, ] > 0) ;
+  esppres <- which(data_abundances[plot_number, ] > 0)
 
   # species richness
-  S <- length(esppres);
+  S <- length(esppres)
 
   # total number of species of species pool
-  taxa <- nrow(data_species);
+  taxa <- nrow(data_species)
 
   # species that are removed
   species_fallout <- taxa - S
 
   # frequencies (number of plots of occurrence) of each species
-  data_frequencies <- generateFrequencies(data_abundances);
+  data_frequencies <- generateFrequencies(data_abundances)
 
   # calculate summary statistics of observed focal plot
   # scale trait values to mean = 0, SD = 1
@@ -60,7 +60,7 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 
 
   # calculate the SD of FD/CTM values: this is used to asses STEPCAM model fit
-  sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits);
+  sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
 
   scaled_species <- as.data.frame(cbind( scaled_species[, c(1:(n_traits + 1))], 
                                          data_frequencies))
@@ -71,49 +71,50 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 
 
   output <- ABC_SMC(numParticles, species_fallout, taxa,esppres, n_traits,
-  sd_vals, summary_stats, plot_number, scaled_species, data_abundances,
-  data_frequencies, stopRate, Ord, continue_from_file = FALSE, stop_at_iteration)
+                    sd_vals, summary_stats, plot_number, scaled_species, 
+                    data_abundances, data_frequencies, stopRate, Ord, 
+                    continue_from_file = FALSE, stop_at_iteration)
 
-  return(output);
+  return(output)
 }
 
 
 plotSTEPCAM <- function(output){
-  total <- output$DA[1] + output$HF[1] + output$LS[1];
-  par(mfrow=c(1, 3));
+  total <- output$DA[1] + output$HF[1] + output$LS[1]
+  par(mfrow=c(1, 3))
   par(mar=c(3,3,3,3))
   hist(output$DA / total, col="grey", main = "Dispersal Assembly", 
-       xlim = c(0, 1), ylab = "", xlab = "");
+       xlim = c(0, 1), ylab = "", xlab = "")
   hist(output$HF / total, col="grey" , main = "Habitat Filtering", 
-       xlim = c(0, 1), ylab = "", xlab = "");
+       xlim = c(0, 1), ylab = "", xlab = "")
   hist(output$LS / total, col="grey" , main = "Limiting Similarity", 
-       xlim = c(0, 1), ylab = "", xlab = "");
+       xlim = c(0, 1), ylab = "", xlab = "")
 }
 
 plot_element <- function(d, xmin, xmax, index, max_time, parameter){
   topLabels <- c("Dispersal Assembly", "Habitat Filtering", 
                  "Limiting Similarity", "Richness", "Evenness",
-                 "Diversity", "Optimum", "Fit");
+                 "Diversity", "Optimum", "Fit")
   mean_data <- mean(d)
   stdev_data <- sd(d)
 
   x <- seq(xmin, xmax, length = 200)
   y <- dnorm(x, mean = mean_data, sd = stdev_data)
-  medY <- 0.8 * max(y);
+  medY <- 0.8 * max(y)
   title <- ""
   if(index %% max_time == 1) title <- topLabels[parameter]
 
   if(index %% max_time == 0 )  {
     hist(d, xlim = c(xmin, xmax),main = title, col = "grey", ylab = "",
-    xlab = "", yaxt = "n", cex.main = 1);
+    xlab = "", yaxt = "n", cex.main = 1)
   } else {
      hist(d, xlim = c(xmin, xmax), main = title, col = "grey", ylab = "",
-     xlab = "", yaxt = "n", xaxt = "n", cex.main = 1);
+     xlab = "", yaxt = "n", xaxt = "n", cex.main = 1)
   }
 }
 
 plotSMC <- function(path){
-  end <- ".txt";
+  end <- ".txt"
   val <- "particles_t="
   calctotal <- read.table(paste(path, val, 1, end, sep = "", collapse = NULL))
   total <- calctotal$V1[1] + calctotal$V2[1] + calctotal$V3[1]
@@ -122,10 +123,10 @@ plotSMC <- function(path){
 
   # determine how many iterations need to be plotted
   for(k in 50:0) {
-    file_name <- paste(path, val,  k,end, sep = "", collapse = NULL);
+    file_name <- paste(path, val,  k,end, sep = "", collapse = NULL)
     if(file.exists(file_name)){
       maxTime <- k
-      break;
+      break
     }
   }
   maxTime <- maxTime-1

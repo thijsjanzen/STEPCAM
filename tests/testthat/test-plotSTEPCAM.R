@@ -6,7 +6,8 @@ test_that("plotSTEPCAM: use", {
   n_traits <- 3
   n_plots <- 10
   num_species <- 10
-  x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
+  x <- generate.Artificial.Data(n_species = num_species, 
+                                n_traits = n_traits,
                                 n_communities = n_plots,
                                 occurence_distribution = 0.5,
                                 average_richness = 10,
@@ -27,7 +28,8 @@ test_that("plotSTEPCAM: use", {
 
   output <- STEPCAM_ABC(data_abundances, data_species,
                         numParticles = 100, n_traits, plot_number = 1,
-                        stopRate = 0.1, stop_at_iteration = 3, continue_from_file = TRUE)
+                        stopRate = 0.1, stop_at_iteration = 3, 
+                        continue_from_file = TRUE)
 
   plotSTEPCAM(output)
 })

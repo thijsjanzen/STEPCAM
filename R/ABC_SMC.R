@@ -1,4 +1,5 @@
-# function to generate a random combination of dispersal, filtering and competition parameter settings (uninformed prior assumed)
+# function to generate a random combination of dispersal, 
+# filtering and competition parameter settings (uninformed prior assumed)
 getRandomVals <- function(max_val)  {
   x <- stats::runif(3, min = 0, max = 1)
   x <- x / sum(x) #normalize to 1

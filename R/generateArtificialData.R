@@ -90,8 +90,7 @@ generate.Artificial.Data <- function(n_species, n_traits, n_communities,
 	for (i in 2:ncol(traits_pool_df)) {
     traits_pool_df[, i] <- as.numeric(traits_pool_df[, i])
 	}
-	output <- list( traits = traits_pool_df, abundances = plots);
+	output <- list( traits = traits_pool_df, abundances = plots)
 
 	return(output)
 }
-

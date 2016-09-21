@@ -39,7 +39,9 @@ test_that("ABC_SMC: use", {
   row.names(abundances) <- c(1:n_plots)
   data_frequencies <- generateFrequencies(data_abundances)
 
-  scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies))
+  scaled_species <- as.data.frame(
+          cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies))
+  
   traitnames <- names(data_species)[-1]
   names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
   row.names(scaled_species) <- c(1:taxa)
@@ -83,9 +85,9 @@ test_that("ABC_SMC: use", {
   stopRate <- 0.04
 
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
-                                sd_vals, summary_stats, community_number, scaled_species,
-                                data_abundances, data_frequencies, stopRate, Ord,
-                                continue_from_file = FALSE, stop_at_iteration = 8)
+                    sd_vals, summary_stats, community_number, scaled_species,
+                    data_abundances, data_frequencies, stopRate, Ord,
+                    continue_from_file = FALSE, stop_at_iteration = 8)
 
   v <- c(mean(output$DA),mean(output$HF),mean(output$LS))
 
@@ -97,11 +99,11 @@ test_that("ABC_SMC: use", {
       file.remove(file_name)
     }
   }
- ################################################################################################
- ################################################################################################
- ######################## Limiting Similarity test #############################################
- ################################################################################################
- ################################################################################################
+ ##############################################################################
+ ##############################################################################
+ ######################## Limiting Similarity test ############################
+ ##############################################################################
+ ##############################################################################
 
   set.seed(42)
   n_traits <- 3
@@ -177,12 +179,12 @@ test_that("ABC_SMC: use", {
   observed_traits <- observed_traits[present_species, ]
   observed_abundances <- observed_abundances[present_species]
   observed_presences <- observed_abundances
-  observed_presences[1:length(observed_presences)] <- 1
+  observed_presences[seq_along(observed_presences)] <- 1
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
   for(i in 1:n_traits){
-    for(j in 1:length(observed_abundances)){
+    for(j in seq_along(observed_abundances)){
       traitvalues[j] <- observed_traits[j, i]
     }
     # calculate CTM value
@@ -298,12 +300,12 @@ test_that("ABC_SMC: abuse", {
   observed_traits <- observed_traits[present_species, ]
   observed_abundances <- observed_abundances[present_species]
   observed_presences <- observed_abundances
-  observed_presences[1:length(observed_presences)] <- 1
+  observed_presences[seq_along(observed_presences)] <- 1
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
   for(i in 1:n_traits){
-    for(j in 1:length(observed_abundances)){
+    for(j in seq_along(observed_abundances)){
       traitvalues[j] <- observed_traits[j, i]
     }
     # calculate CTM value
@@ -329,7 +331,7 @@ test_that("ABC_SMC: abuse", {
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 5),
-  "ABC_SMC: one of the community summary statistics \n            shows no variation in your dataset"
+  "ABC_SMC: one of the community summary statistics" 
   )
 
  set.seed(42)
