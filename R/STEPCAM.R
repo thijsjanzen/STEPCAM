@@ -42,7 +42,7 @@ fallout.competition <- function(new_community,n_traits) {
 }
 
 ## the Kraft.generator function: function that runs (hybrid) STEPCAMs
-STEPCAM<- function(params, species, abundances, taxa, esppres,
+STEPCAM <- function(params, species, abundances, taxa, esppres,
                    community_number, n_traits, species_fallout) {
  output <- matrix(nrow = taxa)
  # matrix in which all output will be written

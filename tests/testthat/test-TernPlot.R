@@ -21,12 +21,12 @@ test_that("TernPlot: use", {
 
   O <- STEPCAM_ABC(data_abundances, data_species,
                    numParticles = 100, n_traits, plot_number = 1,
-                   stopRate = 0.1, stop_at_iteration = 10, 
+                   stopRate = 0.1, stop_at_iteration = 5, 
                    continue_from_file = FALSE)
 
   TernPlot(O)
   d <- cbind(O$DA, O$HF, O$LS)
-  ternaryplot2(d, scale=1, col="black", grid=T, cex = 0.5, 
+  STEPCAM::ternaryplot2(d, scale=1, col="black", grid=T, cex = 0.5, 
                labels = c("inside"),
                dimnames = c("DA", "HF", "LS"), main="", coordinates = TRUE)
 

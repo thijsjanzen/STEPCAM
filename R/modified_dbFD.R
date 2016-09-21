@@ -201,14 +201,14 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
     x.dist2 <- x.dist
   if (!ade4::is.euclid(x.dist)) {
     if (corr == "lingoes") {
-      x.dist2 <- lingoes(x.dist)
+      x.dist2 <- ade4::lingoes(x.dist)
       if (messages) 
         cat("Species x species distance matrix was not Euclidean.",
             "Lingoes correction was applied.", 
             "\n")
     }
     if (corr == "cailliez") {
-      x.dist2 <- cailliez(x.dist)
+      x.dist2 <- ade4::cailliez(x.dist)
       if (messages) 
         cat("Species x species distance matrix was not Euclidean.",
             "Cailliez correction was applied.", 
@@ -227,7 +227,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
               "\n")
     }
     if (corr == "none") {
-      x.dist2 <- quasieuclid(x.dist)
+      x.dist2 <- ade4::quasieuclid(x.dist)
       if (messages) 
         cat("Species x species distance was not Euclidean,",
             "but no correction was applied. Only the PCoA axes",
