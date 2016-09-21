@@ -27,88 +27,87 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
   x <- x / s
   top <- sqrt(3) / 2
   if(newpage)
-    grid.newpage()
+    grid::grid.newpage()
   xlim <- c(-0.03, 1.03)
   ylim <- c(-1, top)
-  pushViewport(viewport(width = unit(1, "snpc")))
+  grid::pushViewport(grid::viewport(width = grid::unit(1, "snpc")))
   if(!is.null(main))
-    grid.text(main, y = 0.9, gp = gpar(fontsize = 18, fontstyle = 1))
-  pushViewport(viewport(width = 0.8, height = 0.8, xscale = xlim,
+    grid::grid.text(main, y = 0.9, gp = grid::gpar(fontsize = 18, fontstyle = 1))
+  grid::pushViewport(grid::viewport(width = 0.8, height = 0.8, xscale = xlim,
   yscale = ylim, name = "plot"))
   eps <- 0.01
-  grid.polygon(c(0, 0.5, 1), c(0, top, 0), gp = gpar(fill = bg,
+  grid::grid.polygon(c(0, 0.5, 1), c(0, top, 0), gp = grid::gpar(fill = bg,
   col = border), ...)
   if(dimnames_position == "corner"){
-    grid.text(x = c(0, 1, 0.5), y = c(-0.02, -0.02, top +
-    0.02), label = dimnames, gp = gpar(fontsize = 18))
+    grid::grid.text(x = c(0, 1, 0.5), y = c(-0.02, -0.02, top +
+    0.02), label = dimnames, gp = grid::gpar(fontsize = 18))
   }
   if (dimnames_position == "edge") {
     shift <- eps * if(labels == "outside")
-    8
-    else 0
-    grid.text(x = 0.25 - 2 * eps - shift, y = 0.5 * top +
-    shift, label = dimnames[2], rot = 60, gp = gpar(col = dimnames_color))
-    grid.text(x = 0.75 + 3 * eps + shift, y = 0.5 * top +
-    shift, label = dimnames[1], rot = -60, gp = gpar(col = dimnames_color))
-    grid.text(x = 0.5, y = -0.02 - shift, label = dimnames[3],
-    gp = gpar(col = dimnames_color))
+
+      grid::grid.text(x = 0.25 - 2 * eps - shift, y = 0.5 * top +
+    shift, label = dimnames[2], rot = 60, gp = grid::gpar(col = dimnames_color))
+    grid::grid.text(x = 0.75 + 3 * eps + shift, y = 0.5 * top +
+    shift, label = dimnames[1], rot = -60, gp = grid::gpar(col = dimnames_color))
+    grid::grid.text(x = 0.5, y = -0.02 - shift, label = dimnames[3],
+    gp = grid::gpar(col = dimnames_color))
   }
   if(is.character(grid))
   for(i in 1:9 * 0.1){
-    grid.lines(c(1 - i, (1 - i) / 2), c(0, 1 - i) * top,
-    gp = gpar(lty = grid, col = grid_color))
-    grid.lines(c(1 - i, 1 - i + i / 2), c(0, i) * top,
-    gp = gpar(lty = grid, col = grid_color))
-    grid.lines(c(i / 2, 1 - i + i / 2), c(i, i) * top, gp = gpar(lty = grid,
-    col = grid_color))
+    grid::grid.lines(c(1 - i, (1 - i) / 2), c(0, 1 - i) * top,
+    gp = grid::gpar(lty = grid, col = grid_color))
+    grid::grid.lines(c(1 - i, 1 - i + i / 2), c(0, i) * top,
+    gp = grid::gpar(lty = grid, col = grid_color))
+    grid::grid.lines(c(i / 2, 1 - i + i / 2), c(i, i) * top, 
+                     gp = grid::gpar(lty = grid, col = grid_color))
     if(labels == "inside"){
-      grid.text(x = (1 - i) * 3 / 4 - eps, y = (1 - i) / 2 *
-      top, label = i * scale, gp = gpar(col = labels_color), rot = 120)
-      grid.text(x = 1 - i + i / 4 + eps, y = i / 2 * top -
-      eps, label = (1 - i) * scale, gp = gpar(col = labels_color), rot = -120)
-      grid.text(x = 0.5, y = i * top + eps, label = i *
-      scale, gp = gpar(col = labels_color))
+      grid::grid.text(x = (1 - i) * 3 / 4 - eps, y = (1 - i) / 2 *
+      top, label = i * scale, gp = grid::gpar(col = labels_color), rot = 120)
+      grid::grid.text(x = 1 - i + i / 4 + eps, y = i / 2 * top -
+      eps, label = (1 - i) * scale, gp = grid::gpar(col = labels_color), rot = -120)
+      grid::grid.text(x = 0.5, y = i * top + eps, label = i *
+      scale, gp = grid::gpar(col = labels_color))
     }
     if(labels == "outside") {
-      grid.text(x = (1 - i) / 2 - 6 * eps + 0.03, 
+      grid::grid.text(x = (1 - i) / 2 - 6 * eps + 0.03, 
                 y = (1 - i) * top, 
                 label = i * scale * 100, 
-                gp = gpar(col = labels_color,fontsize=15), 
+                gp = grid::gpar(col = labels_color,fontsize=15), 
                 rot = 300)
       
-      grid.text(x = 1 - (1 - i) / 2 + 3 * eps - 0.01, 
+      grid::grid.text(x = 1 - (1 - i) / 2 + 3 * eps - 0.01, 
                 y = (1 - i) * top + 5 * eps - 0.03, 
                 label = (1 - i) * scale * 100, 
                 rot = 0,
-                gp = gpar(col = labels_color,fontsize=15))
-      grid.text(x = i + eps - 0.03, 
+                gp = grid::gpar(col = labels_color,fontsize=15))
+      grid::grid.text(x = i + eps - 0.03, 
                 y = -0.02, 
                 label = i * scale * 100, 
                 vjust = 1, 
                 rot = 60, 
-                gp = gpar(col = labels_color,fontsize=15))
+                gp = grid::gpar(col = labels_color, fontsize=15))
     }
   }
   xp <- x[, 2] + x[, 3] / 2
   yp <- x[, 3] * top
-  size <- unit(if(prop_size)
+  size <- grid::unit(if(prop_size)
   prop_size * (s / max(s))
   else cex, "lines")
-  grid.points(xp, yp, pch = pch, gp = gpar(col = col), default.units = "snpc",
+  grid::grid.points(xp, yp, pch = pch, gp = grid::gpar(col = col), default.units = "snpc",
   size = size, ...)
   if(!is.null(id))
-  grid.text( x = xp + c(-0.005, 0.01, 0.01, 0, -0.01, 0, 
+    grid::grid.text( x = xp + c(-0.005, 0.01, 0.01, 0, -0.01, 0, 
                         0, 0.01, 0, 0.01, -0.01,
                         0.02, -0.005, 0, 0.01, 0, 0, 0.01, 0.01, -0.01), 
-             y = unit(yp + c(0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 
+             y = grid::unit(yp + c(0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 
                              0.02, 0.03, 0.03, 0.03, 0.03, 0.03, 
                              0.03, 0.03, 0.03, 0.03, 0.03, 0.03), 
                       "snpc") - 0.5 * size,
              label = as.character(id), 
              just = id_just, 
-             gp = gpar(col = id_color, cex = 0.8))
+             gp = grid::gpar(col = id_color, cex = 0.8))
 
-  popViewport(2)
+  grid::popViewport(2)
 }
 
 # this plots the parameter values of best fitting models: it gives an
