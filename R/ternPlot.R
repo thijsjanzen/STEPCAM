@@ -1,12 +1,11 @@
 # this function is adapted from the "vcd" package to have slightly different labels
-ternaryplot2 = function(x, scale = 1, dimnames = NULL, dimnames_position = c("corner",
+ternaryplot2 <- function(x, scale = 1, dimnames = NULL, dimnames_position = c("corner",
 "edge", "none"), dimnames_color = "black", id = NULL, id_color = "black",
 id_just = c("center", "center"), coordinates = FALSE, grid = TRUE,
 grid_color = "darkgrey", labels = c("inside", "outside", "none"),
 labels_color = "darkgray", border = "black", bg = "white",
 pch = 19, cex = 1, prop_size = FALSE, col = "red", main = "ternary plot",
-newpage = TRUE, ...)
-{
+newpage = TRUE, ...)  {
   labels <- match.arg(labels)
   if(grid == TRUE)
     grid <- "dotted"
@@ -38,7 +37,7 @@ newpage = TRUE, ...)
     grid.text(x = c(0, 1, 0.5), y = c(-0.02, -0.02, top +
     0.02), label = dimnames, gp = gpar(fontsize = 18))
   }
-  if(dimnames_position == "edge"){
+  if (dimnames_position == "edge") {
     shift <- eps * if(labels == "outside")
     8
     else 0
@@ -83,7 +82,7 @@ newpage = TRUE, ...)
   grid.points(xp, yp, pch = pch, gp = gpar(col = col), default.units = "snpc",
   size = size, ...)
   if(!is.null(id))
-  grid.text(x = xp+c(-0.005, 0.01, 0.01, 0, -0.01, 0, 0, 0.01, 0, 0.01, -0.01,
+  grid.text( x = xp + c(-0.005, 0.01, 0.01, 0, -0.01, 0, 0, 0.01, 0, 0.01, -0.01,
   0.02, -0.005, 0, 0.01, 0, 0, 0.01, 0.01, -0.01), y = unit(yp + c(0.03, 0.03,
   0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.02, 0.03, 0.03, 0.03, 0.03, 0.03,
   0.03, 0.03, 0.03, 0.03, 0.03, 0.03), "snpc") - 0.5 * size,
@@ -95,7 +94,7 @@ newpage = TRUE, ...)
 
 # this plots the parameter values of best fitting models: it gives an
 # indication of a most likely community assembly processes in your community
-TernPlot <- function(output){
+TernPlot <- function(output) {
 	d <- cbind(output$DA, output$HF, output$LS);
 	ternaryplot2(d, scale=1, col="black", grid = TRUE, cex = 0.5, labels = c("outside"),
   dimnames = c("DA", "HF", "LS"), main="", coordinates = TRUE)

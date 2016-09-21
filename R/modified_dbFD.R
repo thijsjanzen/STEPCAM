@@ -121,7 +121,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
             "\n")
     }
     else x <- x
-    x.s <- scale(x, center = T, scale = stand.x)
+    x.s <- scale(x, center = TRUE, scale = stand.x)
     x.dist <- dist(x.s)
     x <- data.frame(x)
     dimnames(x) <- list(x.rn, "Trait")
@@ -241,7 +241,7 @@ detMnbsp <- function(x.pco, a){
   nb.sp <- numeric(c)
   for (i in 1:c) {
     sp.pres <- which(a[i, ] > 0)
-    traits.sp.pres <- traits[sp.pres, , drop = F]
+    traits.sp.pres <- traits[sp.pres, , drop = FALSE]
     traits.sp.pres[traits.sp.pres != 0 & abs(traits.sp.pres) < tol] <- 0
     nb.sp[i] <- nrow(unique(traits.sp.pres))
   }
@@ -359,7 +359,7 @@ strippedDbFd <- function(x.pco, a, m, nb.sp){
     if (ncol(tr.FRic) > 1 & nb.sp[i] >= 3) {
       # Option QJ is helpfull in case of planar hulls, Pp removes warning
       vert0 <- geometry::convhulln(tr.FRic, c("Fx TO 'vert.txt'", "QJ", "Pp"))
-      vert1 <- scan("vert.txt", quiet = T)
+      vert1 <- scan("vert.txt", quiet = TRUE)
       vert2 <- vert1 + 1
       vertices <- vert2[-1]
       trvertices <- tr.FRic[vertices, ]

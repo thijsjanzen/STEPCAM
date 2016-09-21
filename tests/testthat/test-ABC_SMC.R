@@ -30,7 +30,7 @@ test_that("ABC_SMC: use", {
   sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
 
 
-  taxa <- nrow(data_species);
+  taxa <- nrow(data_species)
 
   Ord <- ordinationAxes(x = scaled_species, stand.x = FALSE)
 
@@ -39,7 +39,7 @@ test_that("ABC_SMC: use", {
   row.names(abundances) <- c(1:n_plots)
   data_frequencies <- generateFrequencies(data_abundances)
 
-  scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies)) ;
+  scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies))
   traitnames <- names(data_species)[-1]
   names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
   row.names(scaled_species) <- c(1:taxa)
@@ -50,12 +50,14 @@ test_that("ABC_SMC: use", {
   res <- detMnbsp(Ord, abundances)
   FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
   
-  observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
+  observed_traits <- scaled_species[, ]
+  row.names(observed_traits) <- scaled_species[, 1]
   observed_abundances <- data_abundances[plot_number, ]
   present_species <- which(observed_abundances > 0)
   observed_traits <- observed_traits[present_species, ]
   observed_abundances <- observed_abundances[present_species]
-  observed_presences <- observed_abundances ; observed_presences[1:length(observed_presences)] <- 1
+  observed_presences <- observed_abundances
+  observed_presences[seq_len(observed_presences)] <- 1
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
@@ -72,8 +74,8 @@ test_that("ABC_SMC: use", {
                          FD_output$FDiv[plot_number],
                          t(trait_means)) # bind FD values and CTM together
 
-  esppres <- which(data_abundances[plot_number, ] > 0) ;
-  S <- length(esppres);
+  esppres <- which(data_abundances[plot_number, ] > 0)
+  S <- length(esppres)
   species_fallout <- taxa - S
 
   numParticles <- 100
@@ -146,7 +148,7 @@ test_that("ABC_SMC: use", {
 
   sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
 
-  taxa <- nrow(data_species);
+  taxa <- nrow(data_species)
 
   Ord <- ordinationAxes(x = scaled_species, stand.x = FALSE)
 
@@ -155,7 +157,8 @@ test_that("ABC_SMC: use", {
   row.names(abundances) <- c(1:n_plots)
   data_frequencies <- generateFrequencies(data_abundances)
 
-  scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies)) ;
+  scaled_species <- as.data.frame(cbind(
+                    scaled_species[, c(1:(n_traits + 1))], data_frequencies))
   traitnames <- names(data_species)[-1]
   names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
   row.names(scaled_species) <- c(1:taxa)
@@ -167,12 +170,14 @@ test_that("ABC_SMC: use", {
   FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
 
 
-  observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
+  observed_traits <- scaled_species[, ]
+  row.names(observed_traits) <- scaled_species[, 1]
   observed_abundances <- data_abundances[plot_number, ]
   present_species <- which(observed_abundances > 0)
   observed_traits <- observed_traits[present_species, ]
   observed_abundances <- observed_abundances[present_species]
-  observed_presences <- observed_abundances ; observed_presences[1:length(observed_presences)] <- 1
+  observed_presences <- observed_abundances
+  observed_presences[1:length(observed_presences)] <- 1
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
@@ -184,10 +189,13 @@ test_that("ABC_SMC: use", {
     trait_means[i] <- mean(traitvalues)
   }
   # bind FD values and CTM together
-  summary_stats <- cbind(FD_output$FRic[plot_number],FD_output$FEve[plot_number],FD_output$FDiv[plot_number], t(trait_means)) # bind FD values and CTM together
+  summary_stats <- cbind(FD_output$FRic[plot_number],
+                         FD_output$FEve[plot_number],
+                         FD_output$FDiv[plot_number], 
+                         t(trait_means))
 
-  esppres <- which(data_abundances[plot_number, ] > 0) ;
-  S <- length(esppres);
+  esppres <- which(data_abundances[plot_number, ] > 0) 
+  S <- length(esppres)
   species_fallout <- taxa - S
 
   numParticles <- 100
@@ -207,6 +215,7 @@ test_that("ABC_SMC: use", {
                     continue_from_file = FALSE, stop_at_iteration = 2)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
+  
   expect_equal(v[[3]], 0.4, tolerance = 0.1)
 
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
@@ -259,7 +268,7 @@ test_that("ABC_SMC: abuse", {
   sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
 
 
-  taxa <- nrow(data_species);
+  taxa <- nrow(data_species)
 
   Ord <- ordinationAxes(x = scaled_species, stand.x = FALSE)
 
@@ -268,7 +277,9 @@ test_that("ABC_SMC: abuse", {
   row.names(abundances) <- c(1:n_plots)
   data_frequencies <- generateFrequencies(data_abundances)
 
-  scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies)) ;
+  scaled_species <- as.data.frame(cbind(
+    scaled_species[, c(1:(n_traits + 1))], data_frequencies))
+  
   traitnames <- names(data_species)[-1]
   names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
   row.names(scaled_species) <- c(1:taxa)
@@ -280,12 +291,14 @@ test_that("ABC_SMC: abuse", {
   FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
   
   
-  observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
+  observed_traits <- scaled_species[, ]
+  row.names(observed_traits) <- scaled_species[, 1]
   observed_abundances <- data_abundances[plot_number, ]
   present_species <- which(observed_abundances > 0)
   observed_traits <- observed_traits[present_species, ]
   observed_abundances <- observed_abundances[present_species]
-  observed_presences <- observed_abundances ; observed_presences[1:length(observed_presences)] <- 1
+  observed_presences <- observed_abundances
+  observed_presences[1:length(observed_presences)] <- 1
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
@@ -297,10 +310,13 @@ test_that("ABC_SMC: abuse", {
     trait_means[i] <- mean(traitvalues)
   }
   # bind FD values and CTM together
-  summary_stats <- cbind(FD_output$FRic[plot_number],FD_output$FEve[plot_number],FD_output$FDiv[plot_number], t(trait_means)) # bind FD values and CTM together
+  summary_stats <- cbind(FD_output$FRic[plot_number],
+                         FD_output$FEve[plot_number],
+                         FD_output$FDiv[plot_number], 
+                         t(trait_means))
 
-  esppres <- which(data_abundances[plot_number, ] > 0) ;
-  S <- length(esppres);
+  esppres <- which(data_abundances[plot_number, ] > 0)
+  S <- length(esppres)
   species_fallout <- taxa - S
 
   numParticles <- 100
@@ -344,7 +360,7 @@ test_that("ABC_SMC: abuse", {
  sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
 
 
- taxa <- nrow(data_species);
+ taxa <- nrow(data_species)
 
  Ord <- ordinationAxes(x = scaled_species, stand.x = FALSE)
 
@@ -353,7 +369,8 @@ test_that("ABC_SMC: abuse", {
  row.names(abundances) <- c(1:n_plots)
  data_frequencies <- generateFrequencies(data_abundances)
 
- scaled_species <- as.data.frame(cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies)) ;
+ scaled_species <- as.data.frame(cbind(
+   scaled_species[, c(1:(n_traits + 1))], data_frequencies))
  traitnames <- names(data_species)[-1]
  names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
  row.names(scaled_species) <- c(1:taxa)
@@ -364,12 +381,14 @@ test_that("ABC_SMC: abuse", {
  res <- detMnbsp(Ord, abundances)
  FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
  
- observed_traits <- scaled_species[, ] ; row.names(observed_traits) <- scaled_species[, 1]
+ observed_traits <- scaled_species[, ]
+ row.names(observed_traits) <- scaled_species[, 1]
  observed_abundances <- data_abundances[plot_number, ]
  present_species <- which(observed_abundances > 0)
  observed_traits <- observed_traits[present_species, ]
  observed_abundances <- observed_abundances[present_species]
- observed_presences <- observed_abundances ; observed_presences[1:length(observed_presences)] <- 1
+ observed_presences <- observed_abundances
+ observed_presences[1:length(observed_presences)] <- 1
  observed_traits <- observed_traits[, -1]
  trait_means <- c()
  traitvalues <- c()
@@ -386,8 +405,8 @@ test_that("ABC_SMC: abuse", {
                         FD_output$FDiv[plot_number],
                         t(trait_means)) # bind FD values and CTM together
 
- esppres <- which(data_abundances[plot_number, ] > 0) ;
- S <- length(esppres);
+ esppres <- which(data_abundances[plot_number, ] > 0) 
+ S <- length(esppres)
  species_fallout <- taxa - S
 
  numParticles <- 100

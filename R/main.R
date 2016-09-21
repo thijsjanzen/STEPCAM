@@ -150,7 +150,7 @@ plotSMC <- function(path){
       data_name <- paste(path, val, i, end, sep = "", collapse = NULL)
       if(file.exists(data_name))
       {
-        data <- read.table(data_name, header = F)
+        data <- read.table(data_name, header = FALSE)
         fulldata <- cbind(fulldata, data[, c])
       }
     }
