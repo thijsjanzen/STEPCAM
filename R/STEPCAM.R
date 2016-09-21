@@ -27,7 +27,7 @@ fallout.filtering <- function(new_community, new_richness, optimum, n_traits) {
 
 # function with limiting similarity event
 fallout.competition <- function(new_community,n_traits) {
-   new_community <- new_community[, -ncol( new_community)];
+   new_community <- new_community[, -ncol( new_community)]
    trait_distances2 <- as.matrix( dist( new_community[, c(2:( n_traits+1))]))
    trait_distances <- dist( new_community[, (2:(n_traits+1))])
    m3 <- which( trait_distances2 == min( trait_distances), arr.ind=TRUE )
@@ -57,7 +57,7 @@ STEPCAM<- function(params, species, abundances, taxa, esppres,
  competition_fallout <- params[3] 
 
  #just in case something went wrong
- if (is.na(dispersal_fallout)) dispersal_fallout <- 0; 
+ if (is.na(dispersal_fallout)) dispersal_fallout <- 0
  if (is.na(competition_fallout)) competition_fallout <- 0
  if (is.na(filtering_fallout)) filtering_fallout <- 0
 
@@ -85,7 +85,7 @@ STEPCAM<- function(params, species, abundances, taxa, esppres,
 
  for(i in 1:species_fallout) {
    new_richness <- nrow(species) - i
-   type <- fallout[i];
+   type <- fallout[i]
    if(type == 1) {
       new_community <- fallout.dispersal(new_community,new_richness)
    }

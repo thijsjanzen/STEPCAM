@@ -44,7 +44,7 @@ ordinationAxes <- function(x, corr = c("sqrt", "cailliez", "lingoes", "none"),
   if (is.matrix(x) | is.data.frame(x)) {
     x <- data.frame(x)
     if (t.x >= 2) {
-      x.class <- sapply(x, data.class)
+      x.class <- vapply(x, data.class)
       if (any(x.class == "character")) 
         x[, x.class == "character"] <- as.factor(x[, x.class == "character"])
       else x <- x
@@ -318,7 +318,7 @@ strippedDbFd <- function(x.pco, a, m, nb.sp){
     # Will I need relative abundances of the species?
     ab <- as.matrix(a[i, sppres])
     abundrel <- ab/sum(ab)
-    abund2 <- sapply( c(abundrel), function(x) x + abundrel)          
+    abund2 <- vapply( c(abundrel), function(x) x + abundrel)          
     abund2vect <- as.dist(abund2)
     
     # New part: check range of axes values, because if range is very small, 
@@ -383,7 +383,8 @@ strippedDbFd <- function(x.pco, a, m, nb.sp){
       baryv <- colMeans(trvertices) #apply(trvertices, 2, mean)
       #Faster:
       #distbaryv <- rep(0, S)
-      #for (j in 1:S) distbaryv[j] <- ( sum( (tr.FRic[j, ] - baryv)^2) )^0.5      
+      #for (j in 1:S) 
+      # distbaryv[j] <- ( sum( (tr.FRic[j, ] - baryv)^2) )^0.5      
       distbaryv <- sqrt( rowSums( (tr.FRic - baryv)^2) )
       
       meandB <- mean(distbaryv)

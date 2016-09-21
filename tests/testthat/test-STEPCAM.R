@@ -11,18 +11,18 @@ test_that("STEPCAM: use",{
                                 sd_richness = 1,
                                 mechanism_random = FALSE)
 
-  data_species <- x$traits;
+  data_species <- x$traits
   data_species$trait1 <- 1:10
   data_species <- cbind(data_species,generateFrequencies(x$abundances))
   traitnames <- c("1")
   names(data_species) <- c("sp",traitnames[1:n_traits], "freq")
-  data_abundances <- x$abundances;
+  data_abundances <- x$abundances
 
-  taxa <- nrow(data_species);
-  community_number <- 1;
-  n_traits <- 1;
+  taxa <- nrow(data_species)
+  community_number <- 1
+  n_traits <- 1
   esppres <- which(data_abundances[community_number, ] > 0)
-  S <- length(esppres);
+  S <- length(esppres)
   species_fallout <- 2
 
   a <- STEPCAM( c(0, species_fallout, 0), data_species, data_abudances,
@@ -65,5 +65,4 @@ test_that("STEPCAM: use",{
     c(0,1,1,1,1,1,1,1,1,1),
     tol = 0.1
   )
-
 })

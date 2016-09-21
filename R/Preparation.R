@@ -86,7 +86,7 @@ generateFrequencies <- function(abundances) {
   presences <- matrix(nrow = samples, ncol = taxa)
 
   # vector with frequency of each species
-  frequencies <- c();
+  frequencies <- c()
 
   for(i in seq_len(samples)){
     for(j in seq_len(taxa)){
@@ -112,7 +112,7 @@ scaleSpeciesvalues <- function(species, n_traits) {
   }
 
   # scale the trait values
-  standard_deviations <- c();
+  standard_deviations <- c()
   means <- c()
   for (i in 2:(n_traits + 1)) {
     standard_deviations[i] <- sd(species[, i])
