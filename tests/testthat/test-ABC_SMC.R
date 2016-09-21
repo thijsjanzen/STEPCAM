@@ -276,10 +276,6 @@ test_that("ABC_SMC: abuse", {
   params <- c(0,0,1)
   plot_number <- 1
 
-
-  #summary_stats <- generateValues(params, scaled_species, data_abundances,
-  #                                 plot_number, n_traits)
-
   res <- detMnbsp(Ord, abundances)
   FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
   
@@ -317,8 +313,8 @@ test_that("ABC_SMC: abuse", {
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 5),
-  "ABC_SMC: one of the community summary 
-  statistics shows no variation in your dataset")
+  "ABC_SMC: one of the community summary statistics \n            shows no variation in your dataset"
+  )
 
  set.seed(42)
  n_traits <- 3
@@ -403,6 +399,6 @@ test_that("ABC_SMC: abuse", {
                      sd_vals, summary_stats, community_number, scaled_species,
                      data_abundances, data_frequencies, stopRate, Ord,
                      continue_from_file = FALSE, stop_at_iteration = 1),
-   "Can't stop at iteration 1 - please set stop_at_iteration to 2 if you only want to generate from the prior"
+   "ABC_SMC: Can't stop at iteration 1"
  )
 })
