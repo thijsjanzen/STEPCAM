@@ -43,6 +43,6 @@ Version 1.1
 
 Hauffe, Torsten, Christian Albrecht, and Thomas Wilke. Assembly processes of gastropod community change with horizontal and vertical zonation in ancient Lake Ohrid: a metacommunity speciation perspective. Biogeosciences 13.10 (2016): 2901-2911.
 
-Thijs Janzen, Adriana Alzate, Moritz Muschick, Martine Maan, Fons van der Plas & Rampal S. Etienne, (2016). Stochastic processes dominate community assembly in cichlid communities in Lake Tanganyika. bioRxiv, 039503.
+Janzen T, Alzate A, Muschick M, Maan ME, van der Plas F, and Etienne RS. Community assembly in Lake Tanganyika cichlid fish: quantifying the contributions of both niche-based and neutral processes. Ecology and Evolution 2017; 00:1–11. doi:10.1002/ece3.2689..
 
 Fons van der Plas, Thijs Janzen, Alejandro Ordonez, Wimke Fokkema, Josephine Reinders, Rampal S. Etienne, and Han Olff (2015). A new modeling approach estimates the relative importance of different community assembly processes. Ecology 96:1502-1515.
