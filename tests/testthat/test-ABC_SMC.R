@@ -426,16 +426,16 @@ test_that("ABC_SMC: abuse", {
 })
 
 test_speed_function <- function() {
-  set.seed(42)
+  set.seed(45)
   n_traits <- 3
-  n_plots <- 20
-  num_species <- 30
+  n_plots <- 10
+  num_species <- 10
   x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
                                 n_communities = n_plots,
-                                occurence_distribution = 0.2,
-                                average_richness = 10,
-                                sd_richness = 1,
-                                mechanism_random = FALSE)
+                                occurence_distribution = 0.9,
+                                average_richness = 0.7,
+                                sd_richness = 0.1,
+                                mechanism_random = TRUE)
   data_species <- x$traits
   
   data_abundances <- x$abundances
@@ -494,12 +494,12 @@ test_speed_function <- function() {
   
   numParticles <- 1000
   plot_number <- 1
-  stopRate <- 0.001
+  stopRate <- 0.0001
   
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = FALSE, stop_at_iteration = 8)
+                    continue_from_file = FALSE, stop_at_iteration = 9)
   
   v <- c(mean(output$DA),mean(output$HF),mean(output$LS))
 }
@@ -507,7 +507,7 @@ test_speed_function <- function() {
 
 test_that("ABC_SMC: speed", {
   #first test with CRAN library:
-  skip_on_cran()
+  #skip_on_cran()
   library(devtools)
   
   detach(package:STEPCAM, unload=TRUE)

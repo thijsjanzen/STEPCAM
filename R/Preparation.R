@@ -7,7 +7,7 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
     stop("calcSD: ",
          "One of your communities doesn't have species in it")
   }
-  a <- rowSums(abundances)
+  
   if(length(which(a < 3)) > 0) {
     stop("calcSD: ",
          "One of your communities doesn't have at least three species",
@@ -42,10 +42,8 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
   FD_output <- strippedDbFd(Ord, abundances2, res[[1]], res[[2]])
 
   # calculate average CTM values across plots
-  average_optimums <- vector("numeric", n_traits)
-  for (i in seq_len(n_traits)){
-    average_optimums[i] <- mean(optimum[, i])
-  }
+  average_optimums <- colMeans(optimum)
+  
   optimums_plus_average <- rbind(optimum, average_optimums)
 
   # calculate trait distances from average optima
