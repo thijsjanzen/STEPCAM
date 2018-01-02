@@ -120,7 +120,7 @@ scaleSpeciesvalues <- function(species, n_traits) {
     means[i] <- mean(species[, i])
   }
 
-  if (sum(standard_deviations == 0)) {
+  if (sum(standard_deviations[2:length(standard_deviations)] == 0)) {
     stop("scaleSpeciesvalues: ",
          "one of your traits has no variation ", "\n",
          "  most likely trait(s): ", -1 + which(standard_deviations==0))
