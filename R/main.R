@@ -45,7 +45,7 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 
   trait_means <- vector("numeric", n_traits)
   for(i in seq_len(n_traits)) {
-    traitvalues <- vector("numeric", observed_abundances)
+    traitvalues <- vector("numeric", length(observed_abundances))
     for(j in seq_along(observed_abundances)){
       traitvalues[j] <- observed_traits[j, i]
     }
