@@ -14,7 +14,7 @@ generate.Artificial.Data <- function(n_species, n_traits, n_communities,
 	                       ncol = n_traits, nrow = pool_richness)
 
   column1 <- c()
-	for(i in 1:pool_richness) {
+	for(i in seq_len(pool_richness)) {
 	  column1[i] <- paste("species", i, sep = "")
 	}
 	row1 <- rep(NA, (n_traits + 1))
@@ -36,15 +36,15 @@ generate.Artificial.Data <- function(n_species, n_traits, n_communities,
   (average_richness * pool_richness)), 0)
 	richness_values[which(richness_values > pool_richness)] <- pool_richness
 	richness_values[which(richness_values < 0)] <- 0
-	for(i in 1:n_communities) {
+	for(i in seq_len(n_communities)) {
 	  if(mechanism_random == TRUE){
 	    present_species <- sample(c(1:pool_richness), richness_values[i],
       prob = occurence, replace = FALSE)
 	  } else {
 	    opt_traits <- rnorm(n_traits, mean = 0, sd = 1)
 	    opt_traits_matrix <- c()
-	    for (j in 1:n_traits) {
-	      for (k in 1:pool_richness) {
+	    for (j in seq_len(n_traits)) {
+	      for (k in seq_len(pool_richness)) {
 		      l <- (j - 1) * pool_richness + k
 		      opt_traits_matrix[l] <- opt_traits[j]
 	      }
@@ -52,7 +52,7 @@ generate.Artificial.Data <- function(n_species, n_traits, n_communities,
 	    opt_traits_matrix <- matrix(opt_traits_matrix, ncol = n_traits)
 	    traits_distances <- abs(traits_pool - opt_traits_matrix)
 	    trait_distances_onedimen <- c()
-	    for(m in 1:pool_richness){
+	    for(m in seq_len(pool_richness)){
 	      trait_distances_onedimen[m] <- sqrt(sum(traits_distances[m, ] * 
 	                                              traits_distances[m, ]))
 	    }

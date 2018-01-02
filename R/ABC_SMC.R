@@ -187,8 +187,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       # FDiv = functional diversity (Villeger et al, 2008, Ecology)
       FDiv <- FD_output$FDiv 
 
-      trait_means <- c()
-      for (i in 1:n_traits) {
+      trait_means <- vector("numeric", n_traits)
+      for (i in seq_len(n_traits)) {
         # trait means of simulated community
         trait_means[i] <- mean(traits[present_species, i])
       }

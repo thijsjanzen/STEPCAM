@@ -42,7 +42,7 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
   FD_output <- strippedDbFd(Ord, abundances2, res[[1]], res[[2]])
 
   # calculate average CTM values across plots
-  average_optimums <- c()
+  average_optimums <- vector("numeric", n_traits)
   for (i in seq_len(n_traits)){
     average_optimums[i] <- mean(optimum[, i])
   }
@@ -85,9 +85,6 @@ generateFrequencies <- function(abundances) {
   # with only 1's (present) and 0's (absent)
   presences <- matrix(nrow = samples, ncol = taxa)
 
-  # vector with frequency of each species
-  frequencies <- c()
-
   for(i in seq_len(samples)){
     for(j in seq_len(taxa)){
       ifelse(abundances[i, j] > 0 , 
@@ -95,9 +92,13 @@ generateFrequencies <- function(abundances) {
              presences[i, j] <- 0)
     }
   }
-  for (i in seq_len(taxa)){
-    frequencies[i] <- sum(presences[, i])
-  }
+
+  # vector with frequency of each species
+  #frequencies <- vector("numeric", length(taxa))
+  #for (i in seq_len(taxa)){
+  #  frequencies[i] <- sum(presences[, i])
+  #}
+  frequencies <- colSums(presences)
   return(frequencies)
 }
 
@@ -112,14 +113,14 @@ scaleSpeciesvalues <- function(species, n_traits) {
   }
 
   # scale the trait values
-  standard_deviations <- c()
-  means <- c()
+  standard_deviations <- vector("numeric", n_traits + 1)
+  means <- vector("numeric", n_traits + 1)
   for (i in 2:(n_traits + 1)) {
     standard_deviations[i] <- sd(species[, i])
     means[i] <- mean(species[, i])
   }
 
-  if (length(which(standard_deviations == 0)) > 0) {
+  if (sum(standard_deviations == 0)) {
     stop("scaleSpeciesvalues: ",
          "one of your traits has no variation ", "\n",
          "  most likely trait(s): ", -1 + which(standard_deviations==0))
@@ -137,13 +138,12 @@ scaleSpeciesvalues <- function(species, n_traits) {
 generateValues <- function(params, species, 
                            abundances, community_number, 
                            n_traits) {
-  
-  
+
   if (n_traits == 1) {
     stop("generateValues: ",
          "need more than 1 trait")
   }
-  
+
   # calculate for each species in how many plots it occurs
   samples <- length(abundances[, 1])
 
@@ -221,5 +221,3 @@ generateValues <- function(params, species,
 
   return(summary_stats)
 }
-
-
