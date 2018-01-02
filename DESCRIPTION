@@ -6,7 +6,7 @@ Authors@R: c(person("Thijs","Janzen", email = "thijsjanzen@gmail.com",role=c("au
 Imports: gtools, FD, stats, ade4, grid, geometry, ape
 Suggests: testthat,
     knitr,
-    rmarkdown
+    rmarkdown, devtools
 Description: Collection of model estimation, and model plotting functions 
              related to the STEPCAM family of community assembly models. 
              STEPCAM is a STEPwise Community Assembly Model that infers 
