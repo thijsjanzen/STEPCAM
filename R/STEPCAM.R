@@ -67,7 +67,7 @@ STEPCAM <- function(params, species, abundances, taxa, esppres,
  # calculated trait mean. This mean will be used as the 'optimal' trait value
  # in a community for the filtering model. Species very dissimilar from 
  # this value will be filtered out 
- optimum <- c()
+ optimum <- vector("numeric", n_traits)
  for (i in 1:n_traits){
   optimum[i] <- mean(tr[,(i+1)])
  }
@@ -83,7 +83,7 @@ STEPCAM <- function(params, species, abundances, taxa, esppres,
               rep(2, filtering_fallout),
               rep(3, competition_fallout))
 
- for(i in 1:species_fallout) {
+ for(i in seq_len(species_fallout)) {
    new_richness <- nrow(species) - i
    type <- fallout[i]
    if(type == 1) {

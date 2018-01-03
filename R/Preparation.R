@@ -3,12 +3,12 @@
 calcSD <- function(species, abundances, n_plots, n_traits)  {
 
   a <- rowSums(abundances)
-  if(length(which(a == 0)) > 0) {
+  if(sum(a == 0) > 0) {
     stop("calcSD: ",
          "One of your communities doesn't have species in it")
   }
   
-  if(length(which(a < 3)) > 0) {
+  if(sum(a < 3) > 0) {
     stop("calcSD: ",
          "One of your communities doesn't have at least three species",
          " in it in order to calculate summary statistics")
@@ -207,10 +207,7 @@ generateValues <- function(params, species,
   res <- detMnbsp(Ord, presences)
   FD_output <- strippedDbFd(Ord, presences, res[[1]], res[[2]])
 
-  trait_means <- c()
-  for (i in 1:n_traits){
-    trait_means[i] <- mean(traits[, i])
-  }
+  trait_means <- colMeans(traits)
 
   summary_stats <- cbind(FD_output$FRic, 
                          FD_output$FEve, 
