@@ -90,15 +90,15 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   res <- detMnbsp(Ord, abundances)
   optimum <- summary_stats[, 4:(3 + n_traits)]
 
-  disp_vals <- rep(0, numParticles) #1:numParticles
-  filt_vals <- rep(0, numParticles) #1:numParticles
-  comp_vals <- rep(0, numParticles) #1:numParticles
+  disp_vals <- 1:numParticles
+  filt_vals <- 1:numParticles
+  comp_vals <- 1:numParticles
 
-  fits <- rep(0, numParticles) #1:numParticles
-  rich_vec <- rep(0, numParticles) #1:numParticles
-  eve_vec <- rep(0, numParticles) #1:numParticles
-  div_vec <- rep(0, numParticles) #1:numParticles
-  opt_vec <- rep(0, numParticles) #1:numParticles
+  fits <- 1:numParticles
+  rich_vec <- 1:numParticles
+  eve_vec <- 1:numParticles
+  div_vec <- 1:numParticles
+  opt_vec <- 1:numParticles
 
   next_disp <- disp_vals
   next_filt <- filt_vals
@@ -260,9 +260,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
     # and reset
     next_weights <- rep(1,numParticles)
-    next_disp <- rep(0, numParticles) #1:numParticles
-    next_filt <- rep(0, numParticles) #1:numParticles
-    next_comp <- rep(0, numParticles) #1:numParticles
+    next_disp <- 1:numParticles
+    next_filt <- 1:numParticles
+    next_comp <- 1:numParticles
 
     if (stop_iteration == 1) {
       break
