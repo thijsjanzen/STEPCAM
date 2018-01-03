@@ -223,7 +223,7 @@ test_that("ABC_SMC: use", {
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate = 0.2, Ord,
-                    continue_from_file = TRUE, stop_at_iteration = 8)
+                    continue_from_file = TRUE, stop_at_iteration = 20)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   expect_equal(v[[3]], 1, tolerance = 0.2)
