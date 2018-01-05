@@ -6,6 +6,7 @@ Stepwise Community Assembly Model repository for CRAN-R
 [![codecov](https://codecov.io/gh/thijsjanzen/STEPCAM/branch/master/graph/badge.svg)](https://codecov.io/gh/thijsjanzen/STEPCAM)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
 [![](http://cranlogs.r-pkg.org/badges/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
+[![](http://cranlogs.r-pkg.org/badges/STEPCAM?color=brightgreen)](http://www.r-pkg.org/pkg/STEPCAM)
 
 # What is STEPCAM?
 STEPCAM is a STEPwise Community Assembly Model, and aims to infer underlying processes driving community assembly. It is mainly suitable for researchers in the possession of the combination of abundance and trait data, and allows the researcher to infer  the relative contribution of Dispersal Assembly (DA), Habitat Filtering (HF) and Limiting Similarity (LS).
