@@ -1,15 +1,15 @@
-# this function is adapted from the "vcd" package to have 
+# this function is adapted from the "vcd" package to have
 # slightly different labels
-ternaryplot2 <- function(x, scale = 1, dimnames = NULL, 
-                         dimnames_position = c("corner", "edge", "none"), 
-                         dimnames_color = "black", id = NULL, 
-                         id_color = "black", id_just = c("center", "center"), 
-                         coordinates = FALSE, grid = TRUE, 
-                         grid_color = "darkgrey", 
+ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
+                         dimnames_position = c("corner", "edge", "none"),
+                         dimnames_color = "black", id = NULL,
+                         id_color = "black", id_just = c("center", "center"),
+                         coordinates = FALSE, grid = TRUE,
+                         grid_color = "darkgrey",
                          labels = c("inside", "outside", "none"),
-                         labels_color = "darkgray", border = "black", 
-                         bg = "white", pch = 19, cex = 1, prop_size = FALSE, 
-                         col = "red", main = "ternary plot", newpage = TRUE, 
+                         labels_color = "darkgray", border = "black",
+                         bg = "white", pch = 19, cex = 1, prop_size = FALSE,
+                         col = "red", main = "ternary plot", newpage = TRUE,
                          ...)  {
   labels <- match.arg(labels)
   if(grid == TRUE)
@@ -32,8 +32,8 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
   ylim <- c(-1, top)
   grid::pushViewport(grid::viewport(width = grid::unit(1, "snpc")))
   if(!is.null(main))
-    grid::grid.text(main, y = 0.9, 
-                    gp = grid::gpar(fontsize = 18, 
+    grid::grid.text(main, y = 0.9,
+                    gp = grid::gpar(fontsize = 18,
                                     fontstyle = 1))
   grid::pushViewport(grid::viewport(width = 0.8, height = 0.8, xscale = xlim,
   yscale = ylim, name = "plot"))
@@ -45,13 +45,13 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
     0.02), label = dimnames, gp = grid::gpar(fontsize = 18))
   }
   if (dimnames_position == "edge") {
-    shift <- eps * if(labels == "outside")
+    shift <- eps * (labels == "outside")
 
-      grid::grid.text(x = 0.25 - 2 * eps - shift, y = 0.5 * top + shift, 
-                      label = dimnames[2], rot = 60, 
+      grid::grid.text(x = 0.25 - 2 * eps - shift, y = 0.5 * top + shift,
+                      label = dimnames[2], rot = 60,
                       gp = grid::gpar(col = dimnames_color))
-    grid::grid.text(x = 0.75 + 3 * eps + shift, y = 0.5 * top + shift, 
-                    label = dimnames[1], rot = -60, 
+    grid::grid.text(x = 0.75 + 3 * eps + shift, y = 0.5 * top + shift,
+                    label = dimnames[1], rot = -60,
                     gp = grid::gpar(col = dimnames_color))
     grid::grid.text(x = 0.5, y = -0.02 - shift, label = dimnames[3],
     gp = grid::gpar(col = dimnames_color))
@@ -62,34 +62,34 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
     gp = grid::gpar(lty = grid, col = grid_color))
     grid::grid.lines(c(1 - i, 1 - i + i / 2), c(0, i) * top,
     gp = grid::gpar(lty = grid, col = grid_color))
-    grid::grid.lines(c(i / 2, 1 - i + i / 2), c(i, i) * top, 
+    grid::grid.lines(c(i / 2, 1 - i + i / 2), c(i, i) * top,
                      gp = grid::gpar(lty = grid, col = grid_color))
     if(labels == "inside"){
       grid::grid.text(x = (1 - i) * 3 / 4 - eps, y = (1 - i) / 2 *
       top, label = i * scale, gp = grid::gpar(col = labels_color), rot = 120)
-      grid::grid.text(x = 1 - i + i / 4 + eps, y = i / 2 * top - eps, 
-                      label = (1 - i) * scale, 
+      grid::grid.text(x = 1 - i + i / 4 + eps, y = i / 2 * top - eps,
+                      label = (1 - i) * scale,
                       gp = grid::gpar(col = labels_color), rot = -120)
       grid::grid.text(x = 0.5, y = i * top + eps, label = i *
       scale, gp = grid::gpar(col = labels_color))
     }
     if(labels == "outside") {
-      grid::grid.text(x = (1 - i) / 2 - 6 * eps + 0.03, 
-                y = (1 - i) * top, 
-                label = i * scale * 100, 
-                gp = grid::gpar(col = labels_color,fontsize=15), 
+      grid::grid.text(x = (1 - i) / 2 - 6 * eps + 0.03,
+                y = (1 - i) * top,
+                label = i * scale * 100,
+                gp = grid::gpar(col = labels_color,fontsize=15),
                 rot = 300)
-      
-      grid::grid.text(x = 1 - (1 - i) / 2 + 3 * eps - 0.01, 
-                y = (1 - i) * top + 5 * eps - 0.03, 
-                label = (1 - i) * scale * 100, 
+
+      grid::grid.text(x = 1 - (1 - i) / 2 + 3 * eps - 0.01,
+                y = (1 - i) * top + 5 * eps - 0.03,
+                label = (1 - i) * scale * 100,
                 rot = 0,
                 gp = grid::gpar(col = labels_color,fontsize=15))
-      grid::grid.text(x = i + eps - 0.03, 
-                y = -0.02, 
-                label = i * scale * 100, 
-                vjust = 1, 
-                rot = 60, 
+      grid::grid.text(x = i + eps - 0.03,
+                y = -0.02,
+                label = i * scale * 100,
+                vjust = 1,
+                rot = 60,
                 gp = grid::gpar(col = labels_color, fontsize=15))
     }
   }
@@ -98,19 +98,19 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
   size <- grid::unit(if(prop_size)
   prop_size * (s / max(s))
   else cex, "lines")
-  grid::grid.points(xp, yp, pch = pch, gp = grid::gpar(col = col), 
+  grid::grid.points(xp, yp, pch = pch, gp = grid::gpar(col = col),
                     default.units = "snpc", size = size, ...)
   if(!is.null(id))
-    grid::grid.text( x = xp + c(-0.005, 0.01, 0.01, 0, -0.01, 0, 
+    grid::grid.text( x = xp + c(-0.005, 0.01, 0.01, 0, -0.01, 0,
                         0, 0.01, 0, 0.01, -0.01,
-                        0.02, -0.005, 0, 0.01, 0, 0, 0.01, 0.01, -0.01), 
-             y = grid::unit(yp + c(0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 
-                                   0.03, 0.03, 0.02, 0.03, 0.03, 0.03, 
-                                   0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 
-                                   0.03, 0.03), 
+                        0.02, -0.005, 0, 0.01, 0, 0, 0.01, 0.01, -0.01),
+             y = grid::unit(yp + c(0.03, 0.03, 0.03, 0.03, 0.03, 0.03,
+                                   0.03, 0.03, 0.02, 0.03, 0.03, 0.03,
+                                   0.03, 0.03, 0.03, 0.03, 0.03, 0.03,
+                                   0.03, 0.03),
                       "snpc") - 0.5 * size,
-             label = as.character(id), 
-             just = id_just, 
+             label = as.character(id),
+             just = id_just,
              gp = grid::gpar(col = id_color, cex = 0.8))
 
   grid::popViewport(2)
@@ -120,9 +120,9 @@ ternaryplot2 <- function(x, scale = 1, dimnames = NULL,
 # indication of a most likely community assembly processes in your community
 TernPlot <- function(output) {
 	d <- cbind(output$DA, output$HF, output$LS)
-	ternaryplot2(d, scale=1, col="black", grid = TRUE, 
+	ternaryplot2(d, scale=1, col="black", grid = TRUE,
 	             cex = 0.5, labels = c("outside"),
-	             dimnames = c("DA", "HF", "LS"), main="", 
+	             dimnames = c("DA", "HF", "LS"), main="",
 	             coordinates = TRUE)
 }
 
