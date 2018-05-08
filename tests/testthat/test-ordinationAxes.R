@@ -1,7 +1,7 @@
 context("ordinationAxes")
 
 test_that("ordinationAxes: use", {
-  skip_on_cran()
+ # skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -22,7 +22,7 @@ test_that("ordinationAxes: use", {
 
   row.names(abundances) <- c(1:n_plots)
   abundances2 <- as.data.frame(abundances)
-  species2 <- species[,c(2:(n_traits + 1))] 
+  species2 <- species[,c(2:(n_traits + 1))]
   #species2 <- cbind(names(abundances2),species2)
   species2 <- as.matrix(species2)
   row.names(species2) <- names(abundances2)
@@ -103,7 +103,7 @@ test_that("ordinationAxes: use", {
   v <- data_species$trait1
   names(v) <- data_species$species
   Ord <- ordinationAxes(x = v, stand.x = FALSE)
-  
+
   v[4] <- NA
   Ord <-  ordinationAxes(x = v, stand.x = FALSE)
 
@@ -116,13 +116,13 @@ test_that("ordinationAxes: use", {
   expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
-  
+
   #character vector with one missing value
   v[4] <- NA
   expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
-  
+
   #vector factor
   v <- as.factor(v)
   expect_warning(
@@ -133,7 +133,7 @@ test_that("ordinationAxes: use", {
   expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
-  
+
   v <- data_species$trait1
   names(v) <- data_species$species
   v <- as.data.frame(v)
@@ -170,26 +170,26 @@ test_that("ordinationAxes: abuse", {
                                 average_richness = 10,
                                 sd_richness = 1,
                                 mechanism_random = TRUE)
-  
+
   data_species <- x$traits
   data_abundances <- x$abundances
-  
+
   species  <- scaleSpeciesvalues(data_species,n_traits)
   abundances <- data_abundances
-  
-  
+
+
   row.names(abundances) <- c(1:n_plots)
   abundances2 <- as.data.frame(abundances)
-  species2 <- species[,c(2:(n_traits + 1))] 
+  species2 <- species[,c(2:(n_traits + 1))]
   #species2 <- cbind(names(abundances2),species2)
   species2 <- as.matrix(species2)
   row.names(species2) <- names(abundances2)
-  
+
   #add some NA values
   species2[5,1] <- NA
   species2[7,2] <- NA
   expect_error(
     Ord <- ordinationAxes(x = species2, stand.x = FALSE)
   )
-  
+
 })

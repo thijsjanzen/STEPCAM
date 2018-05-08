@@ -1,7 +1,7 @@
 context("generateValues")
 
 test_that("generateValues: use", {
-  skip_on_cran()
+ # skip_on_cran()
   params <- c(0,1,0)
   set.seed(42)
   n_traits <- 2
@@ -57,7 +57,7 @@ test_that("generateValues: use", {
 
 
 test_that("generateValues: abuse", {
-  skip_on_cran()
+  #skip_on_cran()
   params <- c(0,1,0)
   set.seed(42)
   n_traits <- 1

@@ -1,7 +1,7 @@
 context("scaleSpeciesvalues")
 
 test_that("scaleSpeciesvalues: use",{
-  skip_on_cran()
+ # skip_on_cran()
   x <- generate.Artificial.Data(n_species = 3, n_traits = 2, n_communities = 3,
                                 occurence_distribution = 1,
                                 average_richness = 1,
@@ -26,7 +26,7 @@ test_that("scaleSpeciesvalues: use",{
 })
 
 test_that("scaleSpeciesvaluess: abuse", {
-  skip_on_cran()
+  #skip_on_cran()
   x1 <- c(1,2,3)
   x2 <- c(2,3,4)
   traitmatrix <- cbind(x1,x2)

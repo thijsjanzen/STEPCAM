@@ -1,7 +1,7 @@
 context("getRandomVals")
 
 test_that("getRandomVals: use", {
-  skip_on_cran()
+ # skip_on_cran()
   A <- matrix(0,ncol=3,nrow=1e5)
   for(i in 1:1e5) {
     A[i,] <- getRandomVals(100)

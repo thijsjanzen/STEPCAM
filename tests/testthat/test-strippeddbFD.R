@@ -1,12 +1,12 @@
 context("strippedDbFd")
 
 test_that("strippedDbFd: use", {
-  skip_on_cran()
+#  skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
   num_species <- 10
-  x <- generate.Artificial.Data(n_species = num_species, 
+  x <- generate.Artificial.Data(n_species = num_species,
                                 n_traits = n_traits,
                                 n_communities = n_plots,
                                 occurence_distribution = 0.5,
@@ -54,7 +54,7 @@ test_that("strippedDbFd: use", {
   n_traits <- 3
   n_plots <- 10
   num_species <- 10
-  x <- generate.Artificial.Data(n_species = num_species, 
+  x <- generate.Artificial.Data(n_species = num_species,
                                 n_traits = n_traits,
                                 n_communities = n_plots,
                                 occurence_distribution = 0.5,
@@ -68,7 +68,7 @@ test_that("strippedDbFd: use", {
 
   row.names(abundances) <- c(1:n_plots)
   abundances2 <- as.data.frame(abundances)
-  species2 <- species[,c(2:(n_traits + 1))] 
+  species2 <- species[,c(2:(n_traits + 1))]
   #species2 <- cbind(names(abundances2),species2)
   species2 <- as.matrix(species2)
   row.names(species2) <- names(abundances2)
@@ -100,7 +100,7 @@ test_that("strippedDbFd: use", {
   n_traits <- 3
   n_plots <- 10
   num_species <- 10
-  x <- generate.Artificial.Data(n_species = num_species, 
+  x <- generate.Artificial.Data(n_species = num_species,
                                 n_traits = n_traits,
                                 n_communities = n_plots,
                                 occurence_distribution = 0.05,

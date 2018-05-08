@@ -1,7 +1,7 @@
 context("generateFrequencies")
 
 test_that("generateFrequencies: use",{
-  skip_on_cran()
+# skip_on_cran()
   abund <- matrix(data = c(1, 0, 0, 1, 2, 0, 1, 1, 1), nrow = 3, byrow = TRUE)
 	expected <- c(3,2,1)
 	expect_equal(
@@ -11,7 +11,7 @@ test_that("generateFrequencies: use",{
 })
 
 test_that("generateFrequencies: abuse", {
-  skip_on_cran()
+#  skip_on_cran()
   abund <- matrix(data = c(-1, 0, 0, 1, 2, 0, 1, 1, 1), nrow = 3, byrow = TRUE)
   expect_error(
     generateFrequencies(abund),

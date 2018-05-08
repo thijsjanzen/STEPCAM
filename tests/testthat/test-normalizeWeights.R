@@ -1,7 +1,7 @@
 context("normalizeWeights")
 
 test_that("normalizeWeights: use", {
-  skip_on_cran()
+  #skip_on_cran()
   A <- rep(1,5)
   v <- normalizeWeights(A)
   expect_equal(
