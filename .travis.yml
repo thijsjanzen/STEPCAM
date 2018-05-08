@@ -8,5 +8,5 @@ r_github_packages:
 
 after_success:
   - Rscript -e 'lintr::lint_package()'
-  - Rscript -e 'library(covr); codecov()'
+  - travis_wait 60 Rscript -e 'library(covr); codecov()'
 #  - Rscript -e 'library(goodpractice); gp()'  #commented for faster Travis support, main issues are resolved
