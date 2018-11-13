@@ -505,30 +505,30 @@ test_speed_function <- function() {
 }
 
 
-test_that("ABC_SMC: speed", {
-  #first test with CRAN library:
-  #skip_on_cran()
-  library(devtools)
-
-  detach(package:STEPCAM, unload=TRUE)
-  devtools::install_cran("STEPCAM")
-  library(STEPCAM)
-  start_time_CRAN <- Sys.time()
-  system.time(test_speed_function())
-  end_time_CRAN <- Sys.time()
-  detach(package:STEPCAM, unload=TRUE)
-
-  devtools::install_github("thijsjanzen/STEPCAM")
-  library(STEPCAM)
-  start_time_GITHUB <- Sys.time()
-  system.time(test_speed_function())
-  end_time_GITHUB <- Sys.time()
-
-  cat("CRAN:\t", end_time_CRAN - start_time_CRAN, "\n")
-  cat("GITHUB:\t", end_time_GITHUB - start_time_GITHUB, "\n")
-
-  v1 <- end_time_CRAN - start_time_CRAN
-  v2 <- end_time_GITHUB - start_time_GITHUB
-  cat("improvement: ~\t", 1 - v2[[1]]/v1[[1]])
-})
+# test_that("ABC_SMC: speed", {
+#   #first test with CRAN library:
+#   #skip_on_cran()
+#   library(devtools)
+#
+#   detach(package:STEPCAM, unload=TRUE)
+#   devtools::install_cran("STEPCAM")
+#   library(STEPCAM)
+#   start_time_CRAN <- Sys.time()
+#   system.time(test_speed_function())
+#   end_time_CRAN <- Sys.time()
+#   detach(package:STEPCAM, unload=TRUE)
+#
+#   devtools::install_github("thijsjanzen/STEPCAM")
+#   library(STEPCAM)
+#   start_time_GITHUB <- Sys.time()
+#   system.time(test_speed_function())
+#   end_time_GITHUB <- Sys.time()
+#
+#   cat("CRAN:\t", end_time_CRAN - start_time_CRAN, "\n")
+#   cat("GITHUB:\t", end_time_GITHUB - start_time_GITHUB, "\n")
+#
+#   v1 <- end_time_CRAN - start_time_CRAN
+#   v2 <- end_time_GITHUB - start_time_GITHUB
+#   cat("improvement: ~\t", 1 - v2[[1]]/v1[[1]])
+# })
 
