@@ -1,4 +1,4 @@
-# this function calculates the sd values for the different traits, 
+# this function calculates the sd values for the different traits,
 # in order to normalize the traits
 calcSD <- function(species, abundances, n_plots, n_traits)  {
 
@@ -7,7 +7,7 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
     stop("calcSD: ",
          "One of your communities doesn't have species in it")
   }
-  
+
   if(sum(a < 3) > 0) {
     stop("calcSD: ",
          "One of your communities doesn't have at least three species",
@@ -20,9 +20,9 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
     esppres <- which(abundances[n, ] > 0)
     # traits and abundances of species present in community
     tr <- species[esppres,]
-    # Community Trait Means (CTMs). 
+    # Community Trait Means (CTMs).
     # These will be used as the 'optimal' trait value in a
-    # community for the filtering model. 
+    # community for the filtering model.
     # Species very dissimilar from this value will be filtered out
     for (i in seq_len(n_traits)){
       optimum[n, i] <- mean(tr[, (i + 1)])
@@ -43,18 +43,18 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
 
   # calculate average CTM values across plots
   average_optimums <- colMeans(optimum)
-  
+
   optimums_plus_average <- rbind(optimum, average_optimums)
 
   # calculate trait distances from average optima
-  mean_multi_trait_difference <- mean( as.matrix( 
+  mean_multi_trait_difference <- mean( as.matrix(
                                  dist( optimums_plus_average))
                                  [n_plots + 1, c(1:n_plots)])
 
   # calculate SD of FD values
-  sdFRic <- sd(FD_output$FRic)
-  sdFEve <- sd(FD_output$FEve)
-  sdFDiv <- sd(FD_output$FDiv)
+  sdFRic <- sd(FD_output$FRic, na.rm = TRUE)
+  sdFEve <- sd(FD_output$FEve, na.rm = TRUE)
+  sdFDiv <- sd(FD_output$FDiv, na.rm = TRUE)
 
   # standard deviations of observed FD and trait mean values in plots
   sd_values <- c(sdFRic, sdFEve, sdFDiv, mean_multi_trait_difference)
@@ -79,14 +79,14 @@ generateFrequencies <- function(abundances) {
   # total number of species in species pool
   taxa <- length(abundances[1, ])
 
-  # new (empty) presence matrix: species x plot matrix 
+  # new (empty) presence matrix: species x plot matrix
   # with only 1's (present) and 0's (absent)
   presences <- matrix(nrow = samples, ncol = taxa)
 
   for(i in seq_len(samples)){
     for(j in seq_len(taxa)){
-      ifelse(abundances[i, j] > 0 , 
-             presences[i, j] <- 1 , 
+      ifelse(abundances[i, j] > 0 ,
+             presences[i, j] <- 1 ,
              presences[i, j] <- 0)
     }
   }
@@ -100,7 +100,7 @@ generateFrequencies <- function(abundances) {
   return(frequencies)
 }
 
-# function to transform species trait variables to a standard 
+# function to transform species trait variables to a standard
 # normal distribution (mean = 0, sd = 1)
 scaleSpeciesvalues <- function(species, n_traits) {
   #check dimensions
@@ -130,11 +130,11 @@ scaleSpeciesvalues <- function(species, n_traits) {
   return(species)
 }
 
-# function to generate simulated FD / trait mean values given 
-# a certain species/trait pool and certain community assembly 
+# function to generate simulated FD / trait mean values given
+# a certain species/trait pool and certain community assembly
 # parameter settings
-generateValues <- function(params, species, 
-                           abundances, community_number, 
+generateValues <- function(params, species,
+                           abundances, community_number,
                            n_traits) {
 
   if (n_traits == 1) {
@@ -172,8 +172,8 @@ generateValues <- function(params, species,
                                (species_fallout - dispersal_fallout),0)
 
   # species that fall out through limiting similarity
-  competition_fallout <- species_fallout - 
-                         dispersal_fallout - 
+  competition_fallout <- species_fallout -
+                         dispersal_fallout -
                          filtering_fallout
 
   params2 <- c(dispersal_fallout, filtering_fallout, competition_fallout)
@@ -191,8 +191,8 @@ generateValues <- function(params, species,
   traits <- traits[esppres, ]
   presences <- presences[ ,esppres]
 
-  # now make a new species x trait matrix, 
-  # with only an n_traits (see settings) 
+  # now make a new species x trait matrix,
+  # with only an n_traits (see settings)
   # amount of PCA traits
   "+" <- function(...) UseMethod("+")
   "+.default" <- .Primitive("+")
@@ -209,9 +209,9 @@ generateValues <- function(params, species,
 
   trait_means <- colMeans(traits)
 
-  summary_stats <- cbind(FD_output$FRic, 
-                         FD_output$FEve, 
-                         FD_output$FDiv, 
+  summary_stats <- cbind(FD_output$FRic,
+                         FD_output$FEve,
+                         FD_output$FDiv,
                          t(trait_means))
 
   return(summary_stats)
