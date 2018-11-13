@@ -7,6 +7,6 @@ r_github_packages:
   - MangoTheCat/goodpractice
 
 after_success:
-  - Rscript -e 'lintr::lint_package()'
-  - travis_wait 60 Rscript codecov.R;
-  - travis_wait 60 Rscript -e 'library(goodpractice); gp()'
+  # - Rscript -e 'lintr::lint_package()'
+  - travis_wait 120 Rscript codecov.R;
+  # - travis_wait 60 Rscript -e 'library(goodpractice); gp()'
