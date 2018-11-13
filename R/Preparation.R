@@ -52,9 +52,9 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
                                  [n_plots + 1, c(1:n_plots)])
 
   # calculate SD of FD values
-  sdFRic <- sd(FD_output$FRic, na.rm = TRUE)
-  sdFEve <- sd(FD_output$FEve, na.rm = TRUE)
-  sdFDiv <- sd(FD_output$FDiv, na.rm = TRUE)
+  sdFRic <- sd(FD_output$FRic)
+  sdFEve <- sd(FD_output$FEve)
+  sdFDiv <- sd(FD_output$FDiv)
 
   # standard deviations of observed FD and trait mean values in plots
   sd_values <- c(sdFRic, sdFEve, sdFDiv, mean_multi_trait_difference)
