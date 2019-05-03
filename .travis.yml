@@ -1,6 +1,11 @@
 language: r
 cache: packages
 
+os: 
+  - osx
+  - linux
+  - windows
+
 r_github_packages:
   - jimhester/lintr
   - jimhester/covr
