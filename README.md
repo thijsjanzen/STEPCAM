@@ -2,11 +2,18 @@
 Stepwise Community Assembly Model repository for CRAN-R
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
-[![Build Status](https://travis-ci.org/thijsjanzen/STEPCAM.svg?branch=master)](https://travis-ci.org/thijsjanzen/STEPCAM)
-[![codecov](https://codecov.io/gh/thijsjanzen/STEPCAM/branch/master/graph/badge.svg)](https://codecov.io/gh/thijsjanzen/STEPCAM)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
 [![](http://cranlogs.r-pkg.org/badges/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
 [![Research software impact](http://depsy.org/api/package/cran/STEPCAM/badge.svg)](http://depsy.org/package/r/STEPCAM)
+
+Branch|[![Travis CI logo](pics/TravisCI.png)](https://travis-ci.org)|[![AppVeyor logo](pics/AppVeyor.png)](https://www.appveyor.com)|[![Codecov logo](pics/Codecov.png)](https://www.codecov.io)
+---|---|---|---
+master|[![Build Status](https://travis-ci.org/thijsjanzen/STEPCAM.svg?branch=master)](https://travis-ci.org/thijsjanzen/STEPCAM)|[![Build status](https://ci.appveyor.com/api/projects/status/5817qdgh759w4h9f?svg=true)](https://ci.appveyor.com/project/thijsjanzen/stepcam)|[![codecov.io](https://codecov.io/gh/thijsjanzen/STEPCAM/branch/master/graph/badge.svg)](https://codecov.io/gh/thijsjanzen/STEPCAM)
+
+
+
+
+
 
 
 # What is STEPCAM?
