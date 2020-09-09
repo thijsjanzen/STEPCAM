@@ -1,4 +1,4 @@
-# STEPCAM <img src="pics/stepcam_sticker.png" align="right" width="120" />
+# STEPCAM <img src="pics/stepcam_sticker.png" align="right" width="256" />
 Stepwise Community Assembly Model repository for CRAN-R
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
