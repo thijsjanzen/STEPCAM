@@ -36,10 +36,10 @@ test_that("ordinationAxes: use", {
   Ord <- ordinationAxes(x = v2, stand.x = FALSE)
 
   v2[1:3] <- as.factor(c(1,1,2))
-  expect_warning(
+  testthat::expect_warning(
     v2 <- as.dist(v2)
   )
-  expect_warning(
+  testthat::expect_warning(
     Ord <- ordinationAxes(x = v2, stand.x = FALSE)
   )
 
@@ -82,8 +82,9 @@ test_that("ordinationAxes: use", {
                            rep("black",3))
 
   # calculate observed FD values
-  Ord <- ordinationAxes(x = data_species, stand.x = FALSE)
-
+  testthat::expect_warning(
+   Ord <- ordinationAxes(x = data_species, stand.x = FALSE)
+)
   data_species$trait1 <- as.factor(data_species$trait1)
   Ord <- ordinationAxes(x = data_species, stand.x = FALSE)
 
@@ -113,24 +114,24 @@ test_that("ordinationAxes: use", {
           rep("yellow",2),
           rep("black",3))
   names(v) <- data_species$species
-  expect_warning(
+  testthat::expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
 
   #character vector with one missing value
   v[4] <- NA
-  expect_warning(
+  testthat::expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
 
   #vector factor
   v <- as.factor(v)
-  expect_warning(
+  testthat::expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
   #with missing value
   v[4] <- NA
-  expect_warning(
+  testthat::expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
 
@@ -143,7 +144,7 @@ test_that("ordinationAxes: use", {
   names(v) <- data_species$species
   v <- as.data.frame(v)
   v$v <- c(rep("blue",3),rep("red",2),rep("yellow",2),rep("black",3))
-  expect_warning(
+  testthat::expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
 
@@ -152,14 +153,13 @@ test_that("ordinationAxes: use", {
   v <- as.data.frame(v)
   v$v <- c(rep("blue",3),rep("red",2),rep("yellow",2),rep("black",3))
   v$v <- as.factor(v$v)
-  expect_warning(
+  testthat::expect_warning(
     Ord <-  ordinationAxes(x = v, stand.x = FALSE)
   )
 })
 
 
 test_that("ordinationAxes: abuse", {
-  skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -188,8 +188,7 @@ test_that("ordinationAxes: abuse", {
   #add some NA values
   species2[5,1] <- NA
   species2[7,2] <- NA
-  expect_error(
+  testthat::expect_error(
     Ord <- ordinationAxes(x = species2, stand.x = FALSE)
   )
-
 })
