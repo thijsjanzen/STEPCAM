@@ -62,7 +62,7 @@ test_that("ordinationAxes: use", {
   n_traits <- 4
 
   # calculate observed FD values
-  Ord <- ordinationAxes(x = data_species, stand.x = FALSE)
+  Ord <- STEPCAM::ordinationAxes(x = data_species, stand.x = FALSE)
 
   set.seed(42)
   n_traits <- 1
