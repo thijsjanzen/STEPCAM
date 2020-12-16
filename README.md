@@ -5,6 +5,7 @@ Stepwise Community Assembly Model repository for CRAN-R
 [![](http://cranlogs.r-pkg.org/badges/grand-total/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
 [![](http://cranlogs.r-pkg.org/badges/STEPCAM)](https://cran.r-project.org/package=STEPCAM)
 [![Research software impact](http://depsy.org/api/package/cran/STEPCAM/badge.svg)](http://depsy.org/package/r/STEPCAM)
+[![R-CMD-check](https://github.com/thijsjanzen/STEPCAM/workflows/R-CMD-check/badge.svg)](https://github.com/thijsjanzen/STEPCAM/actions)
 
 Branch|[![Travis CI logo](pics/TravisCI.png)](https://travis-ci.org)|[![AppVeyor logo](pics/AppVeyor.png)](https://www.appveyor.com)|[![Codecov logo](pics/Codecov.png)](https://www.codecov.io)
 ---|---|---|---
