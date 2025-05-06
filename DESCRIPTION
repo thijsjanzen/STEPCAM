@@ -12,8 +12,7 @@ Description: Collection of model estimation, and model plotting functions
     a STEPwise Community Assembly Model that infers the relative
     contribution of Dispersal Assembly, Habitat Filtering and Limiting
     Similarity from a dataset consisting of the combination of trait and
-    abundance data. See also van der Plas et al. 2015
-    <doi:10.1890/14-0454.1> for more information.
+    abundance data. See also <doi:10.1890/14-0454.1> for more information.
 License: GPL-2
 URL: https://github.com/thijsjanzen/STEPCAM
 BugReports: https://github.com/thijsjanzen/STEPCAM/issues
