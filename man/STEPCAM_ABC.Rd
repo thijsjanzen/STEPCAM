@@ -14,18 +14,23 @@ STEPCAM_ABC(data_abundances, data_species, numParticles, n_traits,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \itemize{data_abundances}{
-  \item{data_abundances}{is a matrix containing the abundances of all species over all plots.} \cr
-  \item{rows}{ every row corresponds to a different plot or community} \cr
-  \item{columns}{ every column corresponds to a different species.} \cr
-  For an example of a suitable \code{data_abundances} matrix, run the \code{generate.Artificial.Data} function
-}
-  \itemize{data_species}{
-  \item{data_species}{ is a matrix containing the species' specific traits.} \cr
-  \item{rows}{ every row corresponds to a different species} \cr
-  \item{columns}{ the first column contains the name of the species, every consecutive column corresponds to a different trait} \cr
-  It is important to realize that ideally, the number of traits is lower than the number of species in the most species poor plot of the 'data_abundances' matrix, as FRic calculation requires at least as many species as their are traits, and will autmatically omit some traits if this assumption is not met. \cr
-  For an example of a suitable data_species matrix, run the generate.Artificial.Data function
+  \item{data_abundances}{
+    \itemize{
+      \item data_abundances is a matrix containing the abundances of all species over all plots. \cr
+      \item rows every row corresponds to a different plot or community \cr
+      \item columns every column corresponds to a different species. \cr
+      For an example of a suitable \code{data_abundances} matrix, run the \code{generate.Artificial.Data} function
+    }
+  }
+  \item{data_species}{
+    \itemize{
+    \item data_species  is a matrix containing the species' specific traits. \cr
+    \item rows every row corresponds to a different species \cr
+    \item columns the first column contains the name of the species, every consecutive column corresponds to a different trait \cr
+    It is important to realize that ideally, the number of traits is lower than the number of species in the most species poor plot of the 'data_abundances' matrix, as FRic calculation requires at least as many species as their are traits, and will autmatically omit some traits if this assumption is not met. \cr
+    For an example of a suitable data_species matrix, run the \code{generate.Artificial.Data} function
+  }
+
 }
   \item{numParticles}{The number of particles to be used in the ABC-SMC analysis.
 }
@@ -48,7 +53,6 @@ STEPCAM_ABC(data_abundances, data_species, numParticles, n_traits,
 }
 \author{
 Thijs Janzen & Fons van der Plas + Torsten Hauffe
-
 }
 
 
