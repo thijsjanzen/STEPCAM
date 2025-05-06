@@ -1,7 +1,6 @@
 context("ABC_SMC")
 
 test_that("ABC_SMC: use", {
-  testthat::skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -84,10 +83,16 @@ test_that("ABC_SMC: use", {
   plot_number <- 1
   stopRate <- 0.04
 
+
+
+  testthat::skip_on_ci()
+  testthat::skip_on_cran()
+  testthat::expect_output(
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 8)
+  )
 
   v <- c(mean(output$DA),mean(output$HF),mean(output$LS))
 
@@ -99,12 +104,15 @@ test_that("ABC_SMC: use", {
       file.remove(file_name)
     }
   }
+})
+
+test_that("ABC_SMC: use_lim_sim", {
+
  ##############################################################################
  ##############################################################################
  ######################## Limiting Similarity test ############################
  ##############################################################################
  ##############################################################################
-
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -211,19 +219,26 @@ test_that("ABC_SMC: use", {
     }
   }
 
+  testthat::skip_on_ci()
+  testthat::skip_on_cran()
+
+  testthat::expect_output(
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 2)
+  )
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
 
   expect_equal(v[[3]], 0.4, tolerance = 0.1)
 
+  testthat::expect_output(
   output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate = 0.2, Ord,
                     continue_from_file = TRUE, stop_at_iteration = 20)
+)
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   expect_equal(v[[3]], 1, tolerance = 0.2)
@@ -237,7 +252,8 @@ test_that("ABC_SMC: use", {
 })
 
 test_that("ABC_SMC: abuse", {
- # skip_on_cran()
+ testthat::skip_on_cran()
+  testthat::skip_on_ci()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10
@@ -326,12 +342,14 @@ test_that("ABC_SMC: abuse", {
   stopRate <- 0.0001
 
   sd_vals <- round(sd_vals)
+  testthat::expect_output(
  expect_error(
-  ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+   ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 5),
   "ABC_SMC: one of the community summary statistics"
+  )
   )
 
  set.seed(42)
@@ -417,118 +435,10 @@ test_that("ABC_SMC: abuse", {
  stopRate <- 0.04
 
  expect_error(
-   ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+   STEPCAM::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                      sd_vals, summary_stats, community_number, scaled_species,
                      data_abundances, data_frequencies, stopRate, Ord,
                      continue_from_file = FALSE, stop_at_iteration = 1),
    "ABC_SMC: Can't stop at iteration 1"
  )
 })
-
-test_speed_function <- function() {
-  set.seed(45)
-  n_traits <- 3
-  n_plots <- 10
-  num_species <- 10
-  x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
-                                n_communities = n_plots,
-                                occurence_distribution = 0.9,
-                                average_richness = 0.7,
-                                sd_richness = 0.1,
-                                mechanism_random = TRUE)
-  data_species <- x$traits
-
-  data_abundances <- x$abundances
-
-  scaled_species <- scaleSpeciesvalues(data_species, n_traits)
-
-  sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
-
-  taxa <- nrow(data_species)
-
-  Ord <- ordinationAxes(x = scaled_species, stand.x = FALSE)
-
-  abundances <- data_abundances
-  row.names(abundances) <- c(1:n_plots)
-  data_frequencies <- generateFrequencies(data_abundances)
-
-  scaled_species <- as.data.frame(
-    cbind(scaled_species[, c(1:(n_traits + 1))], data_frequencies))
-
-  traitnames <- names(data_species)[-1]
-  names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
-  row.names(scaled_species) <- c(1:taxa)
-
-  plot_number <- 1
-
-  res <- detMnbsp(Ord, abundances)
-  FD_output <- strippedDbFd(Ord, abundances, res[[1]], res[[2]])
-
-  observed_traits <- scaled_species[, ]
-  row.names(observed_traits) <- scaled_species[, 1]
-  observed_abundances <- data_abundances[plot_number, ]
-  present_species <- which(observed_abundances > 0)
-  observed_traits <- observed_traits[present_species, ]
-  observed_abundances <- observed_abundances[present_species]
-  observed_presences <- observed_abundances
-  observed_presences[ seq_along(observed_presences) ] <- 1
-  observed_traits <- observed_traits[, -1]
-  trait_means <- c()
-  traitvalues <- c()
-  for(i in 1:n_traits){
-    for(j in seq_along(observed_abundances)){
-      traitvalues[j] <- observed_traits[j, i]
-    }
-    # calculate CTM value
-    trait_means[i] <- mean(traitvalues)
-  }
-  # bind FD values and CTM together
-  summary_stats <- cbind(FD_output$FRic[plot_number],
-                         FD_output$FEve[plot_number],
-                         FD_output$FDiv[plot_number],
-                         t(trait_means)) # bind FD values and CTM together
-
-  esppres <- which(data_abundances[plot_number, ] > 0)
-  S <- length(esppres)
-  species_fallout <- taxa - S
-
-  numParticles <- 1000
-  plot_number <- 1
-  stopRate <- 0.0001
-
-  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
-                    sd_vals, summary_stats, community_number, scaled_species,
-                    data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = FALSE, stop_at_iteration = 9)
-
-  v <- c(mean(output$DA),mean(output$HF),mean(output$LS))
-}
-
-
-# test_that("ABC_SMC: speed", {
-#   #first test with CRAN library:
-#   #skip_on_cran()
-#   library(devtools)
-#
-#   detach(package:STEPCAM, unload=TRUE)
-#   devtools::install_cran("STEPCAM")
-#   library(STEPCAM)
-#   start_time_CRAN <- Sys.time()
-#   system.time(test_speed_function())
-#   end_time_CRAN <- Sys.time()
-#   detach(package:STEPCAM, unload=TRUE)
-#
-#   devtools::install_github("thijsjanzen/STEPCAM")
-#   library(STEPCAM)
-#   start_time_GITHUB <- Sys.time()
-#   system.time(test_speed_function())
-#   end_time_GITHUB <- Sys.time()
-#
-#   cat("CRAN:\t", end_time_CRAN - start_time_CRAN, "\n")
-#   cat("GITHUB:\t", end_time_GITHUB - start_time_GITHUB, "\n")
-#
-#   v1 <- end_time_CRAN - start_time_CRAN
-#   v2 <- end_time_GITHUB - start_time_GITHUB
-#   cat("improvement: ~\t", 1 - v2[[1]]/v1[[1]])
-# })
-

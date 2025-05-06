@@ -26,11 +26,12 @@ test_that("STEPCAM_ABC: use", {
   data_abundances[1,9] <- 0
   data_abundances[1,10] <- 0
 
-  output <- STEPCAM_ABC(data_abundances, data_species,
+  testthat::expect_output(
+    output <- STEPCAM_ABC(data_abundances, data_species,
                         numParticles = 100, n_traits, plot_number = 1,
                         stopRate = 0.05, stop_at_iteration = 12,
                         continue_from_file = FALSE)
-
+  )
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   expect_equal(v, c(0,2,0), tolerance = 0.1)
 

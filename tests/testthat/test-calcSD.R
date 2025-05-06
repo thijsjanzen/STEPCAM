@@ -39,8 +39,6 @@ test_that("calcSD: use", {
   )
 })
 
-
-
 test_that("calcSD: abuse", {
 #  skip_on_cran()
   set.seed(42)

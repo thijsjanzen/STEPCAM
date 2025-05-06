@@ -19,10 +19,12 @@ test_that("TernPlot: use", {
   data_abundances[1,9] <- 0
   data_abundances[1,10] <- 0
 
-  O <- STEPCAM_ABC(data_abundances, data_species,
+  testthat::expect_output(
+    O <- STEPCAM_ABC(data_abundances, data_species,
                    numParticles = 100, n_traits, plot_number = 1,
                    stopRate = 0.1, stop_at_iteration = 5,
                    continue_from_file = FALSE)
+  )
 
   TernPlot(O)
   d <- cbind(O$DA, O$HF, O$LS)
@@ -61,11 +63,12 @@ test_that("TernPlot: abuse:", {
   data_abundances[1,9] <- 0
   data_abundances[1,10] <- 0
 
+  testthat::expect_output(
   O <- STEPCAM_ABC(data_abundances, data_species,
                    numParticles = 100, n_traits, plot_number = 1,
                    stopRate = 0.1, stop_at_iteration = 10,
                    continue_from_file = FALSE)
-
+  )
   d <- cbind(O$DA, O$HF)
 
   expect_error(

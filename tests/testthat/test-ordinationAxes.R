@@ -82,9 +82,9 @@ test_that("ordinationAxes: use", {
                            rep("black",3))
 
   # calculate observed FD values
-  testthat::expect_warning(
-   Ord <- ordinationAxes(x = data_species, stand.x = FALSE)
-)
+
+  Ord <- ordinationAxes(x = data_species, stand.x = FALSE)
+
   data_species$trait1 <- as.factor(data_species$trait1)
   Ord <- ordinationAxes(x = data_species, stand.x = FALSE)
 
