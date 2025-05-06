@@ -1,19 +1,35 @@
-Package: STEPCAM
 Type: Package
+Package: STEPCAM
 Title: ABC-SMC Inference of STEPCAM
-Version: 1.2.2
-Authors@R: c(person("Thijs","Janzen", email = "thijsjanzen@gmail.com",role=c("aut","cre")), person("Fons","van der Plas",email="",role=c("aut")),person("Thorsten","Hauffe",email="",role=c("ctb")))
-Imports: gtools, FD, stats, ade4, grid, geometry, ape
-Suggests: testthat,
-    knitr,
-    rmarkdown, devtools
-Description: Collection of model estimation, and model plotting functions 
-             related to the STEPCAM family of community assembly models. 
-             STEPCAM is a STEPwise Community Assembly Model that infers 
-             the relative contribution of Dispersal Assembly, Habitat Filtering 
-             and Limiting Similarity from a dataset consisting of the 
-             combination of trait and abundance data. See also <http://onlinelibrary.wiley.com/wol1/doi/10.1890/14-0454.1/abstract> for more information.
+Version: 1.2.3
+Authors@R: c(
+    person("Thijs", "Janzen", , "thijsjanzen@gmail.com", role = c("aut", "cre")),
+    person("Fons", "van der Plas", role = "aut"),
+    person("Thorsten", "Hauffe", role = "ctb")
+  )
+Description: Collection of model estimation, and model plotting functions
+    related to the STEPCAM family of community assembly models. STEPCAM is
+    a STEPwise Community Assembly Model that infers the relative
+    contribution of Dispersal Assembly, Habitat Filtering and Limiting
+    Similarity from a dataset consisting of the combination of trait and
+    abundance data. See also van der Plas et al. 2015
+    <doi:10.1890/14-0454.1> for more information.
 License: GPL-2
 URL: https://github.com/thijsjanzen/STEPCAM
 BugReports: https://github.com/thijsjanzen/STEPCAM/issues
-VignetteBuilder: knitr
+Imports: 
+    ade4,
+    ape,
+    FD,
+    geometry,
+    grid,
+    gtools,
+    stats
+Suggests: 
+    devtools,
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8

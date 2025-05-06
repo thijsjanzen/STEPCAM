@@ -1,7 +1,7 @@
 context("ABC_SMC")
 
 test_that("ABC_SMC: use", {
-#  skip_on_cran()
+  testthat::skip_on_cran()
   set.seed(42)
   n_traits <- 3
   n_plots <- 10

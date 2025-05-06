@@ -55,10 +55,10 @@ test_that("ordinationAxes: use", {
                                 mechanism_random = TRUE)
 
   data_species <- x$traits
-  data_species$trait4 <- c(rep("blue",3),
-                           rep("red",2),
-                           rep("yellow",2),
-                           rep("black",3))
+  data_species$trait4 <- c(rep("blue", 3),
+                           rep("red", 2),
+                           rep("yellow", 2),
+                           rep("black", 3))
   n_traits <- 4
 
   # calculate observed FD values
