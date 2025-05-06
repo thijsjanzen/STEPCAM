@@ -2,3 +2,9 @@
 ^\.Rproj\.user$
 ^\.travis\.yml$
 ^\.github$
+^Hauffe_scheme.png
+^codecov.R
+^codecov.yml
+^vert.txt
+^pics
+^.appveyor.yml

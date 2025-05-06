@@ -283,8 +283,9 @@ test_that("ABC_SMC: abuse", {
 
   scaled_species <- scaleSpeciesvalues(data_species, n_traits)
 
+  testthat::expect_warning(
   sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
-
+)
 
   taxa <- nrow(data_species)
 
