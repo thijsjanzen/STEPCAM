@@ -9,7 +9,7 @@ Stepwise Community Assembly Model repository for CRAN-R
 
 Branch|[![Codecov logo](pics/Codecov.png)]
 ---|---
-master|[![codecov.io](https://codecov.io/gh/thijsjanzen/STEPCAM/branch/master/graph/badge.svg)](https://codecov.io/gh/thijsjanzen/STEPCAM)
+master|[![codecov.io](https://codecov.io/gh/thijsjanzen/STEPCAM/branch/master/graph/badge.svg)](https://app.codecov.io/gh/thijsjanzen/STEPCAM)
 
 
 
