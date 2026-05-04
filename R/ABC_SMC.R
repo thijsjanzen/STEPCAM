@@ -22,11 +22,23 @@ getFromPrevious <- function(inds, ws, disps, filts, comps, orders)  {
 
 # function to calculate the weight of a particle
 calculateWeight <- function(params, target, sigma,
-                            disp_vals, filt_vals, comp_vals,
+                            disp_vals, filt_vals, comp_vals, order_vals,
                             weights)  {
-  diff <- params[target] - cbind(disp_vals, filt_vals, comp_vals)[,target]
-  vals <- weights * dnorm(diff, mean = 0, sd = sigma)  
-  return( 1/sum(vals) )
+  diff <- cbind(disp_vals, filt_vals, comp_vals) - params[1:3]
+  
+  diff_prob <- dnorm(diff, mean = 0, sd = sigma, log = TRUE)
+  
+  # we have to multiply with the ordering as well
+  diff_order <- 1 - (params[4] != order_vals)
+  # 90 % prob of remaining the same
+  diff_order <- diff_order * 0.9
+  diff_order[diff_order == 0] <- 0.1
+
+  vals <- cbind(log(weights), diff_prob, log(diff_order))
+  vals <- rowSums(vals)
+  vals <- exp(vals)
+  
+  return( 1 / sum(vals) ) # prior density is 1.
 }
 
 # normalize all the weights of all particles such that they sum to 1
@@ -39,14 +51,14 @@ normalizeWeights <- function(x) {
 # function to randomly change the contribution of one of the processes:
 perturb <- function(p, sigma, fit_order)  {
   params <- p
-  max_number <- sum(p)
+  max_number <- sum(p[1:3])
   numbers <- 1:3
 
   x <- sample(numbers, 3, replace = FALSE)
 
   oldval <- params[x[1]]
 
-  params[x[1]] <- round(params [x[1]] + rnorm(1, mean = 0, sd = sigma), 0)
+  params[x[1]] <- round(params[x[1]] + rnorm(1, mean = 0, sd = sigma), 0)
   params[x[1]] <- max(0, params[x[1]])
   params[x[1]] <- min(max_number, params[x[1]])
 
@@ -61,8 +73,10 @@ perturb <- function(p, sigma, fit_order)  {
   params[x[3]] <- min(max_number, params[x[3]])
 
   if (fit_order) {
-    if (stats::runif(1, 0, 1) < 0.01) {
-      params[4] <- sample(1:6, 1)
+    if (stats::runif(1, 0, 1) < 0.1) {
+      new_order <- 1:6
+      new_order <- new_order[-params[4]]
+      params[4] <- sample(new_order, 1)
     }
   }
   
@@ -176,6 +190,10 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         params <- params[1:4]
       }
 
+      if (sum(params[1:3]) != species_fallout) {
+        cat(t, numberAccepted, params, "\n")
+      }
+      
       # total number of species in species pool
       taxa <- length(abundances[1, ])
      
@@ -232,8 +250,14 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
           next_weights[numberAccepted] <- 1
         } else {
           next_weights[numberAccepted] <-
-            calculateWeight(params, changed, sigma, disp_vals, filt_vals,
-                            comp_vals, weights)
+            calculateWeight(params = params, 
+                            target = changed, 
+                            sigma = sigma, 
+                            disp_vals = disp_vals, 
+                            filt_vals = filt_vals, 
+                            comp_vals = comp_vals,
+                            order_vals = order_vals,
+                            weights = weights)
         }
         numberAccepted <- numberAccepted + 1
         if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
@@ -291,7 +315,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
 
   if (t >= 2) {
-    d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
+    d <- read.table(paste("particles_t=", t - 1, ".txt", sep = "",
                           collapse = NULL), header = FALSE)
   } else {
       stop("ABC_SMC: ",
@@ -300,5 +324,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
            want to generate from the prior")
   }
   output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
+  if (fit_order) {
+    output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3],
+                    OR = d[, 10])
+  }
   return(output)
 }

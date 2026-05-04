@@ -236,7 +236,7 @@ test_that("ABC_SMC: use_lim_sim", {
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate = 0.2, Ord,
                     continue_from_file = TRUE, stop_at_iteration = 20)
-)
+   )
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
   testthat::expect_equal(v[[3]], 1, tolerance = 0.2)
@@ -431,11 +431,13 @@ test_that("ABC_SMC: abuse", {
  plot_number <- 1
  stopRate <- 0.04
 
+ testthat::expect_output(
  testthat::expect_error(
    STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                      sd_vals, summary_stats, community_number, scaled_species,
                      data_abundances, data_frequencies, stopRate, Ord,
                      continue_from_file = FALSE, stop_at_iteration = 1),
    "ABC_SMC: Can't stop at iteration 1"
+ )
  )
 })
