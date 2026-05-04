@@ -43,7 +43,8 @@ fallout.competition <- function(new_community,n_traits) {
 
 ## the Kraft.generator function: function that runs (hybrid) STEPCAMs
 STEPCAM <- function(params, species, abundances, taxa, esppres,
-                   community_number, n_traits, species_fallout) {
+                    community_number, n_traits, species_fallout,
+                    use_order = FALSE) {
  output <- matrix(nrow = taxa)
  # matrix in which all output will be written
  allfinaloutput <- matrix(nrow = taxa)
@@ -79,10 +80,25 @@ STEPCAM <- function(params, species, abundances, taxa, esppres,
  #  1 = dispersal event,
  #  2 = filtering event,
  #  3 = limiting similarity event
+ 
+ ordering <- c(1, 2, 3)
+ if (use_order == TRUE) {
+    if (!is.na(params[4]) || !is.null(params[4])) {
+       if (params[4] == 1) ordering <- 1:3
+       if (params[4] == 2) ordering <- c(1, 3, 2)
+       if (params[4] == 3) ordering <- c(2, 1, 3)
+       if (params[4] == 4) ordering <- c(2, 3, 1)
+       if (params[4] == 5) ordering <- c(3, 1, 2)
+       if (params[4] == 6) ordering <- c(3, 2, 1)
+    }
+ }
+ 
  fallout <- c(rep(1, dispersal_fallout),
               rep(2, filtering_fallout),
               rep(3, competition_fallout))
-
+ 
+ #fallout <- fallout[order(factor(fallout, levels = ordering))]
+ 
  for(i in seq_len(species_fallout)) {
    new_richness <- nrow(species) - i
    type <- fallout[i]

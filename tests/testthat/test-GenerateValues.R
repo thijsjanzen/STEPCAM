@@ -35,21 +35,21 @@ test_that("generateValues: use", {
   taxa <- nrow(scaled_species)
   row.names(scaled_species) <- c(1:taxa)
 
-  expect_warning(
+  testthat::expect_warning(
     v <- generateValues(params, scaled_species, data_abundances,
                       community_number, n_traits)
   )
 
-  expect_equal(
+  testthat::expect_equal(
     v[[4]],
     mean(scaled_species$trait1[1:9])
   )
-  expect_equal(
+  testthat::expect_equal(
     v[[5]],
     mean(scaled_species$trait2[1:9])
   )
 
-  expect_equal(
+  testthat::expect_equal(
     is.na(v[[2]]),
     TRUE
   )
@@ -91,7 +91,7 @@ test_that("generateValues: abuse", {
   row.names(scaled_species) <- c(1:taxa)
 
 
-  expect_error(
+  testthat::expect_error(
    generateValues(params, scaled_species, data_abundances,
                       community_number, n_traits),
    "need more than 1 trait"

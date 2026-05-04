@@ -1,8 +1,12 @@
-STEPCAM_ABC <- function(data_abundances, data_species,
-                        numParticles, n_traits,
-                        plot_number, stopRate,
+STEPCAM_ABC <- function(data_abundances,
+                        data_species,
+                        numParticles,
+                        n_traits,
+                        plot_number,
+                        stopRate,
                         stop_at_iteration = 10,
-                        continue_from_file = FALSE){
+                        continue_from_file = FALSE,
+                        fit_order = FALSE) {
 
   # empty vector for number of species in each community
   nbsp <- c()
@@ -68,12 +72,11 @@ STEPCAM_ABC <- function(data_abundances, data_species,
   names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
   row.names(scaled_species) <- c(1:taxa)
 
-
-
   output <- ABC_SMC(numParticles, species_fallout, taxa,esppres, n_traits,
                     sd_vals, summary_stats, plot_number, scaled_species, 
                     data_abundances, data_frequencies, stopRate, Ord, 
-                    continue_from_file = FALSE, stop_at_iteration)
+                    continue_from_file = FALSE, stop_at_iteration,
+                    use_order = fit_order)
 
   return(output)
 }

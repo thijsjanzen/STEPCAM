@@ -13,9 +13,9 @@ getRandomVals <- function(max_val)  {
 }
 
 # function to randomly draw a particle depending on it's weight
-getFromPrevious <- function(inds, ws, disps, filts, comps)  {
+getFromPrevious <- function(inds, ws, disps, filts, comps, models)  {
   index <- sample(x = inds, size = 1, replace = TRUE, prob = ws)
-  output <- c(disps[index], filts[index], comps[index])
+  output <- c(disps[index], filts[index], comps[index], models[index])
   return(output)
 }
 
@@ -24,7 +24,7 @@ calculateWeight <- function(params, target, sigma,
                             disp_vals, filt_vals, comp_vals,
                             weights)  {
   diff <- params[target] - cbind(disp_vals, filt_vals, comp_vals)[,target]
-  vals <- weights * dnorm(diff, mean = 0, sd = sigma)  
+  vals <- weights * dnorm(diff, mean = 0, sd = sigma)
   return( 1/sum(vals) )
 }
 
@@ -45,11 +45,11 @@ perturb <- function(p, sigma)  {
 
   oldval <- params[x[1]]
 
-  params[x[1]] <- round(params [x[1]] + rnorm(1, mean = 0, sd = sigma), 0)
+  params[x[1]] <- round(params[x[1]] + rnorm(1, mean = 0, sd = sigma), 0)
   params[x[1]] <- max(0, params[x[1]])
   params[x[1]] <- min(max_number, params[x[1]])
 
-  diff <- params [x[1]] - oldval
+  diff <- params[x[1]] - oldval
 
   params[x[2]] <- params[x[2]] - diff
   params[x[2]] <- max(0, params[x[2]])
@@ -59,6 +59,10 @@ perturb <- function(p, sigma)  {
   params[x[3]] <- max(0, params[x[3]])
   params[x[3]] <- min(max_number, params[x[3]])
 
+  if (stats::runif(1) < 0.01) {
+    params[4] <- sample(1:6, 1)
+  } 
+  
   return(c(params, x[1]))
 }
 
@@ -78,7 +82,8 @@ calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
 ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, species,
                     abundances, frequencies, stopRate, Ord, 
-                    continue_from_file = TRUE, stop_at_iteration = 50)  {
+                    continue_from_file = TRUE, stop_at_iteration = 50,
+                    use_order = FALSE)  {
 
   for (i in seq_along(sd_vals)) {
     if (sd_vals[[i]] == 0.000) {
@@ -93,6 +98,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   disp_vals <- 1:numParticles
   filt_vals <- 1:numParticles
   comp_vals <- 1:numParticles
+  order_vals <- 1:numParticles
 
   fits <- 1:numParticles
   rich_vec <- 1:numParticles
@@ -103,6 +109,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   next_disp <- disp_vals
   next_filt <- filt_vals
   next_comp <- comp_vals
+  next_order <- order_vals
 
   weights <- rep(1, numParticles)
   next_weights <- rep(1, numParticles)
@@ -118,7 +125,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     f <- gtools::mixedsort(f)
     t1 <- 1 + length(f)
     d <- read.table(f[length(f)], header = FALSE)
-    if(d[numParticles,1] == numParticles) {
+    if (d[numParticles,1] == numParticles) {
       d <- read.table(f[length(f) - 1], header = FALSE)
       t1 <- t1 - 1
     }
@@ -126,6 +133,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     disp_vals <- d[, 1]
     filt_vals <- d[, 2]
     comp_vals <- d[, 3]
+    order_vals <- d[, 10]
     fits <-     d[, 8]
     weights <-  d[, 9]
 
@@ -150,19 +158,19 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     tried <- 1
 
     while (numberAccepted <= numParticles) {
-      params <- c(species_fallout, 0, 0)
+      params <- c(species_fallout, 0, 0, 1) # start with normal order
       # get a parameter combination
       if (t == 1)  {
-        params <- getRandomVals(species_fallout)
+        params[1:3] <- getRandomVals(species_fallout)
       } else {
         params <- getFromPrevious(indices, weights,
-                                  disp_vals, filt_vals, comp_vals)
+                                  disp_vals, filt_vals, comp_vals, order_vals)
         params <- perturb(params, sigma)
 
         # we need to know which parameter was perturbed,
         # to be able to calculate its weight later
-        changed <- params[4]
-        params <- params[1:3]
+        changed <- params[5]
+        params <- params[1:4]
       }
 
       # total number of species in species pool
@@ -170,9 +178,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
      
       allcommunities <- STEPCAM(params, species, abundances, taxa,
                                 esppres, community_number, n_traits,
-                                species_fallout)
-      traits <- as.data.frame(species[,c(2:(n_traits+1))],
-                              row.names=c(1:taxa))
+                                species_fallout, use_order)
+      traits <- as.data.frame(species[, c(2:(n_traits + 1))],
+                              row.names = c(1:taxa))
 
       communities <- as.data.frame(t(allcommunities))
       present_species <- which(communities > 0)
@@ -208,6 +216,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         next_disp[numberAccepted] <- params[1]
         next_filt[numberAccepted] <- params[2]
         next_comp[numberAccepted] <- params[3]
+        next_order[numberAccepted] <- params[4]
 
         fits[numberAccepted] <- fit
         rich_vec[numberAccepted] <- FRic[[1]]
@@ -219,8 +228,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
           next_weights[numberAccepted] <- 1
         } else {
           next_weights[numberAccepted] <-
-            calculateWeight(params, changed, sigma, disp_vals, filt_vals,
-                            comp_vals, weights)
+            calculateWeight(params, changed, sigma, 
+                            disp_vals, filt_vals, comp_vals, weights)
         }
         numberAccepted <- numberAccepted + 1
         if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
@@ -248,21 +257,28 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     disp_vals <- next_disp
     filt_vals <- next_filt
     comp_vals <- next_comp
+    order_vals <- next_order
     weights <- next_weights
 
     output <- cbind(disp_vals, filt_vals, comp_vals, rich_vec,
-                    eve_vec, div_vec, opt_vec, fits, weights)
-    file_name <- paste("particles_t=", t, ".txt", sep="", collapse = NULL)
+                    eve_vec, div_vec, opt_vec, fits, weights, order_vals)
+    file_name <- paste("particles_t=", t, ".txt", sep = "", collapse = NULL)
     write.table(output, file_name, row.names = FALSE, col.names = FALSE)
 
-    cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals), 
-        "\t", "accept rate = ", numberAccepted / (tried-1), "\n")
+    if (!use_order) {
+      cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals), 
+          "\t", "accept rate = ", numberAccepted / (tried - 1), "\n")
+    } else {
+      cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals), mean(order_vals),
+          "\t", "accept rate = ", numberAccepted / (tried - 1), "\n")
+    }
 
     # and reset
     next_weights <- rep(1,numParticles)
     next_disp <- 1:numParticles
     next_filt <- 1:numParticles
     next_comp <- 1:numParticles
+    next_order <- 1:numParticles
 
     if (stop_iteration == 1) {
       break
@@ -272,7 +288,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
 
   if (t >= 2) {
-    d <- read.table(paste("particles_t=", t - 1, ".txt", sep="",
+    d <- read.table(paste("particles_t=", t - 1, ".txt", sep = "",
                           collapse = NULL), header = FALSE)
   } else {
       stop("ABC_SMC: ",
@@ -280,6 +296,6 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
            please set stop_at_iteration to 2 if you only 
            want to generate from the prior")
   }
-  output <- list( DA = d[, 1], HF = d[, 2], LS = d[, 3])
+  output <- list(DA = d[, 1], HF = d[, 2], LS = d[, 3], order = d[, 10])
   return(output)
 }

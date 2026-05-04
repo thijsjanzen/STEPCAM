@@ -10,7 +10,8 @@
 STEPCAM_ABC(data_abundances, data_species, numParticles, n_traits,
                         plot_number, stopRate,
                         stop_at_iteration,
-                        continue_from_file)
+                        continue_from_file,
+                        use_order = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,6 +43,7 @@ STEPCAM_ABC(data_abundances, data_species, numParticles, n_traits,
                   for this parameter might lead into long computation times.}
   \item{stop_at_iteration}{If the user instead wants to perform a fixed number of iterations, this parameter sets the maximum number of iterations (the SMC stops when either the maximum number of iterations is reached, or the acceptance rate drops below the stopRate, whatever happens first)}
   \item{continue_from_file}{Should the ABC-SMC algorithm continue from previous output of the STEPCAM_ABC function?}
+  \item{use_order}{Should the order of the three processes also be fit?}
 }
 
 \value{

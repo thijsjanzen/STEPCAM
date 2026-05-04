@@ -7,7 +7,6 @@ export(STEPCAM_ABC)
 export(TernPlot)
 export(plotSTEPCAM)
 export(plotSMC)
-
 export(getRandomVals)
 export(getFromPrevious)
 export(calculateWeight)

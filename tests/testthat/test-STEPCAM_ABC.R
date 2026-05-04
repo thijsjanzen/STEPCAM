@@ -33,7 +33,7 @@ test_that("STEPCAM_ABC: use", {
                         continue_from_file = FALSE)
   )
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
-  expect_equal(v, c(0,2,0), tolerance = 0.1)
+  testthat::expect_equal(v, c(0,2,0), tolerance = 0.1)
 
   #clean up
   for (t in 0:20) {

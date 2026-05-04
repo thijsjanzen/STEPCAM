@@ -88,15 +88,16 @@ test_that("ABC_SMC: use", {
   testthat::skip_on_ci()
   testthat::skip_on_cran()
   testthat::expect_output(
-  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+  output <- STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = FALSE, stop_at_iteration = 8)
+                    continue_from_file = FALSE, stop_at_iteration = 8,
+                    use_order = FALSE)
   )
 
   v <- c(mean(output$DA),mean(output$HF),mean(output$LS))
 
-  expect_equal(v, c(0,2,0), tolerance = 0.1)
+  testthat::expect_equal(v, c(0,2,0), tolerance = 0.1)
 
   for (t in 0:20) {
     file_name <- paste("particles_t=", t, ".txt", sep="")
@@ -223,25 +224,26 @@ test_that("ABC_SMC: use_lim_sim", {
   testthat::skip_on_cran()
 
   testthat::expect_output(
-  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+  output <- STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = FALSE, stop_at_iteration = 2)
+                    continue_from_file = FALSE, stop_at_iteration = 4,
+                    use_order = FALSE)
   )
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
 
-  expect_equal(v[[3]], 0.4, tolerance = 0.1)
+  testthat::expect_equal(v[[3]], 0.4, tolerance = 0.1)
 
   testthat::expect_output(
-  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+  output <- STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate = 0.2, Ord,
                     continue_from_file = TRUE, stop_at_iteration = 20)
 )
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
-  expect_equal(v[[3]], 1, tolerance = 0.2)
+  testthat::expect_equal(v[[3]], 1, tolerance = 0.2)
 
   for (t in 0:20) {
     file_name <- paste("particles_t=", t, ".txt", sep="")
@@ -343,16 +345,14 @@ test_that("ABC_SMC: abuse", {
   stopRate <- 0.0001
 
   sd_vals <- round(sd_vals)
-  testthat::expect_output(
- expect_error(
-   ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+ testthat::expect_error(
+   STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 5),
   "ABC_SMC: one of the community summary statistics"
   )
-  )
-
+ 
  set.seed(42)
  n_traits <- 3
  n_plots <- 10
@@ -435,8 +435,8 @@ test_that("ABC_SMC: abuse", {
  plot_number <- 1
  stopRate <- 0.04
 
- expect_error(
-   STEPCAM::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+ testthat::expect_error(
+   STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                      sd_vals, summary_stats, community_number, scaled_species,
                      data_abundances, data_frequencies, stopRate, Ord,
                      continue_from_file = FALSE, stop_at_iteration = 1),
