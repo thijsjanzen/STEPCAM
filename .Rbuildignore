@@ -8,3 +8,5 @@
 ^vert.txt
 ^pics
 ^.appveyor.yml
+^\.positai$
+^\.claude$

@@ -5,7 +5,8 @@ test_that("ABC_SMC: use", {
   n_traits <- 3
   n_plots <- 10
   num_species <- 10
-  x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
+  x <- generate.Artificial.Data(n_species = num_species,
+                                n_traits = n_traits,
                                 n_communities = n_plots,
                                 occurence_distribution = 0.5,
                                 average_richness = 10,
@@ -18,8 +19,8 @@ test_that("ABC_SMC: use", {
   data_species$trait3 <- c(runif(8,0,1), -20, 40)
 
   data_abundances <- x$abundances
-  for(i in 1:8) {
-    data_abundances[1,i] <- 1
+  for (i in 1:8) {
+    data_abundances[1, i] <- 1
   }
   data_abundances[1,9] <- 0
   data_abundances[1,10] <- 0
@@ -45,7 +46,7 @@ test_that("ABC_SMC: use", {
   names(scaled_species) <- c("sp", traitnames[1:n_traits], "freq")
   row.names(scaled_species) <- c(1:taxa)
 
-  params <- c(0,1,0)
+  params <- c(0, 1, 0)
   plot_number <- 1
 
   res <- detMnbsp(Ord, abundances)
@@ -62,8 +63,8 @@ test_that("ABC_SMC: use", {
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
-  for(i in 1:n_traits){
-    for(j in seq_along(observed_abundances)){
+  for (i in 1:n_traits) {
+    for (j in seq_along(observed_abundances)) {
       traitvalues[j] <- observed_traits[j, i]
     }
     # calculate CTM value
@@ -83,20 +84,18 @@ test_that("ABC_SMC: use", {
   plot_number <- 1
   stopRate <- 0.04
 
-
-
   testthat::skip_on_ci()
   testthat::skip_on_cran()
   testthat::expect_output(
-  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+  output <- STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 8)
   )
 
-  v <- c(mean(output$DA),mean(output$HF),mean(output$LS))
+  v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
 
-  expect_equal(v, c(0,2,0), tolerance = 0.1)
+  testthat::expect_equal(v, c(0,2,0), tolerance = 0.1)
 
   for (t in 0:20) {
     file_name <- paste("particles_t=", t, ".txt", sep="")
@@ -125,9 +124,9 @@ test_that("ABC_SMC: use_lim_sim", {
                                 mechanism_random = FALSE)
 
   data_species <- x$traits
-  data_species$trait1 <- c(runif(10,0,5))
-  data_species$trait2 <- c(runif(10,0,5))
-  data_species$trait3 <- c(runif(10,0,5))
+  data_species$trait1 <- c(runif(10, 0, 5))
+  data_species$trait2 <- c(runif(10, 0, 5))
+  data_species$trait3 <- c(runif(10, 0, 5))
   data_species$trait1[10] <- data_species$trait1[9] + 0.00001
   data_species$trait2[10] <- data_species$trait2[9] + 0.00001
   data_species$trait3[10] <- data_species$trait3[9] + 0.00001
@@ -135,13 +134,12 @@ test_that("ABC_SMC: use_lim_sim", {
 
   data_abundances <- x$abundances
 
-
-  for(i in 1:8) {
-    for(j in 1:3) {
+  for (i in 1:8) {
+    for (j in 1:3) {
       data_abundances[i,j] <- 1
     }
-    for(j in 4:10) {
-      if(runif(1,0,1) < 0.5) {
+    for (j in 4:10) {
+      if (runif(1, 0, 1) < 0.5) {
         data_abundances[i,j] <- 1
       }
     }
@@ -223,7 +221,7 @@ test_that("ABC_SMC: use_lim_sim", {
   testthat::skip_on_cran()
 
   testthat::expect_output(
-  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+  output <- STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 2)
@@ -231,17 +229,17 @@ test_that("ABC_SMC: use_lim_sim", {
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
 
-  expect_equal(v[[3]], 0.4, tolerance = 0.1)
+  testthat::expect_equal(v[[3]], 0.4, tolerance = 0.1)
 
   testthat::expect_output(
-  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+  output <- STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate = 0.2, Ord,
                     continue_from_file = TRUE, stop_at_iteration = 20)
 )
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
-  expect_equal(v[[3]], 1, tolerance = 0.2)
+  testthat::expect_equal(v[[3]], 1, tolerance = 0.2)
 
   for (t in 0:20) {
     file_name <- paste("particles_t=", t, ".txt", sep="")
@@ -266,16 +264,15 @@ test_that("ABC_SMC: abuse", {
                                 mechanism_random = FALSE)
 
   data_species <- x$traits
-  data_species$trait1 <- c(runif(10,0,1))
-  data_species$trait2 <- c(runif(10,0,1))
-  data_species$trait3 <- c(runif(10,0,1))
+  data_species$trait1 <- c(runif(10, 0, 1))
+  data_species$trait2 <- c(runif(10, 0, 1))
+  data_species$trait3 <- c(runif(10, 0, 1))
   data_species$trait1[10] <- data_species$trait1[9]
   data_species$trait2[10] <- data_species$trait2[9]
   data_species$trait3[10] <- data_species$trait3[9]
 
-
   data_abundances <- x$abundances
-  for(i in 1:8) {
+  for (i in 1:8) {
     data_abundances[1,i] <- 1
   }
   data_abundances[1,9] <- 1
@@ -284,8 +281,8 @@ test_that("ABC_SMC: abuse", {
   scaled_species <- scaleSpeciesvalues(data_species, n_traits)
 
   testthat::expect_warning(
-  sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
-)
+    sd_vals <- calcSD(scaled_species, data_abundances, n_plots, n_traits)
+  )
 
   taxa <- nrow(data_species)
 
@@ -321,8 +318,8 @@ test_that("ABC_SMC: abuse", {
   observed_traits <- observed_traits[, -1]
   trait_means <- c()
   traitvalues <- c()
-  for(i in 1:n_traits){
-    for(j in seq_along(observed_abundances)){
+  for (i in 1:n_traits) {
+    for (j in seq_along(observed_abundances)) {
       traitvalues[j] <- observed_traits[j, i]
     }
     # calculate CTM value
@@ -343,21 +340,20 @@ test_that("ABC_SMC: abuse", {
   stopRate <- 0.0001
 
   sd_vals <- round(sd_vals)
-  testthat::expect_output(
- expect_error(
-   ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+     testthat::expect_error(
+   STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
                     continue_from_file = FALSE, stop_at_iteration = 5),
   "ABC_SMC: one of the community summary statistics"
-  )
-  )
-
+     )
+     
  set.seed(42)
  n_traits <- 3
  n_plots <- 10
  num_species <- 10
- x <- generate.Artificial.Data(n_species = num_species, n_traits = n_traits,
+ x <- generate.Artificial.Data(n_species = num_species,
+                               n_traits = n_traits,
                                n_communities = n_plots,
                                occurence_distribution = 0.5,
                                average_richness = 10,
@@ -435,8 +431,8 @@ test_that("ABC_SMC: abuse", {
  plot_number <- 1
  stopRate <- 0.04
 
- expect_error(
-   STEPCAM::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+ testthat::expect_error(
+   STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                      sd_vals, summary_stats, community_number, scaled_species,
                      data_abundances, data_frequencies, stopRate, Ord,
                      continue_from_file = FALSE, stop_at_iteration = 1),
