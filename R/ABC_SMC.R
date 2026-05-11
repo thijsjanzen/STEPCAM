@@ -14,8 +14,8 @@ getRandomVals <- function(max_val)  {
 }
 
 # function to randomly draw a particle depending on it's weight
-getFromPrevious <- function(inds, ws, disps, filts, comps, orders)  {
-  index <- sample(x = inds, size = 1, replace = TRUE, prob = ws)
+getFromPrevious <- function(ws, disps, filts, comps, orders)  {
+  index <- sample(x = seq_along(ws), size = 1, replace = TRUE, prob = ws)
   output <- c(disps[index], filts[index], comps[index], orders[index])
   return(output)
 }
@@ -24,9 +24,12 @@ getFromPrevious <- function(inds, ws, disps, filts, comps, orders)  {
 calculateWeight <- function(params, target, sigma,
                             disp_vals, filt_vals, comp_vals, order_vals,
                             weights)  {
-  diff <- cbind(disp_vals, filt_vals, comp_vals) - params[1:3]
+  diff <- c() 
+  if (target == 1) diff <- params[target] - disp_vals
+  if (target == 2) diff <- params[target] - filt_vals
+  if (target == 3) diff <- params[target] - comp_vals
   
-  diff_prob <- dnorm(diff, mean = 0, sd = sigma, log = TRUE)
+  diff_prob <- dnorm(diff, mean = 0, sd = sigma)
   
   # we have to multiply with the ordering as well
   diff_order <- 1 - (params[4] != order_vals)
@@ -34,9 +37,11 @@ calculateWeight <- function(params, target, sigma,
   diff_order <- diff_order * 0.9
   diff_order[diff_order == 0] <- 0.1
 
-  vals <- cbind(log(weights), diff_prob, log(diff_order))
-  vals <- rowSums(vals)
-  vals <- exp(vals)
+  #vals <- cbind(log(weights), diff_prob, log(diff_order))
+  #vals <- rowSums(vals)
+  #vals <- exp(vals)
+  
+  vals <- weights * diff_prob * diff_order 
   
   return( 1 / sum(vals) ) # prior density is 1.
 }
@@ -95,12 +100,63 @@ calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
   return(full_fit)
 }
 
+get_fit <- function(params, species, abundances, taxa,
+                    esppres, community_number, n_traits,
+                    species_fallout, fit_order, Ord, res, optimum,
+                    summary_stats, sd_vals) {
+  taxa <- length(abundances[1, ])
+  
+  allcommunities <- STEPCAM(params, species, abundances, taxa,
+                            esppres, community_number, n_traits,
+                            species_fallout,
+                            fit_order)
+  traits <- as.data.frame(species[, c(2:(n_traits + 1))],
+                          row.names = c(1:taxa))
+  
+  communities <- as.data.frame(t(allcommunities))
+  present_species <- which(communities > 0)
+  
+  FD_output <- strippedDbFd(Ord, communities, 
+                            m = res[[1]], nb.sp = res[[2]]) 
+  
+  # FRic = functional richness (Villeger et al, 2008, Ecology)
+  FRic <- FD_output$FRic 
+  # FEve = functional evenness (Villeger et al, 2008, Ecology)
+  FEve <- FD_output$FEve 
+  # FDiv = functional diversity (Villeger et al, 2008, Ecology)
+  FDiv <- FD_output$FDiv 
+  
+  trait_means <- vector("numeric", n_traits)
+  for (i in seq_len(n_traits)) {
+    # trait means of simulated community
+    trait_means[i] <- mean(traits[present_species, i])
+  }
+  optimum_plus_trait_means <- rbind(optimum, trait_means)
+  
+  # calculate distance of trait mean between simulated community 
+  # and observed community
+  mean_optimum <- dist(optimum_plus_trait_means)
+  
+  # (inverse) fit of model: euclidian distance of FD and trait mean 
+  # values of observed community from that of simulated
+  fit <- calculateDistance(FRic[[1]], FEve[[1]], FDiv[[1]],
+                           mean_optimum[1], summary_stats, sd_vals)
+  
+  return(list(fit = fit,
+              FRic = FRic,
+              FEve = FEve,
+              FDiv = FDiv,
+              mean_optimum = mean_optimum,
+              params = params))
+}
+
 
 ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, species,
                     abundances, frequencies, stopRate, Ord, 
                     continue_from_file = TRUE, stop_at_iteration = 50,
-                    fit_order = FALSE)  {
+                    fit_order = FALSE,
+                    num_threads = 1)  {
 
   for (i in seq_along(sd_vals)) {
     if (sd_vals[[i]] == 0.000) {
@@ -112,25 +168,24 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   res <- detMnbsp(Ord, abundances)
   optimum <- summary_stats[, 4:(3 + n_traits)]
 
-  disp_vals  <- 1:numParticles
-  filt_vals  <- 1:numParticles
-  comp_vals  <- 1:numParticles
-  order_vals <- 1:numParticles
+  disp_vals  <- c()
+  filt_vals  <- c()
+  comp_vals  <- c()
+  order_vals <- c()
 
-  fits <- 1:numParticles
-  rich_vec <- 1:numParticles
-  eve_vec <- 1:numParticles
-  div_vec <- 1:numParticles
-  opt_vec <- 1:numParticles
+  fits <- c()
+  rich_vec <- c()
+  eve_vec <- c()
+  div_vec <- c()
+  opt_vec <- c()
 
   next_disp <- disp_vals
   next_filt <- filt_vals
   next_comp <- comp_vals
   next_order <- order_vals
 
-  weights <- rep(1, numParticles)
-  next_weights <- rep(1, numParticles)
-  indices <- 1:numParticles
+  weights <- c()
+  next_weights <- c()
 
   sigma <- 1
   t <- 1
@@ -142,7 +197,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     f <- gtools::mixedsort(f)
     t1 <- 1 + length(f)
     d <- read.table(f[length(f)], header = FALSE)
-    if(d[numParticles,1] == numParticles) {
+    if (d[numParticles,1] == numParticles) {
       d <- read.table(f[length(f) - 1], header = FALSE)
       t1 <- t1 - 1
     }
@@ -172,102 +227,106 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
 
     stop_iteration <- 0
     changed <- 1
-    tried <- 1
+    tried <- 0
 
-    while (numberAccepted <= numParticles) {
-      params <- c(species_fallout, 0, 0, 1)
-      # get a parameter combination
-      if (t == 1)  {
-        params <- getRandomVals(species_fallout)
-      } else {
-        params <- getFromPrevious(indices, weights,
-                                  disp_vals, filt_vals, comp_vals, order_vals)
-        params <- perturb(params, sigma, fit_order)
-
-        # we need to know which parameter was perturbed,
-        # to be able to calculate its weight later
-        changed <- params[5]
-        params <- params[1:4]
-      }
-
-      if (sum(params[1:3]) != species_fallout) {
-        cat(t, numberAccepted, params, "\n")
-      }
+    while (numberAccepted <= (numParticles)) {
       
-      # total number of species in species pool
-      taxa <- length(abundances[1, ])
-     
-      allcommunities <- STEPCAM(params, species, abundances, taxa,
-                                esppres, community_number, n_traits,
-                                species_fallout,
-                                fit_order)
-      traits <- as.data.frame(species[, c(2:(n_traits + 1))],
-                              row.names = c(1:taxa))
-
-      communities <- as.data.frame(t(allcommunities))
-      present_species <- which(communities > 0)
+      remaining <- numParticles - numberAccepted
+      if (remaining < 1) break
       
-      FD_output <- strippedDbFd(Ord, communities, 
-                                m = res[[1]], nb.sp = res[[2]]) 
+      block_size <- numParticles - numberAccepted
+      
+      if (tried > 0 && numberAccepted > 0)
+        block_size <- block_size * tried / numberAccepted # 1 / (number_accepted / tried)
+      
+      block_size <- floor(block_size)
+      block_size <- min(block_size, 10000)
+      
+      cat(numberAccepted, block_size, "\n")
+      
+      param_matrix <- list()
+      
+      for (i in 1:block_size) {
+        params <- c(species_fallout, 0, 0, 1)
+        # get a parameter combination
+        if (t == 1)  {
+          params <- getRandomVals(species_fallout)
+          if (fit_order) params[4] <- sample(1:6, 1)
+        } else {
+          params <- getFromPrevious(weights,
+                                    disp_vals, filt_vals, comp_vals, order_vals)
+          params <- perturb(params, sigma, fit_order)
   
-      # FRic = functional richness (Villeger et al, 2008, Ecology)
-      FRic <- FD_output$FRic 
-      # FEve = functional evenness (Villeger et al, 2008, Ecology)
-      FEve <- FD_output$FEve 
-      # FDiv = functional diversity (Villeger et al, 2008, Ecology)
-      FDiv <- FD_output$FDiv 
-
-      trait_means <- vector("numeric", n_traits)
-      for (i in seq_len(n_traits)) {
-        # trait means of simulated community
-        trait_means[i] <- mean(traits[present_species, i])
+          # we need to know which parameter was perturbed,
+          # to be able to calculate its weight later
+          changed <- params[5]
+          params <- params[1:4]
+        }
+        
+        param_matrix[[i]] <- params
       }
-      optimum_plus_trait_means <- rbind(optimum, trait_means)
 
-      # calculate distance of trait mean between simulated community 
-      # and observed community
-      mean_optimum <- dist(optimum_plus_trait_means)
-
-      # (inverse) fit of model: euclidian distance of FD and trait mean 
-      # values of observed community from that of simulated
-      fit <- calculateDistance(FRic[[1]], FEve[[1]], FDiv[[1]],
-                               mean_optimum[1], summary_stats, sd_vals)
+      # now we simulate them all
+      process_particle <- function(local_params) {
+        return(get_fit(local_params, species, abundances, taxa,
+                       esppres, community_number, n_traits,
+                       species_fallout, fit_order, Ord, res, optimum,
+                       summary_stats, sd_vals))
+      }
+      
+      # local_results <- parallel::mclapply(param_matrix, process_particle,
+      #                                    mc.cores = num_threads)
+      
+      local_results <- list()
+      for (i in 1:length(param_matrix)) {
+        local_results[[i]] <- process_particle(param_matrix[[i]])
+      }
+      
+      
+      
+      for (i in 1:length(local_results)) {
+        local_res <- local_results[[i]]
+        if (is.na(local_res$fit) || is.nan(local_res$fit)) next
+        
+        if (local_res$fit < threshold) {
+          numberAccepted <- numberAccepted + 1
+          next_disp[numberAccepted]  <- local_res$params[1]
+          next_filt[numberAccepted]  <- local_res$params[2]
+          next_comp[numberAccepted]  <- local_res$params[3]
+          next_order[numberAccepted] <- local_res$params[4]
+          
+          fits[numberAccepted] <- local_res$fit
+          rich_vec[numberAccepted] <- local_res$FRic[[1]]
+          eve_vec[numberAccepted] <- local_res$FEve[[1]]
+          div_vec[numberAccepted] <- local_res$FDiv[[1]]
+          opt_vec[numberAccepted] <- local_res$mean_optimum
+          
+          if (t == 1) {
+            next_weights[numberAccepted] <- 1
+          } else {
+            next_weights[numberAccepted] <-
+              calculateWeight(params = local_res$params, 
+                              target = changed, 
+                              sigma = sigma, 
+                              disp_vals = disp_vals, 
+                              filt_vals = filt_vals, 
+                              comp_vals = comp_vals,
+                              order_vals = order_vals,
+                              weights = weights)
+          }
+          
+          
+        
+          if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
+            cat("**")
+            flush.console()
+          }
+        }
+      }
       
        # function to accept / reject models based on the fit
-      if (fit < threshold) {
-        next_disp[numberAccepted]  <- params[1]
-        next_filt[numberAccepted]  <- params[2]
-        next_comp[numberAccepted]  <- params[3]
-        next_order[numberAccepted] <- params[4]
-
-        fits[numberAccepted] <- fit
-        rich_vec[numberAccepted] <- FRic[[1]]
-        eve_vec[numberAccepted] <- FEve[[1]]
-        div_vec[numberAccepted] <- FDiv[[1]]
-        opt_vec[numberAccepted] <- mean_optimum
-
-        if (t == 1) {
-          next_weights[numberAccepted] <- 1
-        } else {
-          next_weights[numberAccepted] <-
-            calculateWeight(params = params, 
-                            target = changed, 
-                            sigma = sigma, 
-                            disp_vals = disp_vals, 
-                            filt_vals = filt_vals, 
-                            comp_vals = comp_vals,
-                            order_vals = order_vals,
-                            weights = weights)
-        }
-        numberAccepted <- numberAccepted + 1
-        if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
-          cat("**")
-          flush.console()
-        }
-      }
-
-      tried <- tried + 1
-      if (tried > (1/stopRate) && tried > 50)  {
+      tried <- tried + block_size
+      if (tried > (1 / stopRate) && tried > 50)  {
         # do not check every particle if the acceptance rate is OK
         if (numberAccepted / tried < stopRate) {
           stop_iteration <- 1

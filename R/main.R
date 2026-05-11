@@ -3,7 +3,8 @@ STEPCAM_ABC <- function(data_abundances, data_species,
                         plot_number, stopRate,
                         stop_at_iteration = 10,
                         continue_from_file = FALSE,
-                        fit_order = FALSE){
+                        fit_order = FALSE,
+                        num_threads = 1){
 
   # empty vector for number of species in each community
   nbsp <- c()
@@ -74,8 +75,8 @@ STEPCAM_ABC <- function(data_abundances, data_species,
   output <- ABC_SMC(numParticles, species_fallout, taxa,esppres, n_traits,
                     sd_vals, summary_stats, plot_number, scaled_species, 
                     data_abundances, data_frequencies, stopRate, Ord, 
-                    continue_from_file = FALSE, stop_at_iteration,
-                    fit_order)
+                    continue_from_file = continue_from_file, stop_at_iteration,
+                    fit_order, num_threads)
 
   return(output)
 }
@@ -96,7 +97,7 @@ plotSTEPCAM <- function(output){
 plot_element <- function(d, xmin, xmax, index, max_time, parameter){
   topLabels <- c("Dispersal Assembly", "Habitat Filtering", 
                  "Limiting Similarity", "Richness", "Evenness",
-                 "Diversity", "Optimum", "Fit")
+                 "Diversity", "Optimum", "Fit", "Order")
   mean_data <- mean(d)
   stdev_data <- sd(d)
 
@@ -115,7 +116,7 @@ plot_element <- function(d, xmin, xmax, index, max_time, parameter){
   }
 }
 
-plotSMC <- function(path){
+plotSMC <- function(path, plot_fit_order = FALSE){
   end <- ".txt"
   val <- "particles_t="
   calctotal <- read.table(paste(path, val, 1, end, sep = "", collapse = NULL))
@@ -131,8 +132,10 @@ plotSMC <- function(path){
       break
     }
   }
-  maxTime <- maxTime-1
-  numCols <- 8
+  
+  
+  maxTime <- maxTime - 1
+  numCols <- 8 + plot_fit_order
   numRows <- maxTime
 
   k <- matrix(nrow = numRows, ncol = numCols)
@@ -143,16 +146,19 @@ plotSMC <- function(path){
        cnt <- cnt + 1
     }
   }
+  opar <- par()
   layout(k)
   par(mar = c(0.5, 0, 0.5, 0))
 
-  for(c in 1:8) {
+  chosen_cols <- 1:8
+  if (plot_fit_order) chosen_cols <- c(chosen_cols, 10)
+  
+  for (c in chosen_cols) {
     fulldata <- c()
 
     for (i in 1:(maxTime)) {
       data_name <- paste(path, val, i, end, sep = "", collapse = NULL)
-      if(file.exists(data_name))
-      {
+      if (file.exists(data_name)) {
         data <- read.table(data_name, header = FALSE)
         fulldata <- cbind(fulldata, data[, c])
       }
@@ -160,7 +166,7 @@ plotSMC <- function(path){
 
     xmin <- min(fulldata)
     xmax <- max(fulldata)
-    if(c < 4) {
+    if (c < 4) {
       fulldata <- fulldata / total
       xmin <- 0
       xmax <- 1
@@ -170,4 +176,5 @@ plotSMC <- function(path){
       plot_element(fulldata[, i], xmin * 0.9, xmax * 1.1, i, maxTime, c)
     }
   }
+  par(opar)
 }

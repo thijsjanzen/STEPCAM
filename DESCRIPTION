@@ -17,6 +17,7 @@ License: GPL-2
 URL: https://github.com/thijsjanzen/STEPCAM
 BugReports: https://github.com/thijsjanzen/STEPCAM/issues
 Imports: 
+    parallel,
     ade4,
     ape,
     FD,

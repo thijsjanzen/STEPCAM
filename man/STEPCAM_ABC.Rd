@@ -43,6 +43,7 @@ STEPCAM_ABC(data_abundances, data_species, numParticles, n_traits,
   \item{stop_at_iteration}{If the user instead wants to perform a fixed number of iterations, this parameter sets the maximum number of iterations (the SMC stops when either the maximum number of iterations is reached, or the acceptance rate drops below the stopRate, whatever happens first)}
   \item{continue_from_file}{Should the ABC-SMC algorithm continue from previous output of the STEPCAM_ABC function?}
   \item{fit_order}{if TRUE, an extra parameter determining the order of limiting similarity, habitat filtering and dispersal assembly to be fit as well}
+  \item{num_threads}{If set to a value > 1, multithreading is used.}
 }
 
 
