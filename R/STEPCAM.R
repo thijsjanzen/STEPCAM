@@ -93,6 +93,7 @@ STEPCAM <- function(params, species, abundances, taxa, esppres,
        if (params[4] == 4) ordering <- c(2, 3, 1)
        if (params[4] == 5) ordering <- c(3, 1, 2)
        if (params[4] == 6) ordering <- c(3, 2, 1)
+       if (params[4] == -1) ordering <- 1:3
      }
      fallout <- fallout[order(factor(fallout, levels = ordering))]
  }

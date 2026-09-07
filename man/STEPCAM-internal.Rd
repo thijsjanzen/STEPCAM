@@ -14,7 +14,6 @@
 \alias{perturb}
 \alias{plot_element}
 \alias{scaleSpeciesvalues}
-\alias{STEPCAM}
 \alias{ternaryplot2}
 \alias{ordinationAxes}
 \alias{strippedDbFd}

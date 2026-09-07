@@ -13,7 +13,7 @@ test_that("STEPCAM: use",{
 
   data_species <- x$traits
   data_species$trait1 <- 1:10
-  data_species <- cbind(data_species,generateFrequencies(x$abundances))
+  data_species <- cbind(data_species, generateFrequencies(x$abundances))
   traitnames <- c("1")
   names(data_species) <- c("sp",traitnames[1:n_traits], "freq")
   data_abundances <- x$abundances
@@ -25,7 +25,7 @@ test_that("STEPCAM: use",{
   S <- length(esppres)
   species_fallout <- 2
 
-  a <- STEPCAM( c(0, species_fallout, 0), data_species, data_abudances,
+  a <- STEPCAM( c(0, species_fallout, 0), data_species, data_abundances,
                 taxa, esppres, community_number, n_traits, species_fallout)
 
   expect_equal(
@@ -40,7 +40,7 @@ test_that("STEPCAM: use",{
   names(data_species) <- c("sp",traitnames[1:n_traits], "freq")
 
   species_fallout <- 2
-  a <- STEPCAM( c(0,0,species_fallout), data_species, data_abudances,
+  a <- STEPCAM( c(0,0,species_fallout), data_species, data_abundances,
                 taxa, esppres, community_number,
                 n_traits, species_fallout)
   expect_equal(

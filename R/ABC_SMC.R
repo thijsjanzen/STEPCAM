@@ -41,6 +41,15 @@ calculateWeight <- function(params, target, sigma,
   #vals <- rowSums(vals)
   #vals <- exp(vals)
   
+  a1 <- length(weights)
+  a2 <- length(diff_prob)
+  a3 <- length(diff_order)
+  if (a1 != a2 || a1 != a3 || a2 != a3) {
+    cat("oh oh")
+    b <- 78
+  }
+  
+  
   vals <- weights * diff_prob * diff_order 
   
   return( 1 / sum(vals) ) # prior density is 1.
@@ -77,7 +86,7 @@ perturb <- function(p, sigma, fit_order)  {
   params[x[3]] <- max(0, params[x[3]])
   params[x[3]] <- min(max_number, params[x[3]])
 
-  if (fit_order) {
+  if (fit_order == -1) {
     if (stats::runif(1, 0, 1) < 0.1) {
       new_order <- 1:6
       new_order <- new_order[-params[4]]
@@ -251,7 +260,11 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         # get a parameter combination
         if (t == 1)  {
           params <- getRandomVals(species_fallout)
-          if (fit_order) params[4] <- sample(1:6, 1)
+          if (fit_order == -1) {
+            params[4] <- sample(1:6, 1)
+          } else {
+            params[4] <- fit_order
+          }
         } else {
           params <- getFromPrevious(weights,
                                     disp_vals, filt_vals, comp_vals, order_vals)
@@ -274,13 +287,13 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                        summary_stats, sd_vals))
       }
       
-      # local_results <- parallel::mclapply(param_matrix, process_particle,
-      #                                    mc.cores = num_threads)
+      local_results <- parallel::mclapply(param_matrix, process_particle,
+                                          mc.cores = num_threads)
       
-      local_results <- list()
-      for (i in 1:length(param_matrix)) {
-        local_results[[i]] <- process_particle(param_matrix[[i]])
-      }
+      #local_results <- list()
+      #for (i in 1:length(param_matrix)) {
+      #  local_results[[i]] <- process_particle(param_matrix[[i]])
+      #}
       
       
       
@@ -290,9 +303,10 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         
         if (local_res$fit < threshold) {
           numberAccepted <- numberAccepted + 1
-          next_disp[numberAccepted]  <- local_res$params[1]
-          next_filt[numberAccepted]  <- local_res$params[2]
-          next_comp[numberAccepted]  <- local_res$params[3]
+          
+          next_disp [numberAccepted]  <- local_res$params[1]
+          next_filt [numberAccepted]  <- local_res$params[2]
+          next_comp [numberAccepted]  <- local_res$params[3]
           next_order[numberAccepted] <- local_res$params[4]
           
           fits[numberAccepted] <- local_res$fit
@@ -315,8 +329,6 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                               weights = weights)
           }
           
-          
-        
           if ((numberAccepted) %% (numParticles / PRINT_FREQ) == 0) {
             cat("**")
             flush.console()
@@ -341,11 +353,18 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     }
 
     # replace values
-    disp_vals <- next_disp
-    filt_vals <- next_filt
-    comp_vals <- next_comp
-    order_vals <- next_order
-    weights <- next_weights
+    disp_vals  <- next_disp[1:numParticles]
+    filt_vals  <- next_filt[1:numParticles]
+    comp_vals  <- next_comp[1:numParticles]
+    order_vals <- next_order[1:numParticles]
+    weights    <- next_weights[1:numParticles]
+    
+    rich_vec <- rich_vec[1:numParticles]
+    eve_vec  <- eve_vec[1:numParticles]
+    div_vec  <- div_vec[1:numParticles]
+    opt_vec  <- opt_vec[1:numParticles]
+    fits     <- fits[1:numParticles]
+    
 
     output <- cbind(disp_vals, filt_vals, comp_vals, rich_vec,
                     eve_vec, div_vec, opt_vec, fits, weights, order_vals)
@@ -365,6 +384,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     next_disp <- 1:numParticles
     next_filt <- 1:numParticles
     next_comp <- 1:numParticles
+    next_order <- 1:numParticles
 
     if (stop_iteration == 1) {
       break
