@@ -1,7 +1,7 @@
 Type: Package
 Package: STEPCAM
 Title: ABC-SMC Inference of STEPCAM
-Version: 1.2.3
+Version: 1.3
 Authors@R: c(
     person("Thijs", "Janzen", , "thijsjanzen@gmail.com", role = c("aut", "cre")),
     person("Fons", "van der Plas", role = "aut"),
