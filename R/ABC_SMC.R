@@ -203,26 +203,26 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   if (length(f) > 0 && continue_from_file == TRUE) {
     cat("Found previous output, continuing from that output\n")
     flush.console()
-    f <- gtools::mixedsort(f)
-    t1 <- 1 + length(f)
-    d <- read.table(f[length(f)], header = FALSE)
-    if (d[numParticles,1] == numParticles) {
-      d <- read.table(f[length(f) - 1], header = FALSE)
-      t1 <- t1 - 1
-    }
-
+    
+    for (t1 in stop_at_iteration:1) {
+      file_name <- paste0("particles_t=", t1, ".txt")
+      d <- read.table(file_name, header = FALSE)
+      if (d[numParticles, 1] == numParticles) next
+      
+      t <- t1 + 1
+      break
+    }    
+    
     disp_vals <- d[, 1]
     filt_vals <- d[, 2]
     comp_vals <- d[, 3]
     fits <-     d[, 8]
     weights <-  d[, 9]
     order_vals <- d[, 10]
-
-    t <- t1
   }
 
   # continuously sampling
-  while (t < 50)  {
+  while (t < stop_at_iteration)  {
     cat("\nGenerating Particles for iteration\t", t, "\n")
     cat("0--------25--------50--------75--------100\n")
     cat("*")
@@ -304,9 +304,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         if (local_res$fit < threshold) {
           numberAccepted <- numberAccepted + 1
           
-          next_disp [numberAccepted]  <- local_res$params[1]
-          next_filt [numberAccepted]  <- local_res$params[2]
-          next_comp [numberAccepted]  <- local_res$params[3]
+          next_disp[numberAccepted]  <- local_res$params[1]
+          next_filt[numberAccepted]  <- local_res$params[2]
+          next_comp[numberAccepted]  <- local_res$params[3]
           next_order[numberAccepted] <- local_res$params[4]
           
           fits[numberAccepted] <- local_res$fit
