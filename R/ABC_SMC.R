@@ -206,11 +206,13 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     
     for (t1 in stop_at_iteration:1) {
       file_name <- paste0("particles_t=", t1, ".txt")
-      d <- read.table(file_name, header = FALSE)
-      if (d[numParticles, 1] == numParticles) next
-      
-      t <- t1 + 1
-      break
+      if (file.exists(file_name)) {
+        d <- read.table(file_name, header = FALSE)
+        if (d[numParticles, 1] == numParticles) next
+        
+        t <- t1 + 1
+        break
+      }
     }    
     
     disp_vals <- d[, 1]
