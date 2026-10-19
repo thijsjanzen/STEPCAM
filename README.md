@@ -32,6 +32,13 @@ More information about STEPCAM, and it's uses, can be found in the original pape
 Fons van der Plas, Thijs Janzen, Alejandro Ordonez, Wimke Fokkema, Josephine Reinders, Rampal S. Etienne, and Han Olff 2015. A new modeling approach estimates the relative importance of different community assembly processes. Ecology 96:1502-1515.
 
 # STEPCAM version updates
+Version 1.4
+  - Added support to average over replicate suggested particles
+  - squashed some persistent bugs due to version 1.3
+
+Version 1.3
+  - Added multithreading support
+
 Version 1.2 
   - STEPCAM can now be found on GitHub: https://github.com/thijsjanzen/STEPCAM 
   - Merged STEPCAM code with the supplementary code of Hauffe et al. 2016 
