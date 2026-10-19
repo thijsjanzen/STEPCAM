@@ -4,7 +4,9 @@ STEPCAM_ABC <- function(data_abundances, data_species,
                         stop_at_iteration = 10,
                         continue_from_file = FALSE,
                         fit_order = FALSE,
-                        num_threads = 1){
+                        num_threads = 1,
+                        n_replicates = 1,
+                        threshold_quantile = NULL){
 
   # empty vector for number of species in each community
   nbsp <- c()
@@ -41,9 +43,18 @@ STEPCAM_ABC <- function(data_abundances, data_species,
   observed_traits <- observed_traits[, -1]
 
   # calculate FD values observed communities
+  #
+  # STEPCAM simulates presence/absence only, so get_fit() always evaluates
+  # FEve and FDiv with uniform relative abundances. Computing the OBSERVED
+  # values from raw abundances therefore compares two different quantities
+  # and adds a constant penalty to every particle's distance that no
+  # parameter combination can remove. Binarise so both sides match.
+  data_presences <- data_abundances
+  data_presences[data_presences > 0] <- 1
+
   Ord <- ordinationAxes(x = scaled_species[,-1], stand.x = FALSE)
-  res <- detMnbsp(Ord, data_abundances)
-  FD_output <- strippedDbFd(Ord, data_abundances, res[[1]], res[[2]])
+  res <- detMnbsp(Ord, data_presences)
+  FD_output <- strippedDbFd(Ord, data_presences, res[[1]], res[[2]])
 
   trait_means <- vector("numeric", n_traits)
   for(i in seq_len(n_traits)) {
@@ -72,11 +83,15 @@ STEPCAM_ABC <- function(data_abundances, data_species,
 
 
 
-  output <- ABC_SMC(numParticles, species_fallout, taxa,esppres, n_traits,
-                    sd_vals, summary_stats, plot_number, scaled_species, 
-                    data_abundances, data_frequencies, stopRate, Ord, 
-                    continue_from_file = continue_from_file, stop_at_iteration,
-                    fit_order, num_threads)
+  output <- ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
+                    sd_vals, summary_stats, plot_number, scaled_species,
+                    data_presences, data_frequencies, stopRate, Ord,
+                    continue_from_file = continue_from_file,
+                    stop_at_iteration = stop_at_iteration,
+                    fit_order = fit_order,
+                    num_threads = num_threads,
+                    n_replicates = n_replicates,
+                    threshold_quantile = threshold_quantile)
 
   return(output)
 }

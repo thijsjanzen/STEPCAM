@@ -21,25 +21,43 @@ getFromPrevious <- function(ws, disps, filts, comps, orders)  {
 }
 
 # function to calculate the weight of a particle
+#
+# perturb() changes all three components: it moves params[x[1]] by a normal
+# step, absorbs the difference in params[x[2]], and sets params[x[3]] to
+# whatever keeps the sum fixed. Scoring only the component named by `target`
+# therefore evaluates a kernel that was not the one used, and biases the
+# weights. Because the three counts are constrained to sum to
+# species_fallout, the move really lives in 2 free dimensions, so the density
+# is evaluated over two of the three components.
 calculateWeight <- function(params, target, sigma,
                             disp_vals, filt_vals, comp_vals, order_vals,
                             weights)  {
-  diff <- c() 
-  if (target == 1) diff <- params[target] - disp_vals
-  if (target == 2) diff <- params[target] - filt_vals
-  if (target == 3) diff <- params[target] - comp_vals
-  
-  diff_prob <- dnorm(diff, mean = 0, sd = sigma)
-  
+  prev <- cbind(disp_vals, filt_vals, comp_vals)
+
+  # drop one component: the remaining two determine the third
+  keep <- setdiff(1:3, 3)
+  if (!is.na(target)) keep <- setdiff(1:3, setdiff(1:3, target)[2])
+
+  diff1 <- params[keep[1]] - prev[, keep[1]]
+  diff2 <- params[keep[2]] - prev[, keep[2]]
+
+  diff_prob <- stats::dnorm(diff1, mean = 0, sd = sigma) *
+               stats::dnorm(diff2, mean = 0, sd = sigma)
+
   # we have to multiply with the ordering as well
   diff_order <- 1 - (params[4] != order_vals)
   # 90 % prob of remaining the same
   diff_order <- diff_order * 0.9
   diff_order[diff_order == 0] <- 0.1
-  
-  vals <- weights * diff_prob * diff_order 
-  
-  return( 1 / sum(vals) ) # prior density is 1.
+
+  vals <- weights * diff_prob * diff_order
+
+  denom <- sum(vals)
+  # a particle no previous particle could plausibly have produced would
+  # otherwise get an infinite weight and wipe out the whole population
+  if (!is.finite(denom) || denom <= 0) return(0)
+
+  return( 1 / denom ) # prior density is 1.
 }
 
 # normalize all the weights of all particles such that they sum to 1
@@ -96,53 +114,93 @@ calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
   return(full_fit)
 }
 
-get_fit <- function(params, species, abundances, taxa,
-                    esppres, community_number, n_traits,
-                    species_fallout, Ord, res, optimum,
-                    summary_stats, sd_vals) {
-  taxa <- length(abundances[1, ])
-  
+# Run the model once and return the four summary statistics plus the
+# resulting distance to the observed community.
+get_fit_single <- function(params, species, abundances, taxa,
+                           esppres, community_number, n_traits,
+                           species_fallout, Ord, res, optimum,
+                           summary_stats, sd_vals) {
   allcommunities <- STEPCAM(params, species, abundances, taxa,
                             esppres, community_number, n_traits,
                             species_fallout)
-  
+
   traits <- as.data.frame(species[, c(2:(n_traits + 1))],
                           row.names = c(1:taxa))
-  
+
   communities <- as.data.frame(t(allcommunities))
   present_species <- which(communities > 0)
-  
-  FD_output <- strippedDbFd(Ord, communities, 
-                            m = res[[1]], nb.sp = res[[2]]) 
-  
+
+  # nb.sp must describe THIS simulated community, not plot 1 of the
+  # observed data set. The simulated community always holds
+  # taxa - species_fallout species.
+  nb_sp_sim <- length(present_species)
+
+  FD_output <- strippedDbFd(Ord, communities,
+                            m = res[[1]], nb.sp = nb_sp_sim)
+
   # FRic = functional richness (Villeger et al, 2008, Ecology)
-  FRic <- FD_output$FRic 
+  FRic <- FD_output$FRic
   # FEve = functional evenness (Villeger et al, 2008, Ecology)
-  FEve <- FD_output$FEve 
+  FEve <- FD_output$FEve
   # FDiv = functional diversity (Villeger et al, 2008, Ecology)
-  FDiv <- FD_output$FDiv 
-  
+  FDiv <- FD_output$FDiv
+
   trait_means <- vector("numeric", n_traits)
   for (i in seq_len(n_traits)) {
     # trait means of simulated community
     trait_means[i] <- mean(traits[present_species, i])
   }
   optimum_plus_trait_means <- rbind(optimum, trait_means)
-  
-  # calculate distance of trait mean between simulated community 
+
+  # calculate distance of trait mean between simulated community
   # and observed community
   mean_optimum <- dist(optimum_plus_trait_means)
-  
-  # (inverse) fit of model: euclidian distance of FD and trait mean 
+
+  # (inverse) fit of model: euclidian distance of FD and trait mean
   # values of observed community from that of simulated
   fit <- calculateDistance(FRic[[1]], FEve[[1]], FDiv[[1]],
                            mean_optimum[1], summary_stats, sd_vals)
-  
+
   return(list(fit = fit,
-              FRic = FRic,
-              FEve = FEve,
-              FDiv = FDiv,
-              mean_optimum = mean_optimum,
+              FRic = FRic[[1]],
+              FEve = FEve[[1]],
+              FDiv = FDiv[[1]],
+              mean_optimum = mean_optimum[1]))
+}
+
+# Dispersal is stochastic but filtering and limiting similarity are
+# deterministic, so the variance of `fit` grows with the number of dispersal
+# events. Under a hard acceptance threshold that hands high-dispersal
+# particles a free advantage: they get repeated draws at the lower tail,
+# while a particle with zero dispersal events produces one single fit value
+# and is either always or never accepted. Averaging over n_replicates
+# simulations makes acceptance depend on the expected fit instead, which
+# removes that bias. n_replicates = 1 reproduces the old behaviour.
+get_fit <- function(params, species, abundances, taxa,
+                    esppres, community_number, n_traits,
+                    species_fallout, Ord, res, optimum,
+                    summary_stats, sd_vals, n_replicates = 1) {
+  taxa <- length(abundances[1, ])
+
+  reps <- vector("list", n_replicates)
+  for (r in seq_len(n_replicates)) {
+    reps[[r]] <- get_fit_single(params, species, abundances, taxa,
+                                esppres, community_number, n_traits,
+                                species_fallout, Ord, res, optimum,
+                                summary_stats, sd_vals)
+  }
+
+  pull <- function(nm) {
+    v <- vapply(reps, function(z) as.numeric(z[[nm]]), numeric(1))
+    if (all(is.na(v))) return(NA_real_)
+    mean(v, na.rm = TRUE)
+  }
+
+  return(list(fit = pull("fit"),
+              FRic = pull("FRic"),
+              FEve = pull("FEve"),
+              FDiv = pull("FDiv"),
+              mean_optimum = pull("mean_optimum"),
               params = params))
 }
 
@@ -152,7 +210,9 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     abundances, frequencies, stopRate, Ord, 
                     continue_from_file = TRUE, stop_at_iteration = 50,
                     fit_order = FALSE,
-                    num_threads = 1)  {
+                    num_threads = 1,
+                    n_replicates = 1,
+                    threshold_quantile = NULL)  {
 
   for (i in seq_along(sd_vals)) {
     if (sd_vals[[i]] == 0.000) {
@@ -190,29 +250,41 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   if (length(f) > 0 && continue_from_file == TRUE) {
     cat("Found previous output, continuing from that output\n")
     flush.console()
-    
-    found_previous_file <- FALSE
+
+    d <- NULL
     for (t1 in stop_at_iteration:1) {
       file_name <- paste0("particles_t=", t1, ".txt")
-      if (file.exists(file_name)) {
-        d <- read.table(file_name, header = FALSE)
-        if (d[numParticles, 1] == numParticles) next
-        
-        t <- t1 + 1
-        found_previous_file <- TRUE
-        break
-      }
-    }    
-    
-    # do not read from d if nothing was found
-    if (found_previous_file == FALSE) break 
-    
-    disp_vals <- d[, 1]
-    filt_vals <- d[, 2]
-    comp_vals <- d[, 3]
-    fits <-     d[, 8]
-    weights <-  d[, 9]
-    order_vals <- d[, 10]
+      if (!file.exists(file_name)) next
+
+      candidate <- try(utils::read.table(file_name, header = FALSE),
+                       silent = TRUE)
+      # an unreadable or truncated file is not a usable restart point
+      if (inherits(candidate, "try-error")) next
+      if (nrow(candidate) < numParticles || ncol(candidate) < 10) next
+      # a partially written iteration contains NA rows - skip it
+      if (anyNA(candidate[seq_len(numParticles), 1:10])) next
+      # isTRUE() guards against NA propagating into the if()
+      if (isTRUE(candidate[numParticles, 1] == numParticles)) next
+
+      d <- candidate
+      t <- t1 + 1
+      break
+    }
+
+    # no usable file: fall through and start from the prior rather than
+    # calling break outside a loop (which is a runtime error in R)
+    if (is.null(d)) {
+      cat("No usable previous output found, starting from the prior\n")
+      flush.console()
+      t <- 1
+    } else {
+      disp_vals  <- d[, 1]
+      filt_vals  <- d[, 2]
+      comp_vals  <- d[, 3]
+      fits       <- d[, 8]
+      weights    <- d[, 9]
+      order_vals <- d[, 10]
+    }
   }
 
   # continuously sampling
@@ -226,7 +298,28 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     numberAccepted <- 0
     if (t != 1) weights <- normalizeWeights(weights)
 
-    threshold <- 200 * exp(-0.5 * t)
+    # The hard-coded schedule 200 * exp(-0.5 * t) takes no account of what
+    # distance is actually achievable for this data set: if the best possible
+    # fit is large the chain dies after one or two iterations and returns the
+    # prior, and if it is tiny the chain over-converges. With
+    # threshold_quantile set, each threshold is instead a quantile of the
+    # distances accepted in the previous iteration, which is the usual
+    # adaptive ABC-SMC choice. Iteration 1 still needs a fixed starting value.
+    if (is.null(threshold_quantile) || t == 1 || length(fits) == 0) {
+      threshold <- 200 * exp(-0.5 * t)
+    } else {
+      prev_fits <- fits[is.finite(fits)]
+      if (length(prev_fits) == 0) {
+        threshold <- 200 * exp(-0.5 * t)
+      } else {
+        threshold <- stats::quantile(prev_fits, probs = threshold_quantile,
+                                     names = FALSE)
+        # never let the threshold stall or grow
+        threshold <- min(threshold, max(prev_fits))
+      }
+    }
+    cat("threshold =", signif(threshold, 4), "\n")
+    flush.console()
 
     stop_iteration <- 0
     changed <- 1
@@ -275,13 +368,17 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       }
 
       # now we simulate them all
+      # NB: the result is named fit_res, not res - naming it `res` shadows the
+      # `res` holding detMnbsp() output that is passed straight back into
+      # get_fit() on the same line.
       process_particle <- function(local_params) {
-        res <- get_fit(local_params$params, 
-                       species, abundances, taxa,
-                       esppres, community_number, n_traits,
-                       species_fallout, Ord, res, optimum,
-                       summary_stats, sd_vals)
-        return(list(res = res, changed = local_params$changed))
+        fit_res <- get_fit(local_params$params,
+                           species, abundances, taxa,
+                           esppres, community_number, n_traits,
+                           species_fallout, Ord, res, optimum,
+                           summary_stats, sd_vals,
+                           n_replicates = n_replicates)
+        return(list(res = fit_res, changed = local_params$changed))
       }
       
       local_results <- list()
@@ -353,32 +450,59 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       }
     }
 
+    # An iteration that stopped early has fewer than numParticles accepted
+    # particles. Writing it would produce a file padded with NA, which both
+    # corrupts the posterior and breaks continue_from_file on the next run.
+    if (numberAccepted < numParticles) {
+      cat("\nIteration", t, "stopped early with only", numberAccepted,
+          "of", numParticles, "particles accepted - not written to file.\n")
+      flush.console()
+      stop_iteration <- 1
+      break
+    }
+
     # replace values
     disp_vals  <- next_disp[1:numParticles]
     filt_vals  <- next_filt[1:numParticles]
     comp_vals  <- next_comp[1:numParticles]
     order_vals <- next_order[1:numParticles]
     weights    <- next_weights[1:numParticles]
-    
+
     rich_vec <- rich_vec[1:numParticles]
     eve_vec  <- eve_vec[1:numParticles]
     div_vec  <- div_vec[1:numParticles]
     opt_vec  <- opt_vec[1:numParticles]
     fits     <- fits[1:numParticles]
-    
+
+    # Adapt the perturbation kernel to the spread of the current population.
+    # A kernel pinned at sigma = 1 moves one or two species per step, so with
+    # a large species pool the chain barely explores the simplex within the
+    # number of iterations actually run. The usual ABC-SMC choice is twice the
+    # weighted variance of the previous population (Beaumont et al. 2009).
+    w_norm <- normalizeWeights(weights)
+    wvar <- function(x) {
+      mu <- sum(w_norm * x)
+      sum(w_norm * (x - mu) ^ 2)
+    }
+    pooled_var <- mean(c(wvar(disp_vals), wvar(filt_vals), wvar(comp_vals)))
+    sigma <- sqrt(2 * pooled_var)
+    # keep the kernel wide enough to still move at least one species
+    if (!is.finite(sigma) || sigma < 1) sigma <- 1
 
     output <- cbind(disp_vals, filt_vals, comp_vals, rich_vec,
                     eve_vec, div_vec, opt_vec, fits, weights, order_vals)
     file_name <- paste("particles_t=", t, ".txt", sep = "", collapse = NULL)
-    write.table(output, file_name, row.names = FALSE, col.names = FALSE)
+    utils::write.table(output, file_name,
+                       row.names = FALSE, col.names = FALSE)
 
+    accept_rate <- numberAccepted / max(tried, 1)
     if (fit_order) {
       cat(" ", mean(disp_vals), mean(filt_vals),
-          mean(comp_vals), mean(order_vals), 
-          "\t", "accept rate = ", numberAccepted / (tried - 1), "\n")
+          mean(comp_vals), mean(order_vals),
+          "\t", "accept rate = ", accept_rate, "\n")
     } else {
-    cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals), 
-        "\t", "accept rate = ", numberAccepted / (tried - 1), "\n")
+      cat(" ", mean(disp_vals), mean(filt_vals), mean(comp_vals),
+          "\t", "accept rate = ", accept_rate, "\n")
     }
     # and reset
     next_weights <- rep(NA, numParticles)

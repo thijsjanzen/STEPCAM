@@ -2,7 +2,10 @@
 # in order to normalize the traits
 calcSD <- function(species, abundances, n_plots, n_traits)  {
 
-  a <- rowSums(abundances)
+  # count species, not summed abundance: rowSums(abundances) passes a plot
+  # holding a single species with abundance 10, which then breaks the
+  # summary statistics downstream
+  a <- rowSums(abundances > 0)
   if(sum(a == 0) > 0) {
     stop("calcSD: ",
          "One of your communities doesn't have species in it")
@@ -37,9 +40,13 @@ calcSD <- function(species, abundances, n_plots, n_traits)  {
   row.names(species2) <- names(abundances2)
 
   # calculate observed FD values
+  # presence-based, to match how the simulated communities are scored
+  presences2 <- abundances2
+  presences2[presences2 > 0] <- 1
+
   Ord <- ordinationAxes(x = species2, stand.x = FALSE)
-  res <- detMnbsp(Ord, abundances)
-  FD_output <- strippedDbFd(Ord, abundances2, res[[1]], res[[2]])
+  res <- detMnbsp(Ord, presences2)
+  FD_output <- strippedDbFd(Ord, presences2, res[[1]], res[[2]])
 
   # calculate average CTM values across plots
   average_optimums <- colMeans(optimum)
