@@ -26,3 +26,4 @@ test.pdf
 *.Rproj
 .positai
 *.pdf
+stepcam-fixes.patch
