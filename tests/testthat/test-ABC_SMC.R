@@ -90,7 +90,8 @@ test_that("ABC_SMC: use", {
   output <- STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
-                    continue_from_file = FALSE, stop_at_iteration = 8)
+                    continue_from_file = FALSE, stop_at_iteration = 8,
+                    num_threads = 1)
   )
 
   v <- c(mean(output$DA), mean(output$HF), mean(output$LS))
@@ -340,7 +341,7 @@ test_that("ABC_SMC: abuse", {
   stopRate <- 0.0001
 
   sd_vals <- round(sd_vals)
-     testthat::expect_error(
+  testthat::expect_error(
    STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                     sd_vals, summary_stats, community_number, scaled_species,
                     data_abundances, data_frequencies, stopRate, Ord,
@@ -431,13 +432,11 @@ test_that("ABC_SMC: abuse", {
  plot_number <- 1
  stopRate <- 0.04
 
- testthat::expect_output(
  testthat::expect_error(
    STEPCAM:::ABC_SMC(numParticles, species_fallout, taxa, esppres, n_traits,
                      sd_vals, summary_stats, community_number, scaled_species,
                      data_abundances, data_frequencies, stopRate, Ord,
                      continue_from_file = FALSE, stop_at_iteration = 1),
-   "ABC_SMC: Can't stop at iteration 1"
- )
+   "ABC_SMC: Can't stop at iteration 1 -"
  )
 })

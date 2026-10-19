@@ -27,11 +27,12 @@ test_that("scaleSpeciesvalues: use",{
 
 test_that("scaleSpeciesvaluess: abuse", {
   #skip_on_cran()
+  set.seed(42)
   x1 <- c(1,2,3)
   x2 <- c(2,3,4)
   traitmatrix <- cbind(x1,x2)
 
-  expect_error(
+  testthat::expect_error(
     scaleSpeciesvalues(traitmatrix,n_traits = 2),
     "incorrect trait matrix dimensions"
   )
@@ -45,8 +46,8 @@ test_that("scaleSpeciesvaluess: abuse", {
   traitmatrix <- x$traits
   traitmatrix$trait1 <- c(1,1,2)
   traitmatrix$trait2 <- c(2,2,2)
-  expect_error(
-    scaleSpeciesvalues(traitmatrix,n_traits = 2),
+  testthat::expect_error(
+    scaleSpeciesvalues(traitmatrix, n_traits = 2),
     "one of your traits has no variation "
   )
 })

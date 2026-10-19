@@ -108,7 +108,7 @@ plot_element <- function(d, xmin, xmax, index, max_time, parameter){
   if(index %% max_time == 1) title <- topLabels[parameter]
 
   if(index %% max_time == 0 )  {
-    hist(d, xlim = c(xmin, xmax),main = title, col = "grey", ylab = "",
+    hist(d, xlim = c(xmin, xmax), main = title, col = "grey", ylab = "",
     xlab = "", yaxt = "n", cex.main = 1)
   } else {
      hist(d, xlim = c(xmin, xmax), main = title, col = "grey", ylab = "",
@@ -146,7 +146,7 @@ plotSMC <- function(path, plot_fit_order = FALSE){
        cnt <- cnt + 1
     }
   }
-  opar <- par()
+  opar <- par(no.readonly = TRUE)
   layout(k)
   par(mar = c(0.5, 0, 0.5, 0))
 

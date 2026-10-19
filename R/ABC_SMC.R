@@ -36,19 +36,6 @@ calculateWeight <- function(params, target, sigma,
   # 90 % prob of remaining the same
   diff_order <- diff_order * 0.9
   diff_order[diff_order == 0] <- 0.1
-
-  #vals <- cbind(log(weights), diff_prob, log(diff_order))
-  #vals <- rowSums(vals)
-  #vals <- exp(vals)
-  
-  a1 <- length(weights)
-  a2 <- length(diff_prob)
-  a3 <- length(diff_order)
-  if (a1 != a2 || a1 != a3 || a2 != a3) {
-    cat("oh oh")
-    b <- 78
-  }
-  
   
   vals <- weights * diff_prob * diff_order 
   
@@ -111,14 +98,14 @@ calculateDistance <- function(rich, even, div, opt_diff, obs, sd_vals)  {
 
 get_fit <- function(params, species, abundances, taxa,
                     esppres, community_number, n_traits,
-                    species_fallout, fit_order, Ord, res, optimum,
+                    species_fallout, Ord, res, optimum,
                     summary_stats, sd_vals) {
   taxa <- length(abundances[1, ])
   
   allcommunities <- STEPCAM(params, species, abundances, taxa,
                             esppres, community_number, n_traits,
-                            species_fallout,
-                            fit_order)
+                            species_fallout)
+  
   traits <- as.data.frame(species[, c(2:(n_traits + 1))],
                           row.names = c(1:taxa))
   
@@ -204,6 +191,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     cat("Found previous output, continuing from that output\n")
     flush.console()
     
+    found_previous_file <- FALSE
     for (t1 in stop_at_iteration:1) {
       file_name <- paste0("particles_t=", t1, ".txt")
       if (file.exists(file_name)) {
@@ -211,9 +199,13 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         if (d[numParticles, 1] == numParticles) next
         
         t <- t1 + 1
+        found_previous_file <- TRUE
         break
       }
     }    
+    
+    # do not read from d if nothing was found
+    if (found_previous_file == FALSE) break 
     
     disp_vals <- d[, 1]
     filt_vals <- d[, 2]
@@ -260,6 +252,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       for (i in 1:block_size) {
         params <- c(species_fallout, 0, 0, 1)
         # get a parameter combination
+        changed <- NA
         if (t == 1)  {
           params <- getRandomVals(species_fallout)
           if (fit_order == -1) {
@@ -278,29 +271,35 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
           params <- params[1:4]
         }
         
-        param_matrix[[i]] <- params
+        param_matrix[[i]] <- list(params = params, changed = changed)
       }
 
       # now we simulate them all
       process_particle <- function(local_params) {
-        return(get_fit(local_params, species, abundances, taxa,
+        res <- get_fit(local_params$params, 
+                       species, abundances, taxa,
                        esppres, community_number, n_traits,
-                       species_fallout, fit_order, Ord, res, optimum,
-                       summary_stats, sd_vals))
+                       species_fallout, Ord, res, optimum,
+                       summary_stats, sd_vals)
+        return(list(res = res, changed = local_params$changed))
       }
       
-      local_results <- parallel::mclapply(param_matrix, process_particle,
-                                          mc.cores = num_threads)
+      local_results <- list()
+      if (.Platform$OS.type == "unix" && num_threads > 1) {
+        local_results <- parallel::mclapply(param_matrix, process_particle,
+                                            mc.cores = num_threads)
+      } else {
+        for (i in 1:length(param_matrix)) {
+          local_results[[i]] <- process_particle(param_matrix[[i]])
+        }
+      }
       
-      #local_results <- list()
-      #for (i in 1:length(param_matrix)) {
-      #  local_results[[i]] <- process_particle(param_matrix[[i]])
-      #}
+      
       
       
       
       for (i in 1:length(local_results)) {
-        local_res <- local_results[[i]]
+        local_res <- local_results[[i]]$res
         if (is.na(local_res$fit) || is.nan(local_res$fit)) next
         
         if (local_res$fit < threshold) {
@@ -322,7 +321,7 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
           } else {
             next_weights[numberAccepted] <-
               calculateWeight(params = local_res$params, 
-                              target = changed, 
+                              target = local_results[[i]]$changed, 
                               sigma = sigma, 
                               disp_vals = disp_vals, 
                               filt_vals = filt_vals, 
@@ -382,11 +381,11 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
         "\t", "accept rate = ", numberAccepted / (tried - 1), "\n")
     }
     # and reset
-    next_weights <- rep(1,numParticles)
-    next_disp <- 1:numParticles
-    next_filt <- 1:numParticles
-    next_comp <- 1:numParticles
-    next_order <- 1:numParticles
+    next_weights <- rep(NA, numParticles)
+    next_disp    <- rep(NA, numParticles)
+    next_filt    <- rep(NA, numParticles)
+    next_comp    <- rep(NA, numParticles)
+    next_order   <- rep(NA, numParticles)
 
     if (stop_iteration == 1) {
       break
