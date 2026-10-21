@@ -212,7 +212,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     fit_order = FALSE,
                     num_threads = 1,
                     n_replicates = 1,
-                    threshold_quantile = NULL)  {
+                    threshold_quantile = NULL,
+                    adapt_sigma = !is.null(threshold_quantile))  {
 
   for (i in seq_along(sd_vals)) {
     if (sd_vals[[i]] == 0.000) {
@@ -479,15 +480,27 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     # a large species pool the chain barely explores the simplex within the
     # number of iterations actually run. The usual ABC-SMC choice is twice the
     # weighted variance of the previous population (Beaumont et al. 2009).
-    w_norm <- normalizeWeights(weights)
-    wvar <- function(x) {
-      mu <- sum(w_norm * x)
-      sum(w_norm * (x - mu) ^ 2)
+    #
+    # This is deliberately tied to threshold_quantile by default. The kernel
+    # width is derived from the accepted population and the threshold decides
+    # what gets accepted, so the two are coupled: adapting sigma underneath
+    # the fixed 200 * exp(-0.5 * t) schedule lets the threshold outrun the
+    # kernel, acceptance falls away iteration on iteration, and sigma then
+    # collapses with the degenerate population that survives. Adapting both
+    # together keeps the acceptance rate roughly stable instead.
+    if (adapt_sigma) {
+      w_norm <- normalizeWeights(weights)
+      wvar <- function(x) {
+        mu <- sum(w_norm * x)
+        sum(w_norm * (x - mu) ^ 2)
+      }
+      pooled_var <- mean(c(wvar(disp_vals), wvar(filt_vals), wvar(comp_vals)))
+      sigma <- sqrt(2 * pooled_var)
+      # keep the kernel wide enough to still move at least one species
+      if (!is.finite(sigma) || sigma < 1) sigma <- 1
+      cat("sigma =", signif(sigma, 4), "\n")
+      flush.console()
     }
-    pooled_var <- mean(c(wvar(disp_vals), wvar(filt_vals), wvar(comp_vals)))
-    sigma <- sqrt(2 * pooled_var)
-    # keep the kernel wide enough to still move at least one species
-    if (!is.finite(sigma) || sigma < 1) sigma <- 1
 
     output <- cbind(disp_vals, filt_vals, comp_vals, rich_vec,
                     eve_vec, div_vec, opt_vec, fits, weights, order_vals)

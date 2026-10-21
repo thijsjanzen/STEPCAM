@@ -6,7 +6,8 @@ STEPCAM_ABC <- function(data_abundances, data_species,
                         fit_order = FALSE,
                         num_threads = 1,
                         n_replicates = 1,
-                        threshold_quantile = NULL){
+                        threshold_quantile = NULL,
+                        adapt_sigma = !is.null(threshold_quantile)){
 
   # empty vector for number of species in each community
   nbsp <- c()
@@ -91,7 +92,8 @@ STEPCAM_ABC <- function(data_abundances, data_species,
                     fit_order = fit_order,
                     num_threads = num_threads,
                     n_replicates = n_replicates,
-                    threshold_quantile = threshold_quantile)
+                    threshold_quantile = threshold_quantile,
+                    adapt_sigma = adapt_sigma)
 
   return(output)
 }
