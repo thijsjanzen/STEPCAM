@@ -22,27 +22,50 @@ getFromPrevious <- function(ws, disps, filts, comps, orders)  {
 
 # function to calculate the weight of a particle
 #
-# perturb() changes all three components: it moves params[x[1]] by a normal
-# step, absorbs the difference in params[x[2]], and sets params[x[3]] to
-# whatever keeps the sum fixed. Scoring only the component named by `target`
-# therefore evaluates a kernel that was not the one used, and biases the
-# weights. Because the three counts are constrained to sum to
-# species_fallout, the move really lives in 2 free dimensions, so the density
-# is evaluated over two of the three components.
+# This has to evaluate the density of the kernel perturb() ACTUALLY uses.
+# perturb() draws an ordered pair (a, b) from the three processes, moves
+# component a by a rounded normal step with sd sigma[a], and absorbs the
+# same amount out of component b; the third component is untouched. So a
+# move is a 1-D step along one of the three edge directions (1,-1,0),
+# (1,0,-1), (0,1,-1) - NOT an isotropic step in the 2 free dimensions of the
+# simplex. The kernel is therefore degenerate, supported on a union of three
+# lines through the current particle, and has no 2-D density: scoring it with
+# a product of two normals is as wrong as scoring a single component.
+#
+# For a candidate reached from a previous particle by delta, the probability
+# is a mixture over the six equally likely ordered pairs. Each unordered pair
+# {a, b} contributes (1/6) * (P(step = delta[a] | sigma[a])
+#                             + P(step = -delta[a] | sigma[b])),
+# and the step is rounded to an integer, so the probability is the normal
+# mass over the rounding interval rather than a density. A delta of exactly
+# zero is reachable through all three pairs and the triple contribution is
+# the correct total. Clamping at 0 and max_number is ignored; it moves a
+# little extra mass onto the boundary.
 calculateWeight <- function(params, target, sigma,
                             disp_vals, filt_vals, comp_vals, order_vals,
                             weights)  {
+  sigma <- expandSigma(sigma)
   prev <- cbind(disp_vals, filt_vals, comp_vals)
 
-  # drop one component: the remaining two determine the third
-  keep <- setdiff(1:3, 3)
-  if (!is.na(target)) keep <- setdiff(1:3, setdiff(1:3, target)[2])
+  delta <- sweep(-prev, 2, params[1:3], "+")   # params - prev, row-wise
 
-  diff1 <- params[keep[1]] - prev[, keep[1]]
-  diff2 <- params[keep[2]] - prev[, keep[2]]
+  step_mass <- function(eps, sd_val) {
+    stats::pnorm(eps + 0.5, 0, sd_val) - stats::pnorm(eps - 0.5, 0, sd_val)
+  }
 
-  diff_prob <- stats::dnorm(diff1, mean = 0, sd = sigma) *
-               stats::dnorm(diff2, mean = 0, sd = sigma)
+  diff_prob <- numeric(nrow(prev))
+  for (pr in list(c(1, 2), c(1, 3), c(2, 3))) {
+    a <- pr[1]
+    b <- pr[2]
+    untouched <- setdiff(1:3, pr)
+    eps <- delta[, a]
+    # the move is only reachable along this edge if the third component did
+    # not change and the other two are equal and opposite
+    reachable <- (delta[, untouched] == 0) & (delta[, b] == -eps)
+    diff_prob <- diff_prob +
+      reachable * (1 / 6) * (step_mass(eps, sigma[a]) +
+                             step_mass(-eps, sigma[b]))
+  }
 
   # we have to multiply with the ordering as well
   diff_order <- 1 - (params[4] != order_vals)
@@ -67,8 +90,23 @@ normalizeWeights <- function(x) {
   return(x)
 }
 
+# sigma may be a single width (the historical form, and what the tests pass)
+# or one width per process. Expand to length 3 so that callers can always
+# index it by component. Both rnorm() and dnorm() silently recycle a vector
+# rather than erroring, so indexing has to be explicit everywhere sigma is
+# used; this helper is the single place that decides what sigma means.
+expandSigma <- function(sigma) {
+  if (length(sigma) == 1) return(rep(sigma, 3))
+  if (length(sigma) != 3) {
+    stop("expandSigma: ",
+         "sigma must have length 1 or 3, got ", length(sigma))
+  }
+  return(sigma)
+}
+
 # function to randomly change the contribution of one of the processes:
 perturb <- function(p, sigma, fit_order)  {
+  sigma <- expandSigma(sigma)
   params <- p
   max_number <- sum(p[1:3])
   numbers <- 1:3
@@ -77,7 +115,10 @@ perturb <- function(p, sigma, fit_order)  {
 
   oldval <- params[x[1]]
 
-  params[x[1]] <- round(params[x[1]] + rnorm(1, mean = 0, sd = sigma), 0)
+  # sd must be the width for THIS component: passing the whole vector would
+  # silently use sigma[1] for every process
+  params[x[1]] <- round(params[x[1]] +
+                          rnorm(1, mean = 0, sd = sigma[x[1]]), 0)
   params[x[1]] <- max(0, params[x[1]])
   params[x[1]] <- min(max_number, params[x[1]])
 
@@ -244,7 +285,8 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
   weights <- c()
   next_weights <- c()
 
-  sigma <- 1
+  # one perturbation width per process (dispersal, filtering, competition)
+  sigma <- rep(1, 3)
   t <- 1
 
   f <- list.files(pattern = "particles_t=")
@@ -488,17 +530,19 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
     # kernel, acceptance falls away iteration on iteration, and sigma then
     # collapses with the degenerate population that survives. Adapting both
     # together keeps the acceptance rate roughly stable instead.
+    # One width per process rather than one pooled width: the posterior is
+    # routinely tighter on one process than another, and a single pooled
+    # sigma then over-perturbs the tight one and under-perturbs the wide one.
     if (adapt_sigma) {
       w_norm <- normalizeWeights(weights)
       wvar <- function(x) {
         mu <- sum(w_norm * x)
         sum(w_norm * (x - mu) ^ 2)
       }
-      pooled_var <- mean(c(wvar(disp_vals), wvar(filt_vals), wvar(comp_vals)))
-      sigma <- sqrt(2 * pooled_var)
-      # keep the kernel wide enough to still move at least one species
-      if (!is.finite(sigma) || sigma < 1) sigma <- 1
-      cat("sigma =", signif(sigma, 4), "\n")
+      sigma <- sqrt(2 * c(wvar(disp_vals), wvar(filt_vals), wvar(comp_vals)))
+      # keep each kernel wide enough to still move at least one species
+      sigma[!is.finite(sigma) | sigma < 1] <- 1
+      cat("sigma (D,F,C) =", paste(signif(sigma, 4), collapse = ", "), "\n")
       flush.console()
     }
 
