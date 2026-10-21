@@ -256,6 +256,38 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
                     threshold_quantile = NULL,
                     adapt_sigma = !is.null(threshold_quantile))  {
 
+  # threshold_quantile is a PROBABILITY, not a switch. Passing TRUE reads
+  # naturally as "turn this on", but TRUE coerces to 1, and quantile(fits,
+  # probs = 1) is the maximum of the previous distances - a threshold almost
+  # nothing fails. The run then accepts nearly every particle, applies no
+  # selection at all, and (with adapt_sigma on) the kernel width runs away.
+  # That failure is silent, so reject it here rather than let it through.
+  if (!is.null(threshold_quantile)) {
+    if (is.logical(threshold_quantile)) {
+      stop("ABC_SMC: ",
+           "threshold_quantile must be a probability, not TRUE/FALSE. ",
+           "TRUE would be read as quantile 1 (the worst previous distance), ",
+           "which accepts almost everything. Use a value such as 0.5, ",
+           "or NULL to keep the fixed threshold schedule.")
+    }
+    if (!is.numeric(threshold_quantile) ||
+        length(threshold_quantile) != 1 ||
+        !is.finite(threshold_quantile) ||
+        threshold_quantile <= 0 || threshold_quantile >= 1) {
+      stop("ABC_SMC: ",
+           "threshold_quantile must be a single number strictly between ",
+           "0 and 1 (0.5 is a reasonable default), or NULL. Got: ",
+           paste(utils::capture.output(str(threshold_quantile)),
+                 collapse = " "))
+    }
+  }
+
+  if (!is.logical(adapt_sigma) || length(adapt_sigma) != 1 ||
+      is.na(adapt_sigma)) {
+    stop("ABC_SMC: ",
+         "adapt_sigma must be TRUE or FALSE")
+  }
+
   for (i in seq_along(sd_vals)) {
     if (sd_vals[[i]] == 0.000) {
       stop("ABC_SMC: ",
@@ -357,10 +389,15 @@ ABC_SMC <- function(numParticles, species_fallout, taxa, esppres, n_traits,
       } else {
         threshold <- stats::quantile(prev_fits, probs = threshold_quantile,
                                      names = FALSE)
-        # never let the threshold stall or grow
-        threshold <- min(threshold, max(prev_fits))
+        # min(threshold, max(prev_fits)) was a no-op, since a quantile can
+        # never exceed the maximum. Compare against the PREVIOUS threshold
+        # instead, so the sequence can genuinely never grow or stall.
+        if (exists("prev_threshold", inherits = FALSE)) {
+          threshold <- min(threshold, prev_threshold)
+        }
       }
     }
+    prev_threshold <- threshold
     cat("threshold =", signif(threshold, 4), "\n")
     flush.console()
 
